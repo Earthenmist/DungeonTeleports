@@ -44,8 +44,8 @@ local minimapButton = LDB:NewDataObject("DungeonTeleports", {
     end,
     OnTooltipShow = function(tooltip)
         tooltip:AddLine(L["ADDON_TITLE"])
-        tooltip:AddLine(L["|cFFFFFF00Left Click:|r Open Teleports"])
-        tooltip:AddLine(L["|cFFFFFF00Right Click:|r Open Settings"])
+        tooltip:AddLine(L["Open_Teleports"])
+        tooltip:AddLine(L["Open_Settings"])
     end,
 })
 
