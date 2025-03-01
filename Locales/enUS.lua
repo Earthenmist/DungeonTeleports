@@ -16,8 +16,8 @@ L["OPACITY_SLIDER"] = "Background Opacity"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Main frame not initialized yet."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Config frame not initialized yet."
-L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
-L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
+L["Open_Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
+L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 
 -- Settings
