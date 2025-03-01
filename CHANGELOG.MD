@@ -1,10 +1,10 @@
-📜 Changelog - Version 1.04
+📜 Changelog - Version 1.05
 
 📅 Release Date: 01/03/2025
 
 🛠️ Changes & Improvements:
 
-✅ Updated for the Season 2 TWW
+✅ Language file updates
 
 ⚠️ Known Issues / Notes:
 
