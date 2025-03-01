@@ -2,6 +2,23 @@ local addonName, addon = ...
 local constants = addon.constants
 local L = addon.L
 
+addon.version = "Unknown" -- Default if retrieval fails
+
+-- Event frame to retrieve version at the right time
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+
+eventFrame:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then
+        if _G.GetAddOnMetadata then
+            addon.version = _G.GetAddOnMetadata(addonName, "Version") or "Unknown"
+        elseif C_AddOns and C_AddOns.GetAddOnMetadata then
+            addon.version = C_AddOns.GetAddOnMetadata(addonName, "Version") or "Unknown"
+        end
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+    end
+end)
+
 -- Initialize database if missing
 if not DungeonTeleportsDB then
     DungeonTeleportsDB = {}
