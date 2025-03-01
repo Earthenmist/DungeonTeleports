@@ -63,12 +63,12 @@ ConfigFrame.title:SetTextColor(1, 1, 0)
 -- Display Addon Version in Config Window
 local versionText = ConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 versionText:SetPoint("BOTTOMLEFT", ConfigFrame, "BOTTOMLEFT", 15, 10) -- More padding from reset button
-versionText:SetText("Mythic Dungeon Teleports vLoading...")
+versionText:SetText("vLoading...")
 
 -- Function to update version when it's available
 local function UpdateVersionText()
     if addon.version and addon.version ~= "Unknown" then
-        versionText:SetText("Mythic Dungeon Teleports v" .. addon.version)
+        versionText:SetText("v" .. addon.version)
     else
         C_Timer.After(1, UpdateVersionText) -- Keep checking every 1 second until version is set
     end
