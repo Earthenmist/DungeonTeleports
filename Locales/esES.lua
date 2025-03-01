@@ -16,6 +16,8 @@ L["OPACITY_SLIDER"] = "Opacidad del fondo"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: La ventana principal aún no se ha inicializado."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: La ventana de configuración aún no se ha inicializado."
+L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
+L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 -- Settings
 L["CONFIG_TITLE"] = "Teletransportes de Mazmorras Míticas - Configuración"
@@ -38,7 +40,7 @@ L["Legion"] = "Legion"
 L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Shadowlands"] = "Shadowlands"
 L["Dragonflight"] = "Dragonflight"
-L["War Within"] = "The War Within"
+L["The War Within"] = "The War Within"
 L["Current Season"] = "Temporada Actual"
 
 -- Dungeons

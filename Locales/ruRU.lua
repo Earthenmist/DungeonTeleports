@@ -1,44 +1,45 @@
 local L = select(2, ...).L('ruRU')
 
 -- Core
-L["ADDON_TITLE"] = "Телепорты в эпохальные подземелья"
+L["ADDON_TITLE"] = "Телепорты в М+ подземелья"
 L["DEFAULT_EXPANSION"] = "Дополнение по умолчанию"
 L["SELECT_EXPANSION"] = "Выбрать дополнение"
 L["COOLDOWN_READY"] = "Готово к использованию!"
 L["COOLDOWN_NOT_READY"] = "Пока не готово!"
 L["CLICK_TO_TELEPORT"] = "Нажмите, чтобы телепортироваться!"
 L["TELEPORT_NOT_KNOWN"] = "Телепорт неизвестен!"
-L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона."
-L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени."
+L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона"
+L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени"
 L["OPACITY_SLIDER"] = "Непрозрачность фона"
 
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Основное окно еще не инициализировано."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Конфигурационное окно еще не инициализировано."
-
+L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00ЛКМ:|r Открыть меню телепортов"
+L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00ПКМ:|r Открыть настройки"
 
 -- Settings
 L["CONFIG_TITLE"] = "Mythic Dungeon Teleports - Настройки"
 L["RESET_SETTINGS"] = "Сброс к настройкам по умолчанию"
-L["RESET_TOOLTIP"] = "Сбрасывает все настройки до значений по умолчанию."
-L["SHOW_MINIMAP"] = "Показать кнопку на мини-карте"
-L["TOGGLE_MINIMAP"] = "Включить или выключить кнопку на мини-карте."
+L["RESET_TOOLTIP"] = "Сбрасывает все настройки до значений по умолчанию"
+L["SHOW_MINIMAP"] = "Показать кнопку на миникарте"
+L["TOGGLE_MINIMAP"] = "Включить или выключить кнопку на миникарте"
 L["DEFAULT_EXPANSIONCONFIG"] = "Дополнение по умолчанию"
-L["SELECT_EXPANSIONCONFIG"] = "Выберите дополнение, которое будет отображаться при открытии аддона."
+L["SELECT_EXPANSIONCONFIG"] = "Выберите дополнение, которое будет отображаться при открытии аддона"
 L["DISABLE_BACKGROUND"] = "Отключить фоновые изображения"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Включить или выключить фоновые изображения. Окно аддона будет закрыто для внесения изменений"
 
 
 -- Expansions
-L["Cataclysm"] = "Cataclysm"
-L["Mists of Pandaria"] = "Mists of Pandaria"
-L["Warlords of Draenor"] = "Warlords of Draenor"
-L["Legion"] = "Legion"
-L["Battle for Azeroth"] = "Battle for Azeroth"
-L["Shadowlands"] = "Shadowlands"
-L["Dragonflight"] = "Dragonflight"
-L["War Within"] = "The War Within"
+L["Cataclysm"] = "Катаклизм"
+L["Mists of Pandaria"] = "Пандария"
+L["Warlords of Draenor"] = "Дренор"
+L["Legion"] = "Легион"
+L["Battle for Azeroth"] = "Битва за Азерот"
+L["Shadowlands"] = "Темные Земли"
+L["Dragonflight"] = "Драконы"
+L["The War Within"] = "Война Внутри"
 L["Current Season"] = "Текущий сезон"
 
 -- Dungeons
@@ -110,5 +111,5 @@ L["RAID_AMIRDRASSIL_THE_DREAMS_HOPE"] = "Амирдрассил, Надежда 
 L["RAID_CASTLE_NATHRIA"] = "Замок Нафрия"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
-L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Подкопа"
+L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
 
