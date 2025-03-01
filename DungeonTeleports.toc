@@ -1,0 +1,26 @@
+## Interface: 110100
+## Title: Mythic Dungeon Teleports
+## Notes: Adds teleport buttons for M+ Dungeons & Raids
+## Author: Earthenmist-Anachronos
+## Version: 1.04
+## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
+## DefaultState: Enabled
+## SavedVariables: DungeonTeleportsDB
+## OptionalDeps: LibDataBroker-1.1, LibDBIcon-1.0
+
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+# Localisation Files
+Locales/Locales.lua
+Locales/enUS.lua
+Locales/deDE.lua
+Locales/frFR.lua
+Locales/esES.lua
+Locales/ruRU.lua
+
+# Core Files
+TeleportData.lua
+MinimapButton.lua
+DungeonTeleports.lua
+Config\config.lua
