@@ -16,6 +16,8 @@ L["OPACITY_SLIDER"] = "Background Opacity"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Main frame not initialized yet."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Config frame not initialized yet."
+L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
+L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 
 -- Settings
@@ -38,7 +40,7 @@ L["Legion"] = "Legion"
 L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Shadowlands"] = "Shadowlands"
 L["Dragonflight"] = "Dragonflight"
-L["War Within"] = "The War Within"
+L["The War Within"] = "The War Within"
 L["Current Season"] = "Current Season"
 
 -- Dungeons
