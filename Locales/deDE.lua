@@ -16,8 +16,8 @@ L["OPACITY_SLIDER"] = "Hintergrund-Deckkraft"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Hauptfenster wurde noch nicht initialisiert."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Konfigurationsfenster wurde noch nicht initialisiert."
-L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
-L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
+L["Open_Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
+L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 -- Settings
 L["CONFIG_TITLE"] = "Mythische Dungeon-Teleports - Konfiguration"
