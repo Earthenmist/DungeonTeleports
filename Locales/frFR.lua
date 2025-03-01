@@ -16,8 +16,8 @@ L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports : La fenêtre principale n'est pas encore initialisée."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports : La fenêtre de configuration n'est pas encore initialisée."
-L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
-L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
+L["Open_Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
+L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 -- Settings
 L["CONFIG_TITLE"] = "Téléportations de Donjons Mythiques - Configuration"
