@@ -16,8 +16,8 @@ L["OPACITY_SLIDER"] = "Непрозрачность фона"
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Основное окно еще не инициализировано."
 L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Конфигурационное окно еще не инициализировано."
-L["|cFFFFFF00Left Click:|r Open Teleports"] = "|cFFFFFF00ЛКМ:|r Открыть меню телепортов"
-L["|cFFFFFF00Right Click:|r Open Settings"] = "|cFFFFFF00ПКМ:|r Открыть настройки"
+L["Open_Teleports"] = "|cFFFFFF00ЛКМ:|r Открыть меню телепортов"
+L["Open_Settings"] = "|cFFFFFF00ПКМ:|r Открыть настройки"
 
 -- Settings
 L["CONFIG_TITLE"] = "Mythic Dungeon Teleports - Настройки"
