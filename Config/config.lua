@@ -62,7 +62,7 @@ ConfigFrame.title:SetTextColor(1, 1, 0)
 
 -- Display Addon Version in Config Window
 local versionText = ConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-versionText:SetPoint("BOTTOMLEFT", ConfigFrame, "BOTTOMLEFT", 15, 50) -- More padding from reset button
+versionText:SetPoint("BOTTOMLEFT", ConfigFrame, "BOTTOMLEFT", 15, 10) -- More padding from reset button
 versionText:SetText("Mythic Dungeon Teleports vLoading...")
 
 -- Function to update version when it's available
@@ -272,7 +272,7 @@ transparencySlider:SetScript(
 -- 🔄 **Reset Button**
 --------------------------------------
 local resetButton = CreateFrame("Button", nil, ConfigFrame, "UIPanelButtonTemplate")
-resetButton:SetPoint("BOTTOM", ConfigFrame, "BOTTOM", 0, 20)
+resetButton:SetPoint("BOTTOM", ConfigFrame, "BOTTOM", 0, 35)
 resetButton:SetText(L["RESET_SETTINGS"])
 resetButton:SetWidth(resetButton:GetTextWidth() + 20) -- Dynamically adjust width
 resetButton:SetHeight(25)
