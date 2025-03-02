@@ -1,6 +1,6 @@
 📜 Changelog - Version 1.07
 
-📅 Release Date: TBC
+📅 Release Date: 02-03-2025
 
 🛠️ Changes & Improvements:
 
