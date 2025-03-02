@@ -1,10 +1,10 @@
-📜 Changelog - Version 1.05
+📜 Changelog - Version 1.07
 
-📅 Release Date: 01/03/2025
+📅 Release Date: 02-03-2025
 
 🛠️ Changes & Improvements:
 
-✅ Language file updates
+✅ Changes to the display of the version number in the config window
 
 ⚠️ Known Issues / Notes:
 
