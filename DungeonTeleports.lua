@@ -157,26 +157,17 @@ mainFrame:SetScript(
     end
 )
 
--- Set faction-specific spell IDs (Siege of Boralus)
+-- Set faction-specific spell IDs (e.g. Siege of Boralus)
 local function SetFactionSpecificSpells()
     local faction = UnitFactionGroup("player")
     if faction == "Alliance" then
         constants.mapIDtoSpellID[506] = 445418 -- Alliance spell ID for Siege of Boralus
+        constants.mapIDtoSpellID[507] = 467553 -- Alliance spell ID for The Motherlode!!
     elseif faction == "Horde" then
         constants.mapIDtoSpellID[506] = 464256 -- Horde spell ID for Siege of Boralus
+        constants.mapIDtoSpellID[507] = 467555 -- Horde spell ID for The Motherlode!!
     else
         constants.mapIDtoSpellID[506] = nil -- No teleport if faction is unknown
-    end
-end
-
--- Set faction-specific spell IDs (The Motherlode!)
-local function SetFactionSpecificSpells()
-    local faction = UnitFactionGroup("player")
-    if faction == "Alliance" then
-        constants.mapIDtoSpellID[507] = 467553 -- Alliance spell ID for Siege of Boralus
-    elseif faction == "Horde" then
-        constants.mapIDtoSpellID[507] = 467555 -- Horde spell ID for Siege of Boralus
-    else
         constants.mapIDtoSpellID[507] = nil -- No teleport if faction is unknown
     end
 end
