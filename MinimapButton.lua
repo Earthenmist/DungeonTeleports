@@ -1,3 +1,4 @@
+
 local addonName, addon = ...
 local L = addon.L
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
@@ -56,9 +57,16 @@ MinimapHandler:SetScript("OnEvent", function()
     DungeonTeleportsDB = DungeonTeleportsDB or {}
     DungeonTeleportsDB.minimap = DungeonTeleportsDB.minimap or {}
 
-    LDBIcon:Register("DungeonTeleports", minimapButton, DungeonTeleportsDB.minimap)
+    -- Only register if not already registered
+    if not LDBIcon:IsRegistered("DungeonTeleports") then
+        LDBIcon:Register("DungeonTeleports", minimapButton, DungeonTeleportsDB.minimap)
+    end
 
-    -- Ensure the frame isn't shown unless it was open before logout
+    -- Respect saved visibility preference
+    if DungeonTeleportsDB.minimap.hidden then
+        LDBIcon:Hide("DungeonTeleports")
+    end
+
     if DungeonTeleportsDB.isVisible and DungeonTeleportsMainFrame then
         DungeonTeleportsMainFrame:Show()
     else
