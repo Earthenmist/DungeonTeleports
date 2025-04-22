@@ -1,10 +1,10 @@
 📜 Changelog - Version 1.07
 
-📅 Release Date: 02-03-2025
+📅 Release Date: 22-04-2025
 
 🛠️ Changes & Improvements:
 
-✅ Changes to the display of the version number in the config window
+✅ Fixed reported bug - The minimap button option isn't remembering it's setting
 
 ⚠️ Known Issues / Notes:
 
