@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.07
+📜 Changelog - Version 1.10
 
 📅 Release Date: 22-04-2025
 
