@@ -1,10 +1,11 @@
-📜 Changelog - Version 1.10
+📜 Changelog - Version 1.11
 
 📅 Release Date: 22-04-2025
 
 🛠️ Changes & Improvements:
 
 ✅ Fixed reported bug - The minimap button option isn't remembering it's setting
+✅ Updated for 11.1.5
 
 ⚠️ Known Issues / Notes:
 
