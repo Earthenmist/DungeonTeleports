@@ -1,11 +1,10 @@
-📜 Changelog - Version 1.11
+📜 Changelog - Version 1.12
 
-📅 Release Date: 22-04-2025
+📅 Release Date: 07-05-2025
 
 🛠️ Changes & Improvements:
 
-✅ Fixed reported bug - The minimap button option isn't remembering it's setting
-✅ Updated for 11.1.5
+✅ Added locale for koKR with thanks to kr-azshara-다염
 
 ⚠️ Known Issues / Notes:
 
