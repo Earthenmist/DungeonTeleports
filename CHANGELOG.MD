@@ -1,10 +1,10 @@
-📜 Changelog - Version 1.13
+📜 Changelog - Version 1.14
 
-📅 Release Date: 05-06-2025
+📅 Release Date: 18-06-2025
 
 🛠️ Changes & Improvements:
 
-✅ Added locale for koKR with thanks to Askanius-ZirkeldesCenarius
+✅ Update for 11.1.7
 
 ⚠️ Known Issues / Notes:
 
