@@ -1,4 +1,4 @@
-## Interface: 110105
+## Interface: 110107
 ## Title: Mythic Dungeon Teleports
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
