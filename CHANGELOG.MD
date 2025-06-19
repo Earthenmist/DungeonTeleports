@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.15-BETA1
+📜 Changelog - Version 1.15.2-BETA
 
 📅 Release Date: 19-06-2025
 
