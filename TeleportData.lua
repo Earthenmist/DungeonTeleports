@@ -16,7 +16,7 @@ local mapExpansionToBackground = {
 
 local mapExpansionToMapID = {
     -- Season 1 TWW
-    [L["Current Season"]] = {805, 806, 807, 808, 505, 606, 809, 507, 810},
+    [L["Current Season"]] = {802, 804, 808, 809, 811, 604, 609, 812},
     [L["Cataclysm"]] = {101, 102, 103},
     [L["Mists of Pandaria"]] = {201, 202, 203, 204, 205, 206, 207, 208, 209},
     [L["Warlords of Draenor"]] = {301, 302, 303, 304, 305, 306, 307, 308},
@@ -97,6 +97,8 @@ local mapIDtoDungeonName = {
     [808] = L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"],
     [809] = L["DUNGEON_OPERATION_FLOODGATE"],
     [810] = L["RAID_LIBERATION_UNDERMINE"],
+    [811] = L["DUNGEON_ECHO_DOME"],
+    [812] = L["RAID_MANAFORGE_OMEGA"],
 
     -- Add more as needed...
 }
@@ -170,6 +172,8 @@ local mapIDtoSpellID = {
     [808] = 445444, -- Priory of the Sacred Flame
     [809] = 1216786, -- Operation: Floodgate (Path of the Circuit Breaker)
     [810] = 1226482, -- Liberation of Undermine
+    [811] = 1237124, -- Eco-Dome, Al'dani
+    [812] = 1239155, -- Manaforge Omega
 
     -- Add more as needed...
 }
