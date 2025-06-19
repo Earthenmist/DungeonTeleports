@@ -104,6 +104,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Darkflame Cleft"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Cinderbrew Brewery"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priory of the Sacred Flame"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operation: Floodgate"
+L["DUNGEON_ECHO_DOME"] = "Eco-Dome, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Vault of the Incarnates"
@@ -113,4 +114,5 @@ L["RAID_CASTLE_NATHRIA"] = "Castle Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Sanctum of Domination"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcher of the First Ones"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberation of Undermine"
+L["RAID_MANAFORGE_OMEGA"] = "Manaforge Omega"
 
