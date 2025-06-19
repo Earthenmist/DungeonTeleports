@@ -1,15 +1,16 @@
-📜 Changelog - Version 1.15-ALPHA
+📜 Changelog - Version 1.15-BETA1
 
 📅 Release Date: 19-06-2025
 
 🛠️ Changes & Improvements:
 
 ✅ Update for 11.2 PTR ONLY
+✅ Embed Libstub
+✅ Embed CallbackHandler-1.0
+✅ Included fix from v1.15-Release to fix the issue that if using ElvUI you won't see the backgrounds correctly, this is due to the way ElvUI takes over the UI.
 
 ⚠️ Known Issues / Notes:
 
-⚠️If using ElvUI you wont see the backgrounds correctly, this is due to the way ElvUI takes over the UI. If you would like to see the backgrounds you will need to install the following addon:  
 
-> AddOnSkins - https://www.curseforge.com/wow/addons/addonskins
 
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀
