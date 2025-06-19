@@ -104,6 +104,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "어둠불꽃 동굴"
 L["DUNGEON_CINDERBREW_BREWERY"] = "잿불맥주 양조장"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "신성한 불꽃의 수도원"
 L["DUNGEON_OPERATION_FLOODGATE"] = "작전명: 수문"
+L["DUNGEON_ECHO_DOME"] = "에코 돔, 알다니"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "현신의 금고"
@@ -113,4 +114,5 @@ L["RAID_CASTLE_NATHRIA"] = "나스리아 성채"
 L["RAID_SANCTUM_OF_DOMINATION"] = "지배의 성소"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "태초의 존재의 매장터"
 L["RAID_LIBERATION_UNDERMINE"] = "언더마인 해방전선"
+L["RAID_MANAFORGE_OMEGA"] = "마나괴철로 오메가"
 
