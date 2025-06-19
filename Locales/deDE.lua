@@ -103,6 +103,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Dunkelflammenspalt"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Metbrauerei Glutbräu"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priorat der Heiligen Flamme"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operation: Schleuse"
+L["DUNGEON_ECHO_DOME"] = "Echokuppel, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Gewölbe der Inkarnationen"
@@ -112,4 +113,5 @@ L["RAID_CASTLE_NATHRIA"] = "Schloss Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Sanktum der Herrschaft"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Mausoleum der Ersten"
 L["RAID_LIBERATION_UNDERMINE"] = "Befreiung von Lorenhall"
+L["RAID_MANAFORGE_OMEGA"] = "Manaschmiede Omega"
 
