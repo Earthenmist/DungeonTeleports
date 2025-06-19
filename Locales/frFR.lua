@@ -103,6 +103,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Faille des Flammes-Sombres"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Brasserie Brasécume"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Prieuré de la Flamme Sacrée"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Opération : Écluse"
+L["DUNGEON_ECHO_DOME"] = "Éco-dôme, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Caveau des Incarnations"
@@ -112,4 +113,5 @@ L["RAID_CASTLE_NATHRIA"] = "Château Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Sanctum de la Domination"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sépulcre des Fondateurs"
 L["RAID_LIBERATION_UNDERMINE"] = "Libération de Sous-Mine"
+L["RAID_MANAFORGE_OMEGA"] = "Manaforge Oméga"
 
