@@ -1,10 +1,10 @@
-📜 Changelog - Version 1.14
+📜 Changelog - Version 1.15-ALPHA
 
-📅 Release Date: 18-06-2025
+📅 Release Date: 19-06-2025
 
 🛠️ Changes & Improvements:
 
-✅ Update for 11.1.7
+✅ Update for 11.2 PTR ONLY
 
 ⚠️ Known Issues / Notes:
 
