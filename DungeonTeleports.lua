@@ -30,20 +30,10 @@ local DungeonTeleports = CreateFrame("Frame")
 local createdButtons = {}
 local createdTexts = {}
 
--- Create the main moveable frame
-local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent, "BackdropTemplate")
+-- Create the main moveable frame without SetBackdrop to support ElvUI
+local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent)
 mainFrame:SetSize(275, 600)
 mainFrame:SetPoint("CENTER")
-mainFrame:SetBackdrop(
-    {
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        tileSize = 32,
-        edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
-    }
-)
 mainFrame:SetMovable(true)
 mainFrame:EnableMouse(true)
 mainFrame:RegisterForDrag("LeftButton")
@@ -63,18 +53,21 @@ title:SetTextColor(1, 1, 0) -- Yellow title
 local closeButton = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
 closeButton:SetSize(24, 24)
 closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -5, -5)
-closeButton:SetScript(
-    "OnClick",
-    function()
-        mainFrame:Hide()
-        DungeonTeleportsDB.isVisible = false
-    end
-)
+closeButton:SetScript("OnClick", function()
+    mainFrame:Hide()
+    DungeonTeleportsDB.isVisible = false
+end)
 
--- Add background texture to the frame
-local backgroundTexture = mainFrame:CreateTexture(nil, "BACKGROUND")
+-- Add black base layer for contrast
+local baseBackground = mainFrame:CreateTexture(nil, "BACKGROUND")
+baseBackground:SetAllPoints(mainFrame)
+baseBackground:SetColorTexture(0, 0, 0, 1) -- Always fully opaque black
+
+-- Add image or colored background layer
+local backgroundTexture = mainFrame:CreateTexture(nil, "ARTWORK")
 backgroundTexture:SetAllPoints(mainFrame)
-backgroundTexture:SetColorTexture(0, 0, 0, 1) -- Default semi-transparent background
+backgroundTexture:SetColorTexture(0, 0, 0, DungeonTeleportsDB.backgroundAlpha or 0.7)
+mainFrame.backgroundTexture = backgroundTexture
 
 -- Dropdown Menu for Expansions
 local dropdown = CreateFrame("Frame", "DungeonTeleportsDropdown", mainFrame, "UIDropDownMenuTemplate")
@@ -84,40 +77,25 @@ UIDropDownMenu_SetText(dropdown, L["SELECT_EXPANSION"])
 
 -- Function to update the background when switching expansions
 function addon.updateBackground(selectedExpansion)
-    -- Ensure backgroundTexture exists
-    if not DungeonTeleportsMainFrame.backgroundTexture then
-        DungeonTeleportsMainFrame.backgroundTexture = DungeonTeleportsMainFrame:CreateTexture(nil, "BACKGROUND")
-        DungeonTeleportsMainFrame.backgroundTexture:SetAllPoints(DungeonTeleportsMainFrame)
-    end
-
     local background = DungeonTeleportsMainFrame.backgroundTexture
+    if not background then return end
+
     local alpha = DungeonTeleportsDB.backgroundAlpha or 0.7
     local bgPath = addon.constants.mapExpansionToBackground[selectedExpansion]
 
-    -- **Step 1: Check if Backgrounds are Disabled**
     if DungeonTeleportsDB.disableBackground then
-        background:SetTexture(nil) -- Remove any image texture
-        background:SetColorTexture(0, 0, 0, alpha) -- Ensure solid black background with correct opacity
-        return -- Stop further execution
+        background:SetTexture(nil)
+        background:SetColorTexture(0, 0, 0, alpha)
+        return
     end
 
-    -- **Step 2: Load Correct Background**
     if bgPath then
         background:SetTexture(bgPath)
+        background:SetAlpha(alpha)
     else
         background:SetTexture(nil)
-        background:SetColorTexture(0, 0, 0, alpha) -- Fallback solid color
+        background:SetColorTexture(0, 0, 0, alpha)
     end
-
-    -- **Step 3: Ensure the Background Stays Visible**
-    C_Timer.After(
-        0.1,
-        function()
-            if background:GetTexture() == bgPath or not bgPath then
-                background:SetAlpha(alpha) -- Apply correct transparency
-            end
-        end
-    )
 end
 
 -- Initialize the dropdown before setting the OnShow script
