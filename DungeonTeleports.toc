@@ -3,12 +3,12 @@
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
 ## Author: Earthenmist-Anachronos
-## Version: 1.15-alpha
+## Version: 1.15-beta1
 ## X-Wago-ID: BNBeblGx
 ## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
 ## DefaultState: Enabled
 ## SavedVariables: DungeonTeleportsDB
-## OptionalDeps: LibDataBroker-1.1, LibDBIcon-1.0
+## OptionalDeps: LibDataBroker-1.1, LibDBIcon-1.0, LibStub, CallbackHandler-1.0
 
 ## Category-enUS: Dungeons & Raids
 ## Category-deDE: Dungeons & Schlachtzüge
@@ -22,6 +22,8 @@
 ## Category-zhCN: 地下城和团队副本
 ## Category-zhTW: 地城與團隊
 
+libs\LibStub\LibStub.lua
+libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
