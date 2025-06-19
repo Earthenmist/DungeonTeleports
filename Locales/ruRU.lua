@@ -103,6 +103,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Расселина Темного Пламени
 L["DUNGEON_CINDERBREW_BREWERY"] = "Искроварня"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Приорат Священного Пламени"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Операция: Шлюз"
+L["DUNGEON_ECHO_DOME"] = "Эхо-купол, Ал'дани"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Хранилище Воплощений"
@@ -112,4 +113,5 @@ L["RAID_CASTLE_NATHRIA"] = "Замок Нафрия"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
 L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
+L["RAID_MANAFORGE_OMEGA"] = "Манагорн Омега"
 
