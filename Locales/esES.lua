@@ -104,6 +104,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Grieta de la Llama Oscura"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Cervecería Brasacendra"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priorato de la Llama Sagrada"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operación: Compuerta"
+L["DUNGEON_ECHO_DOME"] = "Eco-Cúpula, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Bóveda de los Encarnados"
@@ -113,4 +114,5 @@ L["RAID_CASTLE_NATHRIA"] = "Castillo Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Santuario de Dominación"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcro de los Primeros"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberación de Minasombra"
+L["RAID_MANAFORGE_OMEGA"] = "Forja de maná Omega"
 
