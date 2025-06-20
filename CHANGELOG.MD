@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.16
+📜 Changelog - Version 1.16.2
 
 📅 Release Date: 20-06-2025
 
