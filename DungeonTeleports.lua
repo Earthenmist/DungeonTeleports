@@ -29,7 +29,7 @@ local createdTexts = {}
 
 -- Main frame with polished visuals and retained functionality
 local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent, "BackdropTemplate")
-mainFrame:SetSize(275, 600)
+mainFrame:SetSize(295, 600)
 mainFrame:SetPoint("CENTER")
 mainFrame:SetBackdrop({
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
@@ -232,6 +232,7 @@ function createTeleportButtons(selectedExpansion)
             -- Dungeon name text
             local nameText = DungeonTeleportsMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             nameText:SetPoint("LEFT", button, "RIGHT", 10, 0)
+            nameText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
             nameText:SetText(dungeonName)
             createdTexts[mapID] = nameText -- Track the text for clearing later
 
