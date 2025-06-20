@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.15.4-BETA
+📜 Changelog - Version 1.17-BETA
 
 📅 Release Date: 20-06-2025
 
@@ -9,6 +9,7 @@
 ✅ Embed CallbackHandler-1.0
 ✅ Resolved: If using ElvUI you won't see the backgrounds correctly.
 ✅ Cleaned up Main window for a more polished look
+✅ Adjusted Dungeon text for readability
 ✅ Cleaned up Settings window for a more polished look
 
 ⚠️ Known Issues / Notes:
