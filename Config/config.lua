@@ -1,64 +1,64 @@
 local addonName, addon = ...
 local L = addon.L
-local LDBIcon = LibStub("LibDBIcon-1.0") -- Ensure LDBIcon is properly initialized
+local LDBIcon = LibStub("LibDBIcon-1.0")
 
--- Create the settings frame
+-- Create the polished settings frame
 local ConfigFrame = CreateFrame("Frame", "DungeonTeleportsConfigFrame", UIParent, "BackdropTemplate")
-ConfigFrame:SetSize(350, 280) -- Adjusted height to accommodate spacing
+ConfigFrame:SetSize(375, 300)
 ConfigFrame:SetPoint("CENTER")
-ConfigFrame:SetBackdrop(
-    {
-        bgFile = "Interface\\Buttons\\WHITE8x8", -- Use a solid texture
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = false, tileSize = 0, edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
-    }
-)
+ConfigFrame:SetBackdrop({
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    tile = true, tileSize = 16, edgeSize = 16,
+    insets = {left = 5, right = 5, top = 5, bottom = 5}
+})
+ConfigFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.95)
 
--- Allow the frame to respond to key presses
-ConfigFrame:EnableKeyboard(true)
-ConfigFrame:SetPropagateKeyboardInput(false) -- Prevents the escape key from affecting other UI elements
+-- Improved layering
+ConfigFrame:SetFrameStrata("DIALOG")
+ConfigFrame:SetFrameLevel(100)
+ConfigFrame:SetToplevel(true)
 
--- Register the Escape key to close the frame
-ConfigFrame:SetScript("OnKeyDown", function(self, key)
-    if key == "ESCAPE" then
-        self:Hide()
-        self:SetPropagateKeyboardInput(false) -- Stop ESC from propagating
-    end
-end)
+-- Soft rounded border and shadow
+if not ConfigFrame.shadow then
+    ConfigFrame.shadow = CreateFrame("Frame", nil, ConfigFrame, "BackdropTemplate")
+    ConfigFrame.shadow:SetPoint("TOPLEFT", -5, 5)
+    ConfigFrame.shadow:SetPoint("BOTTOMRIGHT", 5, -5)
+    ConfigFrame.shadow:SetBackdrop({
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+        edgeSize = 16,
+    })
+    ConfigFrame.shadow:SetBackdropBorderColor(0, 0, 0, 0.75)
+end
 
-
--- Set dark grey background
-ConfigFrame:SetBackdropColor(0.15, 0.15, 0.15, 1) -- Slightly Lighter Grey
-
--- Ensure full opacity
-ConfigFrame:SetAlpha(1)
-
--- Hook into OnShow to force opacity every time it opens
-ConfigFrame:HookScript("OnShow", function(self)
-    self:SetAlpha(1) -- Ensure frame itself is fully visible
-
-    -- Ensure all children (buttons, text, sliders) are fully opaque
-    for _, child in ipairs({self:GetChildren()}) do
-        if child and child.SetAlpha then
-            child:SetAlpha(1)
-        end
-    end
-
-end)
-
+-- Movable and keyboard responsive
 ConfigFrame:SetMovable(true)
 ConfigFrame:EnableMouse(true)
 ConfigFrame:RegisterForDrag("LeftButton")
 ConfigFrame:SetScript("OnDragStart", ConfigFrame.StartMoving)
 ConfigFrame:SetScript("OnDragStop", ConfigFrame.StopMovingOrSizing)
-ConfigFrame:Hide() -- Hide by default
+
+-- Escape key closes the frame
+ConfigFrame:EnableKeyboard(true)
+ConfigFrame:SetPropagateKeyboardInput(false)
+ConfigFrame:SetScript("OnKeyDown", function(self, key)
+    if key == "ESCAPE" then
+        self:Hide()
+        self:SetPropagateKeyboardInput(false)
+    end
+end)
+
+ConfigFrame:Hide()
 
 -- Title
-ConfigFrame.title = ConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-ConfigFrame.title:SetPoint("TOP", ConfigFrame, "TOP", 0, -10)
-ConfigFrame.title:SetText(L["CONFIG_TITLE"])
-ConfigFrame.title:SetTextColor(1, 1, 0)
+local title = ConfigFrame:CreateFontString(nil, "OVERLAY")
+title:SetFontObject("GameFontHighlightLarge")
+title:SetFont(select(1, title:GetFont()), 18, "OUTLINE") -- Increased size & bold outline
+title:SetShadowOffset(1, -1)
+title:SetShadowColor(0, 0, 0, 0.75)
+title:SetPoint("TOP", ConfigFrame, "TOP", 0, -15)
+title:SetText(L["CONFIG_TITLE"])
+title:SetTextColor(1, 1, 0)
 
 -- Display Addon Version in Config Window
 local versionText = ConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -77,260 +77,134 @@ end
 -- Start checking for the correct version
 UpdateVersionText()
 
-
 -- Close button
 local closeButton = CreateFrame("Button", nil, ConfigFrame, "UIPanelCloseButton")
-closeButton:SetSize(24, 24)
 closeButton:SetPoint("TOPRIGHT", ConfigFrame, "TOPRIGHT", -5, -5)
-closeButton:SetScript(
-    "OnClick",
-    function()
-        ConfigFrame:Hide()
-    end
-)
+closeButton:SetScript("OnClick", function() ConfigFrame:Hide() end)
 
---------------------------------------
--- 🧭 **Minimap Button Toggle**
---------------------------------------
-local minimapCheckbox =
-    CreateFrame("CheckButton", "DungeonTeleportsMinimapCheckbox", ConfigFrame, "ChatConfigCheckButtonTemplate")
-minimapCheckbox:SetPoint("TOPLEFT", ConfigFrame, "TOPLEFT", 20, -40)
+
+-- Minimap Checkbox
+local minimapCheckbox = CreateFrame("CheckButton", nil, ConfigFrame, "ChatConfigCheckButtonTemplate")
+minimapCheckbox:SetPoint("TOPLEFT", ConfigFrame, "TOPLEFT", 20, -60)
 minimapCheckbox.Text:SetText(L["SHOW_MINIMAP"])
-minimapCheckbox:SetScript(
-    "OnClick",
-    function(self)
-        local isHidden = not self:GetChecked()
-        DungeonTeleportsDB.minimap.hidden = isHidden
-        if isHidden then
-            LDBIcon:Hide("DungeonTeleports")
-        else
-            LDBIcon:Show("DungeonTeleports")
-        end
-    end
-)
+minimapCheckbox:SetScript("OnClick", function(self)
+    local isHidden = not self:GetChecked()
+    DungeonTeleportsDB.minimap.hidden = isHidden
+    if isHidden then LDBIcon:Hide("DungeonTeleports") else LDBIcon:Show("DungeonTeleports") end
+end)
+minimapCheckbox:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(L["SHOW_MINIMAP"], 1, 1, 1)
+    GameTooltip:AddLine(L["TOGGLE_MINIMAP"], 1, 1, 1, true)
+    GameTooltip:Show()
+end)
+minimapCheckbox:SetScript("OnLeave", GameTooltip_Hide)
 
--- Tooltip for Minimap Checkbox
-minimapCheckbox:SetScript(
-    "OnEnter",
-    function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["SHOW_MINIMAP"], 1, 1, 1)
-        GameTooltip:AddLine(L["TOGGLE_MINIMAP"], 1, 1, 1, true)
-        GameTooltip:Show()
-    end
-)
-minimapCheckbox:SetScript(
-    "OnLeave",
-    function()
-        GameTooltip:Hide()
-    end
-)
-
---------------------------------------
--- 🖼️ **Disable Background Images**
---------------------------------------
-local backgroundCheckbox =
-    CreateFrame("CheckButton", "DungeonTeleportsBackgroundCheckbox", ConfigFrame, "ChatConfigCheckButtonTemplate")
+-- Background Checkbox
+local backgroundCheckbox = CreateFrame("CheckButton", nil, ConfigFrame, "ChatConfigCheckButtonTemplate")
 backgroundCheckbox:SetPoint("TOPLEFT", minimapCheckbox, "BOTTOMLEFT", 0, -20)
 backgroundCheckbox.Text:SetText(L["DISABLE_BACKGROUND"])
 backgroundCheckbox.tooltipText = L["DISABLE_BACKGROUND_TOOLTIP"]
-
-backgroundCheckbox:SetScript(
-    "OnClick",
-    function(self)
-        local isDisabled = self:GetChecked()
-        DungeonTeleportsDB.disableBackground = isDisabled
-
-        -- Close the main frame to apply changes next time it's opened
-        if DungeonTeleportsMainFrame and DungeonTeleportsMainFrame:IsShown() then
-            DungeonTeleportsMainFrame:Hide()
-        end
+backgroundCheckbox:SetScript("OnClick", function(self)
+    DungeonTeleportsDB.disableBackground = self:GetChecked()
+    if DungeonTeleportsMainFrame and DungeonTeleportsMainFrame:IsShown() then
+        DungeonTeleportsMainFrame:Hide()
     end
-)
+end)
 
---------------------------------------
--- 📂 **Default Expansion Dropdown**
---------------------------------------
+-- Expansion Dropdown
 local expansionLabel = ConfigFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
 expansionLabel:SetPoint("TOPLEFT", backgroundCheckbox, "BOTTOMLEFT", 0, -20)
 expansionLabel:SetText(L["DEFAULT_EXPANSION"])
 
-local expansionDropdown =
-    CreateFrame("Frame", "DungeonTeleportsExpansionDropdown", ConfigFrame, "UIDropDownMenuTemplate")
+local expansionDropdown = CreateFrame("Frame", "DungeonTeleportsExpansionDropdown", ConfigFrame, "UIDropDownMenuTemplate")
 expansionDropdown:SetPoint("LEFT", expansionLabel, "RIGHT", -10, -5)
 UIDropDownMenu_SetWidth(expansionDropdown, 150)
-UIDropDownMenu_SetText(expansionDropdown, L["Current Season"])
-
-UIDropDownMenu_Initialize(
-    expansionDropdown,
-    function(self, level, menuList)
-        local info = UIDropDownMenu_CreateInfo()
-        for _, expansion in ipairs(addon.constants.orderedExpansions) do
-            info.text = expansion
-            info.arg1 = expansion
-            info.func = function(self, arg1)
-                DungeonTeleportsDB.defaultExpansion = arg1
-                UIDropDownMenu_SetText(expansionDropdown, arg1)
-            end
-            UIDropDownMenu_AddButton(info)
+UIDropDownMenu_Initialize(expansionDropdown, function()
+    local info = UIDropDownMenu_CreateInfo()
+    for _, exp in ipairs(addon.constants.orderedExpansions) do
+        info.text = exp
+        info.arg1 = exp
+        info.func = function(_, arg1)
+            DungeonTeleportsDB.defaultExpansion = arg1
+            UIDropDownMenu_SetText(expansionDropdown, arg1)
         end
+        UIDropDownMenu_AddButton(info)
     end
-)
+end)
 
--- Tooltip for Expansion Dropdown
-expansionDropdown:SetScript(
-    "OnEnter",
-    function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["DEFAULT_EXPANSION"], 1, 1, 1)
-        GameTooltip:AddLine(L["SELECT_EXPANSIONCONFIG"], 1, 1, 1, true)
-        GameTooltip:Show()
-    end
-)
-expansionDropdown:SetScript(
-    "OnLeave",
-    function()
-        GameTooltip:Hide()
-    end
-)
-
---------------------------------------
--- 🎨 **Background Transparency Slider**
---------------------------------------
-local transparencySlider = CreateFrame("Slider", "DungeonTeleportsOpacitySlider", ConfigFrame, "OptionsSliderTemplate")
-transparencySlider:SetPoint("TOPLEFT", expansionLabel, "BOTTOMLEFT", 0, -30)
-transparencySlider:SetMinMaxValues(0, 1)
-transparencySlider:SetValueStep(0.05)
-transparencySlider:SetObeyStepOnDrag(true)
-transparencySlider:SetWidth(200)
-
--- Tooltip for the slider
-transparencySlider.tooltipText = L["OPACITY_TOOLTIP"]
-transparencySlider:SetScript(
-    "OnEnter",
-    function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["OPACITY_TOOLTIP"], 1, 1, 1)
-        GameTooltip:AddLine(L["OPACITY_WARNING"], 1, 0, 0, true)
-        GameTooltip:Show()
-    end
-)
-transparencySlider:SetScript(
-    "OnLeave",
-    function(self)
-        GameTooltip:Hide()
-    end
-)
-
--- Label for slider
-transparencySlider.Text = transparencySlider:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-transparencySlider.Text:SetPoint("TOP", transparencySlider, "BOTTOM", 0, -5) -- Adjust position if needed
-transparencySlider.Text:SetText(L["OPACITY_SLIDER"] or "Background Opacity")
-
-transparencySlider:SetScript(
-    "OnValueChanged",
-    function(self, value)
-        DungeonTeleportsDB.backgroundAlpha = value
-
-        -- Ensure the main frame and background exist before applying changes
-        if DungeonTeleportsMainFrame and DungeonTeleportsMainFrame.backgroundTexture then
-            local background = DungeonTeleportsMainFrame.backgroundTexture
-
-            -- Get the **current expansion that is being displayed** in the UI
-            local selectedExpansion =
-                DungeonTeleportsDB.lastExpansion or UIDropDownMenu_GetText(DungeonTeleportsExpansionDropdown) or
-                "Current Season"
-
-            -- Ensure the expansion exists in the backgrounds table
-            if not addon.constants.mapExpansionToBackground[selectedExpansion] then
-                selectedExpansion = "Current Season"
-            end
-
-            -- If backgrounds are disabled, apply solid colour instead
-            if DungeonTeleportsDB.disableBackground then
-                background:SetTexture(nil)
-                background:SetColorTexture(0, 0, 0, value) -- Apply opacity to solid background
+-- Transparency Slider
+local slider = CreateFrame("Slider", "DungeonTeleportsOpacitySlider", ConfigFrame, "OptionsSliderTemplate")
+slider:SetPoint("TOPLEFT", expansionLabel, "BOTTOMLEFT", 0, -30)
+slider:SetMinMaxValues(0, 1)
+slider:SetValueStep(0.05)
+slider:SetObeyStepOnDrag(true)
+slider:SetWidth(200)
+slider.tooltipText = L["OPACITY_TOOLTIP"]
+slider:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(L["OPACITY_TOOLTIP"], 1, 1, 1)
+    GameTooltip:AddLine(L["OPACITY_WARNING"], 1, 0, 0, true)
+    GameTooltip:Show()
+end)
+slider:SetScript("OnLeave", GameTooltip_Hide)
+slider.Text = slider:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
+slider.Text:SetPoint("TOP", slider, "BOTTOM", 0, -5)
+slider.Text:SetText(L["OPACITY_SLIDER"])
+slider:SetScript("OnValueChanged", function(self, value)
+    DungeonTeleportsDB.backgroundAlpha = value
+    if DungeonTeleportsMainFrame and DungeonTeleportsMainFrame.backgroundTexture then
+        local bg = DungeonTeleportsMainFrame.backgroundTexture
+        local exp = DungeonTeleportsDB.lastExpansion or "current"
+        if not addon.constants.mapExpansionToBackground[exp] then exp = "current" end
+        if DungeonTeleportsDB.disableBackground then
+            bg:SetTexture(nil)
+            bg:SetColorTexture(0, 0, 0, value)
+        else
+            local tex = addon.constants.mapExpansionToBackground[exp]
+            if tex then
+                bg:SetTexture(tex)
+                bg:SetAlpha(value)
             else
-                local bgPath = addon.constants.mapExpansionToBackground[selectedExpansion]
-
-                if bgPath then
-                    background:SetTexture(bgPath)
-                    background:SetAlpha(value)
-                else
-                    background:SetTexture(nil)
-                    background:SetColorTexture(0, 0, 0, value) -- Ensure solid background with alpha
-                end
+                bg:SetTexture(nil)
+                bg:SetColorTexture(0, 0, 0, value)
             end
-
-            -- 🔥 **New Fix:** Save the currently displayed expansion so it persists!
-            DungeonTeleportsDB.lastExpansion = selectedExpansion
         end
+        DungeonTeleportsDB.lastExpansion = exp
     end
-)
+end)
 
---------------------------------------
--- 🔄 **Reset Button**
---------------------------------------
-local resetButton = CreateFrame("Button", nil, ConfigFrame, "UIPanelButtonTemplate")
-resetButton:SetPoint("BOTTOM", ConfigFrame, "BOTTOM", 0, 35)
-resetButton:SetText(L["RESET_SETTINGS"])
-resetButton:SetWidth(resetButton:GetTextWidth() + 20) -- Dynamically adjust width
-resetButton:SetHeight(25)
-resetButton:SetScript(
-    "OnClick",
-    function()
-        DungeonTeleportsDB = {}
-        ReloadUI()
-    end
-)
+-- Reset Button
+local reset = CreateFrame("Button", nil, ConfigFrame, "UIPanelButtonTemplate")
+reset:SetPoint("BOTTOM", ConfigFrame, "BOTTOM", 0, 35)
+reset:SetText(L["RESET_SETTINGS"])
+reset:SetWidth(reset:GetTextWidth() + 20)
+reset:SetHeight(25)
+reset:SetScript("OnClick", function()
+    DungeonTeleportsDB = {}
+    ReloadUI()
+end)
+reset:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(L["RESET_SETTINGS"], 1, 1, 1)
+    GameTooltip:AddLine(L["RESET_TOOLTIP"], 1, 1, 1, true)
+    GameTooltip:Show()
+end)
+reset:SetScript("OnLeave", GameTooltip_Hide)
 
--- Tooltip for Reset Button
-resetButton:SetScript(
-    "OnEnter",
-    function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L["RESET_SETTINGS"], 1, 1, 1)
-        GameTooltip:AddLine(L["RESET_TOOLTIP"], 1, 1, 1, true)
-        GameTooltip:Show()
-    end
-)
-resetButton:SetScript(
-    "OnLeave",
-    function()
-        GameTooltip:Hide()
-    end
-)
+-- Update UI state when shown
+ConfigFrame:SetScript("OnShow", function()
+    minimapCheckbox:SetChecked(not DungeonTeleportsDB.minimap.hidden)
+    backgroundCheckbox:SetChecked(DungeonTeleportsDB.disableBackground or false)
+    slider:SetValue(DungeonTeleportsDB.backgroundAlpha or 0.7)
+    UIDropDownMenu_SetText(expansionDropdown, DungeonTeleportsDB.defaultExpansion or "current")
+end)
 
---------------------------------------
--- 🔄 **Update UI on Show**
---------------------------------------
-ConfigFrame:SetScript(
-    "OnShow",
-    function()
-        minimapCheckbox:SetChecked(not DungeonTeleportsDB.minimap.hidden)
-        backgroundCheckbox:SetChecked(DungeonTeleportsDB.disableBackground or false)
-        transparencySlider:SetValue(DungeonTeleportsDB.backgroundAlpha or 0.7)
-        UIDropDownMenu_SetText(expansionDropdown, DungeonTeleportsDB.defaultExpansion or L["Current Season"])
-    end
-)
-
---------------------------------------
--- ⚙️ **Function to toggle the config window**
---------------------------------------
+-- Toggle function
 function ToggleConfig()
-    if ConfigFrame:IsShown() then
-        ConfigFrame:Hide()
-    else
-        ConfigFrame:ClearAllPoints()
-        ConfigFrame:SetPoint("CENTER", UIParent, "CENTER") -- Always open in center
-        ConfigFrame:Show()
-    end
+    if ConfigFrame:IsShown() then ConfigFrame:Hide() else ConfigFrame:Show() end
 end
 
---------------------------------------
--- 🔣 **Slash command to open config**
---------------------------------------
+-- Slash command
 SLASH_DUNGEONTELEPORTSCONFIG1 = "/dtpconfig"
-SlashCmdList["DUNGEONTELEPORTSCONFIG"] = function()
-    ToggleConfig()
-end
+SlashCmdList["DUNGEONTELEPORTSCONFIG"] = ToggleConfig
