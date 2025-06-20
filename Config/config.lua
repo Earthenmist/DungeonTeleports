@@ -155,8 +155,8 @@ slider:SetScript("OnValueChanged", function(self, value)
     DungeonTeleportsDB.backgroundAlpha = value
     if DungeonTeleportsMainFrame and DungeonTeleportsMainFrame.backgroundTexture then
         local bg = DungeonTeleportsMainFrame.backgroundTexture
-        local exp = DungeonTeleportsDB.lastExpansion or "current"
-        if not addon.constants.mapExpansionToBackground[exp] then exp = "current" end
+        local exp = DungeonTeleportsDB.lastExpansion or L["Current Season"]
+        if not addon.constants.mapExpansionToBackground[exp] then exp = L["Current Season"] end
         if DungeonTeleportsDB.disableBackground then
             bg:SetTexture(nil)
             bg:SetColorTexture(0, 0, 0, value)
@@ -197,7 +197,7 @@ ConfigFrame:SetScript("OnShow", function()
     minimapCheckbox:SetChecked(not DungeonTeleportsDB.minimap.hidden)
     backgroundCheckbox:SetChecked(DungeonTeleportsDB.disableBackground or false)
     slider:SetValue(DungeonTeleportsDB.backgroundAlpha or 0.7)
-    UIDropDownMenu_SetText(expansionDropdown, DungeonTeleportsDB.defaultExpansion or "current")
+    UIDropDownMenu_SetText(expansionDropdown, DungeonTeleportsDB.defaultExpansion or L["Current Season"])
 end)
 
 -- Toggle function
