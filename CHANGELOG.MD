@@ -1,13 +1,15 @@
-📜 Changelog - Version 1.15.2-BETA
+📜 Changelog - Version 1.15.3-BETA
 
-📅 Release Date: 19-06-2025
+📅 Release Date: 20-06-2025
 
 🛠️ Changes & Improvements:
 
 ✅ Update for 11.2 PTR ONLY
 ✅ Embed Libstub
 ✅ Embed CallbackHandler-1.0
-✅ Included fix from v1.15-Release to fix the issue that if using ElvUI you won't see the backgrounds correctly, this is due to the way ElvUI takes over the UI.
+✅ Resolved: If using ElvUI you won't see the backgrounds correctly.
+✅ Cleaned up Main window for a more polished look
+✅ Cleaned up Settings window for a more polished look
 
 ⚠️ Known Issues / Notes:
 
