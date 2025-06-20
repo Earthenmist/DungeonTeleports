@@ -2,12 +2,11 @@ local addonName, addon = ...
 local constants = addon.constants
 local L = addon.L
 
-addon.version = "Unknown" -- Default if retrieval fails
+addon.version = "Unknown"
 
--- Event frame to retrieve version at the right time
+-- Event frame to get version
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-
 eventFrame:SetScript("OnEvent", function(self, event)
     if event == "PLAYER_ENTERING_WORLD" then
         if _G.GetAddOnMetadata then
@@ -25,55 +24,87 @@ if not DungeonTeleportsDB then
 end
 
 local DungeonTeleports = CreateFrame("Frame")
-
--- Ensure both buttons and texts are tracked for clearing
 local createdButtons = {}
 local createdTexts = {}
 
--- Create the main moveable frame without SetBackdrop to support ElvUI
-local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent)
+-- Main frame with polished visuals and retained functionality
+local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent, "BackdropTemplate")
 mainFrame:SetSize(275, 600)
 mainFrame:SetPoint("CENTER")
+mainFrame:SetBackdrop({
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    tile = true, tileSize = 32, edgeSize = 32,
+    insets = { left = 8, right = 8, top = 8, bottom = 8 },
+})
+mainFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.95)
 mainFrame:SetMovable(true)
 mainFrame:EnableMouse(true)
 mainFrame:RegisterForDrag("LeftButton")
 mainFrame:SetScript("OnDragStart", mainFrame.StartMoving)
 mainFrame:SetScript("OnDragStop", mainFrame.StopMovingOrSizing)
-
--- Register the frame to close with the Escape key
+mainFrame:SetFrameStrata("DIALOG")
+mainFrame:SetToplevel(true)
 tinsert(UISpecialFrames, "DungeonTeleportsMainFrame")
 
--- Add title
-local title = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-title:SetPoint("TOP", mainFrame, "TOP", 0, -10)
+-- Soft rounded border and shadow
+if not mainFrame.shadow then
+    mainFrame.shadow = CreateFrame("Frame", nil, mainFrame, "BackdropTemplate")
+    mainFrame.shadow:SetPoint("TOPLEFT", -5, 5)
+    mainFrame.shadow:SetPoint("BOTTOMRIGHT", 5, -5)
+    mainFrame.shadow:SetBackdrop({
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+        edgeSize = 16,
+    })
+    mainFrame.shadow:SetBackdropBorderColor(0, 0, 0, 0.75)
+end
+
+-- Title
+local title = mainFrame:CreateFontString(nil, "OVERLAY")
+title:SetFontObject("GameFontHighlightLarge")
+title:SetFont(select(1, title:GetFont()), 18, "OUTLINE") -- Increased size & bold outline
+title:SetShadowOffset(1, -1)
+title:SetShadowColor(0, 0, 0, 0.75)
+title:SetPoint("TOP", mainFrame, "TOP", 0, -35)
 title:SetText(L["ADDON_TITLE"])
-title:SetTextColor(1, 1, 0) -- Yellow title
+title:SetTextColor(1, 1, 0)
 
 -- Close button
 local closeButton = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
 closeButton:SetSize(24, 24)
-closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -5, -5)
+closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -15, -15)
 closeButton:SetScript("OnClick", function()
     mainFrame:Hide()
     DungeonTeleportsDB.isVisible = false
 end)
 
--- Add black base layer for contrast
+-- Add black base layer for contrast (kept for compatibility)
 local baseBackground = mainFrame:CreateTexture(nil, "BACKGROUND")
 baseBackground:SetAllPoints(mainFrame)
-baseBackground:SetColorTexture(0, 0, 0, 1) -- Always fully opaque black
+baseBackground:SetColorTexture(0, 0, 0, 1)
 
--- Add image or colored background layer
+-- Optional background image/alpha texture
 local backgroundTexture = mainFrame:CreateTexture(nil, "ARTWORK")
 backgroundTexture:SetAllPoints(mainFrame)
 backgroundTexture:SetColorTexture(0, 0, 0, DungeonTeleportsDB.backgroundAlpha or 0.7)
+backgroundTexture:SetDrawLayer("ARTWORK", -1)  -- Ensure it draws behind the border
 mainFrame.backgroundTexture = backgroundTexture
+
+-- Keep border opaque regardless of alpha slider
+mainFrame.SetBackdropColor = function(self, r, g, b, a)
+    getmetatable(self).__index.SetBackdropColor(self, r, g, b, 0.95)
+end
+
+-- Export frame to addon
+_G.DungeonTeleportsMainFrame = mainFrame
+addon.mainFrame = mainFrame
 
 -- Dropdown Menu for Expansions
 local dropdown = CreateFrame("Frame", "DungeonTeleportsDropdown", mainFrame, "UIDropDownMenuTemplate")
-dropdown:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 10, -30)
+dropdown:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 10, -75)
 UIDropDownMenu_SetWidth(dropdown, 200)
 UIDropDownMenu_SetText(dropdown, L["SELECT_EXPANSION"])
+
 
 -- Function to update the background when switching expansions
 function addon.updateBackground(selectedExpansion)
@@ -173,7 +204,7 @@ function createTeleportButtons(selectedExpansion)
     local index = 0
     local buttonHeight = 50 -- Height per button (including padding)
     local topPadding = 20 -- Padding at the top (dropdown + title space)
-    local bottomPadding = 100 -- Padding at the bottom
+    local bottomPadding = 140 -- Padding at the bottom
 
     for _, mapID in ipairs(mapIDs) do
         local spellID = constants.mapIDtoSpellID[mapID]
