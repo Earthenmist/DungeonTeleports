@@ -100,7 +100,6 @@ local mapIDtoDungeonName = {
     [811] = L["DUNGEON_ECHO_DOME"],
     [812] = L["RAID_MANAFORGE_OMEGA"],
 
-    -- Add more as needed...
 }
 
 -- Mapping Map IDs to Teleport Spells
@@ -175,7 +174,6 @@ local mapIDtoSpellID = {
     [811] = 1237124, -- Eco-Dome, Al'dani
     [812] = 1239155, -- Manaforge Omega
 
-    -- Add more as needed...
 }
 
 -- Export the constants
