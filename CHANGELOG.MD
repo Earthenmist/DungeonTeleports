@@ -1,6 +1,6 @@
-📜 Changelog - Version 1.17.3-BETA
+📜 Changelog - Version 1.17.4-BETA
 
-📅 Release Date: 20-06-2025
+📅 Release Date: 22-06-2025
 
 🛠️ Changes & Improvements:
 
@@ -11,6 +11,7 @@
 ✅ Cleaned up Main window for a more polished look
 ✅ Adjusted Dungeon text for readability
 ✅ Cleaned up Settings window for a more polished look
+✅ Fix cooldown overlay, broken on previous frame rework  
 
 ⚠️ Known Issues / Notes:
 
