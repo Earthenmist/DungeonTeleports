@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.17.4-BETA
+📜 Changelog - Version 1.17.5-BETA
 
 📅 Release Date: 22-06-2025
 
