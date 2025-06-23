@@ -171,7 +171,7 @@ local mapIDtoSpellID = {
     [808] = 445444, -- Priory of the Sacred Flame
     [809] = 1216786, -- Operation: Floodgate (Path of the Circuit Breaker)
     [810] = 1226482, -- Liberation of Undermine
-    [811] = 1237124, -- Eco-Dome, Al'dani
+    [811] = 1237215, -- Eco-Dome, Al'dani
     [812] = 1239155, -- Manaforge Omega
 
 }
