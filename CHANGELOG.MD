@@ -1,6 +1,6 @@
-📜 Changelog - Version 1.17.5-BETA
+📜 Changelog - Version 1.17.6-BETA
 
-📅 Release Date: 22-06-2025
+📅 Release Date: 23-06-2025
 
 🛠️ Changes & Improvements:
 
@@ -14,6 +14,7 @@
 ✅ Fix cooldown overlay, broken on previous frame rework  
 ✅ Added option to disable cooldown overlay (live updates on change)
 ✅ Disable backgrounds now live updates on change instead of closing the add-on window first
+✅ PTR using different SpellID than Datamined for the Dungeon teleport - adjusted to match
 
 ⚠️ Known Issues / Notes:
 
