@@ -1,31 +1,34 @@
 local L = select(2, ...).L('koKR')
 
 -- Core
-L["ADDON_TITLE"] = "Mythic Dungeon Teleports"
-L["DEFAULT_EXPANSION"] = "Default Expansion"
-L["SELECT_EXPANSION"] = "Select Expansion"
-L["COOLDOWN_READY"] = "Ready to use!"
-L["COOLDOWN_NOT_READY"] = "Not ready yet!"
-L["CLICK_TO_TELEPORT"] = "Click to teleport!"
-L["TELEPORT_NOT_KNOWN"] = "Teleport not known!"
+
+L["ADDON_TITLE"] = "신화 던전 순간이동"
+L["DEFAULT_EXPANSION"] = "기본 확장팩"
+L["SELECT_EXPANSION"] = "확장팩 선택"
+L["COOLDOWN_READY"] = "사용 가능!"
+L["COOLDOWN_NOT_READY"] = "아직 사용할 수 없습니다!"
+L["CLICK_TO_TELEPORT"] = "클릭하여 순간이동!"
+L["TELEPORT_NOT_KNOWN"] = "순간이동을 알지 못합니다!"
 
 -- Minimap
-L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Main frame not initialized yet."
-L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: Config frame not initialized yet."
-L["Open_Teleports"] = "|cFFFFFF00Left Click:|r Open Teleports"
-L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
+
+L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: 메인 프레임이 아직 초기화되지 않았습니다."
+L["NOT_INITIALIZED_CONFIG"] = "DungeonTeleports: 설정 프레임이 아직 초기화되지 않았습니다."
+L["Open_Teleports"] = "|cFFFFFF00좌클릭:|r 순간이동 열기"
+L["Open_Settings"] = "|cFFFFFF00우클릭:|r 설정 열기"
 
 
 -- Settings
-L["CONFIG_TITLE"] = "Mythic Dungeon Teleports - Config"
-L["RESET_SETTINGS"] = "Reset to Default"
-L["RESET_TOOLTIP"] = "Resets all settings to default."
-L["SHOW_MINIMAP"] = "Show Minimap Button"
-L["TOGGLE_MINIMAP"] = "Toggle the minimap button on or off."
-L["DEFAULT_EXPANSIONCONFIG"] = "Default Expansion"
-L["SELECT_EXPANSIONCONFIG"] = "Select the expansion that will be shown when the addon opens."
-L["DISABLE_BACKGROUND"] = "Disable Background Images"
-L["DISABLE_BACKGROUND_TOOLTIP"] = "Toggle background images on or off. Addon window will be close to make change"
+
+L["CONFIG_TITLE"] = "신화 던전 순간이동 - 설정"
+L["RESET_SETTINGS"] = "기본값으로 초기화"
+L["RESET_TOOLTIP"] = "모든 설정을 기본값으로 초기화합니다."
+L["SHOW_MINIMAP"] = "미니맵 버튼 표시"
+L["TOGGLE_MINIMAP"] = "미니맵 버튼을 켜거나 끕니다."
+L["DEFAULT_EXPANSIONCONFIG"] = "기본 확장팩"
+L["SELECT_EXPANSIONCONFIG"] = "애드온을 열 때 표시할 확장팩을 선택합니다."
+L["DISABLE_BACKGROUND"] = "배경 이미지 비활성화"
+L["DISABLE_BACKGROUND_TOOLTIP"] = "배경 이미지를 켜거나 끕니다. 변경을 위해 애드온 창이 닫힙니다."
 L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
 L["OPACITY_WARNING"] = "Changes will take effect in real time."
 L["OPACITY_SLIDER"] = "Background Opacity"
