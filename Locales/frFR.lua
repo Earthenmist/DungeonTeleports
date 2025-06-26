@@ -8,10 +8,6 @@ L["COOLDOWN_READY"] = "Prêt à l'utilisation !"
 L["COOLDOWN_NOT_READY"] = "Pas encore prêt !"
 L["CLICK_TO_TELEPORT"] = "Cliquez pour vous téléporter !"
 L["TELEPORT_NOT_KNOWN"] = "Téléportation inconnue !"
-L["OPACITY_TOOLTIP"] = "Ajuste l'opacité de l'arrière-plan."
-L["OPACITY_WARNING"] = "Les modifications ne prendront effet qu'après la fermeture et la réouverture de l'addon."
-L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
-
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports : La fenêtre principale n'est pas encore initialisée."
@@ -29,7 +25,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Extension par défaut"
 L["SELECT_EXPANSIONCONFIG"] = "Sélectionnez l'extension qui s'affichera à l'ouverture de l'addon."
 L["DISABLE_BACKGROUND"] = "Désactiver les images de fond"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Activer ou désactiver les images de fond. La fenêtre de l'addon se fermera pour appliquer le changement."
-
+L["OPACITY_TOOLTIP"] = "Ajuste l'opacité de l'arrière-plan."
+L["OPACITY_WARNING"] = "Les modifications ne prendront effet qu'après la fermeture et la réouverture de l'addon."
+L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
