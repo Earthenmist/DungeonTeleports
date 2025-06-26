@@ -8,9 +8,6 @@ L["COOLDOWN_READY"] = "Bereit zur Nutzung!"
 L["COOLDOWN_NOT_READY"] = "Noch nicht bereit!"
 L["CLICK_TO_TELEPORT"] = "Klicken, um zu teleportieren!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport nicht bekannt!"
-L["OPACITY_TOOLTIP"] = "Passt die Deckkraft des Hintergrunds an."
-L["OPACITY_WARNING"] = "Änderungen werden erst wirksam, wenn das Addon geschlossen und erneut geöffnet wird."
-L["OPACITY_SLIDER"] = "Hintergrund-Deckkraft"
 
 
 -- Minimap
@@ -29,6 +26,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Standard-Erweiterung"
 L["SELECT_EXPANSIONCONFIG"] = "Wählen Sie die Erweiterung aus, die beim Öffnen des Addons angezeigt wird."
 L["DISABLE_BACKGROUND"] = "Hintergrundbilder deaktivieren"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Hintergrundbilder ein- oder ausschalten. Das Addon-Fenster wird geschlossen, um die Änderung zu übernehmen."
+L["OPACITY_TOOLTIP"] = "Passt die Deckkraft des Hintergrunds an."
+L["OPACITY_WARNING"] = "Änderungen werden erst wirksam, wenn das Addon geschlossen und erneut geöffnet wird."
+L["OPACITY_SLIDER"] = "Hintergrund-Deckkraft"
 
 
 -- Expansions
