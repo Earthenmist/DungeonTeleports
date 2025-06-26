@@ -32,9 +32,9 @@ L["DISABLE_COOLDOWN_OVERLAY"] = "Disable Cooldown Overlay"
 L["DISABLE_COOLDOWN_OVERLAY_TOOLTIP"] = "Hide cooldown swipe animation and numbers from teleport buttons."
 L["COOLDOWN_OVERLAY_WARNING"] = "Cooldown timer still shows on Tooltip."
 L["DEFAULT_EXPANSION_TOOLTIP"] = "Select which Expansion the Addon Main Screen opens with."
-L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
+L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background image."
 L["OPACITY_WARNING"] = "Changes will take effect in real time."
-L["OPACITY_SLIDER"] = "Background Opacity"
+L["OPACITY_SLIDER"] = "Background Image Opacity"
 
 
 -- Expansions
