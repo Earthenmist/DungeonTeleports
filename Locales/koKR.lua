@@ -8,10 +8,6 @@ L["COOLDOWN_READY"] = "Ready to use!"
 L["COOLDOWN_NOT_READY"] = "Not ready yet!"
 L["CLICK_TO_TELEPORT"] = "Click to teleport!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport not known!"
-L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
-L["OPACITY_WARNING"] = "Changes will take effect in real time."
-L["OPACITY_SLIDER"] = "Background Opacity"
-
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Main frame not initialized yet."
@@ -30,6 +26,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Default Expansion"
 L["SELECT_EXPANSIONCONFIG"] = "Select the expansion that will be shown when the addon opens."
 L["DISABLE_BACKGROUND"] = "Disable Background Images"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Toggle background images on or off. Addon window will be close to make change"
+L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
+L["OPACITY_WARNING"] = "Changes will take effect in real time."
+L["OPACITY_SLIDER"] = "Background Opacity"
 
 
 -- Expansions
