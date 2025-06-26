@@ -29,9 +29,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "기본 확장팩"
 L["SELECT_EXPANSIONCONFIG"] = "애드온을 열 때 표시할 확장팩을 선택합니다."
 L["DISABLE_BACKGROUND"] = "배경 이미지 비활성화"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "배경 이미지를 켜거나 끕니다. 변경을 위해 애드온 창이 닫힙니다."
-L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
-L["OPACITY_WARNING"] = "Changes will take effect in real time."
-L["OPACITY_SLIDER"] = "Background Opacity"
+L["OPACITY_TOOLTIP"] = "배경의 불투명도를 조절합니다."
+L["OPACITY_WARNING"] = "변경 사항은 실시간으로 적용됩니다."
+L["OPACITY_SLIDER"] = "배경 불투명도"
 
 
 -- Expansions
