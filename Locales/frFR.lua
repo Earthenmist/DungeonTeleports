@@ -8,10 +8,6 @@ L["COOLDOWN_READY"] = "Prêt à l'utilisation !"
 L["COOLDOWN_NOT_READY"] = "Pas encore prêt !"
 L["CLICK_TO_TELEPORT"] = "Cliquez pour vous téléporter !"
 L["TELEPORT_NOT_KNOWN"] = "Téléportation inconnue !"
-L["OPACITY_TOOLTIP"] = "Ajuste l'opacité de l'arrière-plan."
-L["OPACITY_WARNING"] = "Les modifications ne prendront effet qu'après la fermeture et la réouverture de l'addon."
-L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
-
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports : La fenêtre principale n'est pas encore initialisée."
@@ -29,7 +25,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Extension par défaut"
 L["SELECT_EXPANSIONCONFIG"] = "Sélectionnez l'extension qui s'affichera à l'ouverture de l'addon."
 L["DISABLE_BACKGROUND"] = "Désactiver les images de fond"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Activer ou désactiver les images de fond. La fenêtre de l'addon se fermera pour appliquer le changement."
-
+L["OPACITY_TOOLTIP"] = "Ajuste l'opacité de l'arrière-plan."
+L["OPACITY_WARNING"] = "Les modifications ne prendront effet qu'après la fermeture et la réouverture de l'addon."
+L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
@@ -103,6 +101,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Faille des Flammes-Sombres"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Brasserie Brasécume"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Prieuré de la Flamme Sacrée"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Opération : Écluse"
+L["DUNGEON_ECHO_DOME"] = "Éco-dôme, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Caveau des Incarnations"
@@ -112,4 +111,5 @@ L["RAID_CASTLE_NATHRIA"] = "Château Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Sanctum de la Domination"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sépulcre des Fondateurs"
 L["RAID_LIBERATION_UNDERMINE"] = "Libération de Sous-Mine"
+L["RAID_MANAFORGE_OMEGA"] = "Manaforge Oméga"
 

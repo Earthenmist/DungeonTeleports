@@ -3,7 +3,7 @@ local L = addon.L or {}
 
 -- Backgrounds for each expansion
 local mapExpansionToBackground = {
-    [L["Current Season"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WarWithinS2.tga",
+    [L["Current Season"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WarWithinS3.tga",
     [L["Cataclysm"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\Cataclysm.tga",
     [L["Mists of Pandaria"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\MoP.tga",
     [L["Warlords of Draenor"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WoD.tga",
@@ -16,7 +16,7 @@ local mapExpansionToBackground = {
 
 local mapExpansionToMapID = {
     -- Season 1 TWW
-    [L["Current Season"]] = {805, 806, 807, 808, 505, 606, 809, 507, 810},
+    [L["Current Season"]] = {802, 804, 808, 809, 811, 604, 609, 812},
     [L["Cataclysm"]] = {101, 102, 103},
     [L["Mists of Pandaria"]] = {201, 202, 203, 204, 205, 206, 207, 208, 209},
     [L["Warlords of Draenor"]] = {301, 302, 303, 304, 305, 306, 307, 308},
@@ -24,7 +24,7 @@ local mapExpansionToMapID = {
     [L["Battle for Azeroth"]] = {501, 502, 503, 504, 505, 506, 507},
     [L["Shadowlands"]] = {601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612},
     [L["Dragonflight"]] = {701, 702, 703, 704, 705, 706, 707, 708, 709, 710, 711, 712},
-    [L["The War Within"]] = {801, 802, 803, 804, 805, 806, 807, 808, 809, 810},
+    [L["The War Within"]] = {801, 802, 803, 804, 805, 806, 807, 808, 809, 810, 811, 812},
 }
 
 
@@ -97,8 +97,9 @@ local mapIDtoDungeonName = {
     [808] = L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"],
     [809] = L["DUNGEON_OPERATION_FLOODGATE"],
     [810] = L["RAID_LIBERATION_UNDERMINE"],
+    [811] = L["DUNGEON_ECHO_DOME"],
+    [812] = L["RAID_MANAFORGE_OMEGA"],
 
-    -- Add more as needed...
 }
 
 -- Mapping Map IDs to Teleport Spells
@@ -170,8 +171,9 @@ local mapIDtoSpellID = {
     [808] = 445444, -- Priory of the Sacred Flame
     [809] = 1216786, -- Operation: Floodgate (Path of the Circuit Breaker)
     [810] = 1226482, -- Liberation of Undermine
+    [811] = 1237215, -- Eco-Dome, Al'dani 
+    [812] = 1239155, -- Manaforge Omega
 
-    -- Add more as needed...
 }
 
 -- Export the constants

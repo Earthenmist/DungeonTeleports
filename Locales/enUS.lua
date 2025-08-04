@@ -8,9 +8,7 @@ L["COOLDOWN_READY"] = "Ready to use!"
 L["COOLDOWN_NOT_READY"] = "Not ready yet!"
 L["CLICK_TO_TELEPORT"] = "Click to teleport!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport not known!"
-L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background."
-L["OPACITY_WARNING"] = "Changes will take effect in real time."
-L["OPACITY_SLIDER"] = "Background Opacity"
+
 
 
 -- Minimap
@@ -21,7 +19,7 @@ L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 
 -- Settings
-L["CONFIG_TITLE"] = "Mythic Dungeon Teleports - Config"
+L["CONFIG_TITLE"] = "Settings"
 L["RESET_SETTINGS"] = "Reset to Default"
 L["RESET_TOOLTIP"] = "Resets all settings to default."
 L["SHOW_MINIMAP"] = "Show Minimap Button"
@@ -29,7 +27,14 @@ L["TOGGLE_MINIMAP"] = "Toggle the minimap button on or off."
 L["DEFAULT_EXPANSIONCONFIG"] = "Default Expansion"
 L["SELECT_EXPANSIONCONFIG"] = "Select the expansion that will be shown when the addon opens."
 L["DISABLE_BACKGROUND"] = "Disable Background Images"
-L["DISABLE_BACKGROUND_TOOLTIP"] = "Toggle background images on or off. Addon window will be close to make change"
+L["DISABLE_BACKGROUND_TOOLTIP"] = "Toggle background images on or off."
+L["DISABLE_COOLDOWN_OVERLAY"] = "Disable Cooldown Overlay"
+L["DISABLE_COOLDOWN_OVERLAY_TOOLTIP"] = "Hide cooldown swipe animation and numbers from teleport buttons."
+L["COOLDOWN_OVERLAY_WARNING"] = "Cooldown timer still shows on Tooltip."
+L["DEFAULT_EXPANSION_TOOLTIP"] = "Select which Expansion the Addon Main Screen opens with."
+L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background image."
+L["OPACITY_WARNING"] = "Changes will take effect in real time."
+L["OPACITY_SLIDER"] = "Background Image Opacity"
 
 
 -- Expansions
@@ -104,6 +109,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Darkflame Cleft"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Cinderbrew Brewery"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priory of the Sacred Flame"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operation: Floodgate"
+L["DUNGEON_ECHO_DOME"] = "Eco-Dome, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Vault of the Incarnates"
@@ -113,4 +119,5 @@ L["RAID_CASTLE_NATHRIA"] = "Castle Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Sanctum of Domination"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcher of the First Ones"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberation of Undermine"
+L["RAID_MANAFORGE_OMEGA"] = "Manaforge Omega"
 

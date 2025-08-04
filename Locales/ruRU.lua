@@ -8,10 +8,6 @@ L["COOLDOWN_READY"] = "Готово к использованию!"
 L["COOLDOWN_NOT_READY"] = "Пока не готово!"
 L["CLICK_TO_TELEPORT"] = "Нажмите, чтобы телепортироваться!"
 L["TELEPORT_NOT_KNOWN"] = "Телепорт неизвестен!"
-L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона"
-L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени"
-L["OPACITY_SLIDER"] = "Непрозрачность фона"
-
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Основное окно еще не инициализировано."
@@ -29,6 +25,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Дополнение по умолчанию"
 L["SELECT_EXPANSIONCONFIG"] = "Выберите дополнение, которое будет отображаться при открытии аддона"
 L["DISABLE_BACKGROUND"] = "Отключить фоновые изображения"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Включить или выключить фоновые изображения. Окно аддона будет закрыто для внесения изменений"
+L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона"
+L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени"
+L["OPACITY_SLIDER"] = "Непрозрачность фона"
 
 
 -- Expansions
@@ -103,6 +102,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Расселина Темного Пламени
 L["DUNGEON_CINDERBREW_BREWERY"] = "Искроварня"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Приорат Священного Пламени"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Операция: Шлюз"
+L["DUNGEON_ECHO_DOME"] = "Эхо-купол, Ал'дани"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Хранилище Воплощений"
@@ -112,4 +112,5 @@ L["RAID_CASTLE_NATHRIA"] = "Замок Нафрия"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
 L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
+L["RAID_MANAFORGE_OMEGA"] = "Манагорн Омега"
 

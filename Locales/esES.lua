@@ -8,10 +8,6 @@ L["COOLDOWN_READY"] = "¡Listo para usar!"
 L["COOLDOWN_NOT_READY"] = "¡Aún no está listo!"
 L["CLICK_TO_TELEPORT"] = "¡Haz clic para teletransportarte!"
 L["TELEPORT_NOT_KNOWN"] = "¡Teletransporte no conocido!"
-L["OPACITY_TOOLTIP"] = "Ajusta la opacidad del fondo."
-L["OPACITY_WARNING"] = "Los cambios no se aplicarán hasta que el complemento se cierre y vuelva a abrir."
-L["OPACITY_SLIDER"] = "Opacidad del fondo"
-
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: La ventana principal aún no se ha inicializado."
@@ -29,8 +25,9 @@ L["DEFAULT_EXPANSIONCONFIG"] = "Expansión predeterminada"
 L["SELECT_EXPANSIONCONFIG"] = "Selecciona la expansión que se mostrará al abrir el addon."
 L["DISABLE_BACKGROUND"] = "Desactivar imágenes de fondo"
 L["DISABLE_BACKGROUND_TOOLTIP"] = "Activar o desactivar las imágenes de fondo. La ventana del addon se cerrará para aplicar el cambio."
-
-
+L["OPACITY_TOOLTIP"] = "Ajusta la opacidad del fondo."
+L["OPACITY_WARNING"] = "Los cambios no se aplicarán hasta que el complemento se cierre y vuelva a abrir."
+L["OPACITY_SLIDER"] = "Opacidad del fondo"
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
@@ -104,6 +101,7 @@ L["DUNGEON_DARKFLAME_CLEFT"] = "Grieta de la Llama Oscura"
 L["DUNGEON_CINDERBREW_BREWERY"] = "Cervecería Brasacendra"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priorato de la Llama Sagrada"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operación: Compuerta"
+L["DUNGEON_ECHO_DOME"] = "Eco-Cúpula, Al'dani"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Bóveda de los Encarnados"
@@ -113,4 +111,5 @@ L["RAID_CASTLE_NATHRIA"] = "Castillo Nathria"
 L["RAID_SANCTUM_OF_DOMINATION"] = "Santuario de Dominación"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcro de los Primeros"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberación de Minasombra"
+L["RAID_MANAFORGE_OMEGA"] = "Forja de maná Omega"
 
