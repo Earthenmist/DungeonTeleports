@@ -65,7 +65,7 @@ eventFrame:SetScript("OnEvent", function(self, event)
       title:SetFont(select(1, title:GetFont()), 18, "OUTLINE") -- Increased size & bold outline
       title:SetShadowOffset(1, -1)
       title:SetShadowColor(0, 0, 0, 0.75)
-      title:SetPoint("TOP", mainFrame, "TOP", 0, -45)
+      title:SetPoint("TOP", mainFrame, "TOP", 0, -35)
       title:SetText(L["ADDON_TITLE"])
       title:SetTextColor(1, 1, 0)
 
