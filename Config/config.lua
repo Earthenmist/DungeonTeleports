@@ -62,7 +62,7 @@ title:SetFontObject("GameFontHighlightLarge")
 title:SetFont(select(1, title:GetFont()), 18, "OUTLINE") -- Increased size & bold outline
 title:SetShadowOffset(1, -1)
 title:SetShadowColor(0, 0, 0, 0.75)
-title:SetPoint("TOP", ConfigFrame, "TOP", 0, -45)
+title:SetPoint("TOP", ConfigFrame, "TOP", 0, -35)
 title:SetText(L["CONFIG_TITLE"])
 title:SetTextColor(1, 1, 0)
 
