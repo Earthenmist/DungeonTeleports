@@ -1,10 +1,10 @@
-📜 Changelog - Version 1.17.6-BETA
+📜 Changelog - Version 1.18
 
-📅 Release Date: 23-06-2025
+📅 Release Date: 06-08-2025
 
 🛠️ Changes & Improvements:
 
-✅ Update for 11.2 PTR ONLY
+✅ Update for 11.2
 ✅ Embed Libstub
 ✅ Embed CallbackHandler-1.0
 ✅ Resolved: If using ElvUI, you won't see the backgrounds correctly.
@@ -21,3 +21,4 @@
 
 
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀
+
