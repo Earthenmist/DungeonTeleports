@@ -19,8 +19,6 @@
 
 ⚠️ Known Issues / Notes:
 
-
-
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀
 
 
