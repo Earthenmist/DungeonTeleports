@@ -14,13 +14,15 @@
 ✅ Fix cooldown overlay, broken on previous frame rework  
 ✅ Added option to disable cooldown overlay (live updates on change)  
 ✅ Disable backgrounds now live updates on change instead of closing the add-on window first  
-✅ PTR using different SpellID than Datamined for the Dungeon teleport - adjusted to match  
+✅ Added teleport for Manaforge Omega  
+✅ Added teleport for Eco-Dome, Al'dani  
 
 ⚠️ Known Issues / Notes:
 
 
 
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀
+
 
 
 
