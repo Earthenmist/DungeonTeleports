@@ -72,7 +72,7 @@ eventFrame:SetScript("OnEvent", function(self, event)
       -- Close button
       local closeButton = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
       closeButton:SetSize(24, 24)
-      closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -15, -15)
+      closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -10, -10)
       closeButton:SetScript("OnClick", function()
         mainFrame:Hide()
         DungeonTeleportsDB.isVisible = false
@@ -183,6 +183,10 @@ end
 
 -- Function to create teleport buttons
 function createTeleportButtons(selectedExpansion)
+-- Track buttons globally so the config checkbox can update them live
+DungeonTeleportsMainFrame.buttons = DungeonTeleportsMainFrame.buttons or {}
+table.insert(DungeonTeleportsMainFrame.buttons, teleportButton)
+
   -- Clear existing buttons and texts before creating new ones
   for _, button in pairs(createdButtons) do
     button:Hide()
@@ -222,15 +226,45 @@ function createTeleportButtons(selectedExpansion)
       texture:SetTexture(C_Spell.GetSpellTexture(spellID))
 
       -- Cooldown overlay (must be a named child of a secure button)
-      local cooldown = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
-      cooldown:SetAllPoints()
-      cooldown:SetFrameLevel(button:GetFrameLevel() + 1)
-      cooldown:SetSwipeTexture("Interface\\Cooldown\\ping4") -- optional visual
-      cooldown:SetSwipeColor(0, 0, 0, 0.6)
-      cooldown:SetDrawBling(false)
-      cooldown:SetDrawEdge(true)
-      cooldown:SetHideCountdownNumbers(false)
-      cooldown:Hide()
+-- Cooldown overlay (must be a named child of a secure button)
+	local cooldown = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
+	cooldown:SetAllPoints()
+	cooldown:SetFrameLevel(button:GetFrameLevel() + 1)
+	cooldown:SetSwipeTexture("Interface\\Cooldown\\ping4") -- optional visual
+	cooldown:SetSwipeColor(0, 0, 0, 0.6)
+	cooldown:SetDrawBling(false)
+	cooldown:SetDrawEdge(true)
+	cooldown:SetHideCountdownNumbers(false)
+	cooldown:Hide()
+
+-- Optional disabling of cooldown overlay
+if DungeonTeleportsDB.disableCooldownOverlay then
+    cooldown:SetSwipeColor(0, 0, 0, 0)  -- Fully transparent
+    cooldown:SetDrawEdge(false)
+    cooldown:SetDrawBling(false)
+    cooldown:SetHideCountdownNumbers(true)
+end
+
+function DungeonTeleportsMainFrame:UpdateBackground()
+    if not self.bg then
+        self.bg = self:CreateTexture(nil, "BACKGROUND")
+        self.bg:SetAllPoints()
+        self.bg:SetColorTexture(0, 0, 0, 0.5) -- fallback color
+    end
+
+    local expansion = DungeonTeleportsDB.selectedExpansion or constants.orderedExpansions[1]
+    local tex = constants.mapExpansionToBackground[expansion]
+
+    if tex then
+        self.bg:SetTexture(tex)
+    else
+        self.bg:SetTexture(nil)
+    end
+
+    self.bg:SetShown(not DungeonTeleportsDB.disableBackground)
+end
+
+
 
 
       -- Dungeon name text
@@ -264,8 +298,6 @@ function createTeleportButtons(selectedExpansion)
         cooldown:Hide()
       end
     end
-
-
 
     -- Register cooldown update events only if the spell is known
     button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
