@@ -134,6 +134,7 @@ eventFrame:SetScript("OnEvent", function(self, event)
     dropdown,
     function(self, level, menuList)
       local info = UIDropDownMenu_CreateInfo()
+	info.notCheckable = true
       for _, expansion in ipairs(constants.orderedExpansions) do
         info.text = L[expansion] or expansion
         info.arg1 = expansion
@@ -399,6 +400,7 @@ UIDropDownMenu_Initialize(
 dropdown,
 function(self, level, menuList)
   local info = UIDropDownMenu_CreateInfo()
+    info.notCheckable = true
   for _, expansion in ipairs(constants.orderedExpansions) do
     info.text = expansion
     info.arg1 = expansion
@@ -457,3 +459,4 @@ SlashCmdList["DUNGEONTELEPORTS"] = function()
   )
 end
 end
+
