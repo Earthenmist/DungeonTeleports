@@ -2,7 +2,7 @@
 ## Title: Mythic Dungeon Teleports
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
-## Author: Earthenmist-Anachronos
+## Author: Lanni-Alonsus
 ## Version: 1.18
 
 ## X-Wago-ID: BNBeblGx
@@ -42,4 +42,5 @@ TeleportData.lua
 MinimapButton.lua
 DungeonTeleports.lua
 Config\config.lua
+
 
