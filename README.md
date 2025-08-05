@@ -51,11 +51,10 @@ Download the addon and extract the folder into:
 Restart the game or reload the UI with /reload.  
 Enjoy faster dungeon teleports! 🚀  
 💡 Future Features (Planned)  
-🔹 Auto-Swap Expansions based on the current dungeon rotation.  
-🔹 Favourite Teleports for quick access.  
 🔹 More Localisations (community translations welcome!).  
   
 💬 Feedback & Support  
 📩 Report bugs & feature requests: [Your Discord / GitHub Issue Tracker Link]  
 ❤️ If you enjoy the addon, consider sharing it with friends!  
+
 
