@@ -158,6 +158,7 @@ expansionDropdown:SetPoint("LEFT", expansionLabel, "RIGHT", -10, -5)
 UIDropDownMenu_SetWidth(expansionDropdown, 150)
 UIDropDownMenu_Initialize(expansionDropdown, function()
     local info = UIDropDownMenu_CreateInfo()
+        info.notCheckable = true
     for _, exp in ipairs(addon.constants.orderedExpansions) do
         info.text = exp
         info.arg1 = exp
@@ -232,3 +233,4 @@ end
 
 SLASH_DUNGEONTELEPORTSCONFIG1 = "/dtpconfig"
 SlashCmdList["DUNGEONTELEPORTSCONFIG"] = ToggleConfig
+
