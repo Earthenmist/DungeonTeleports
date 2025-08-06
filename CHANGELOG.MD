@@ -1,10 +1,11 @@
-📜 Changelog - Version 1.18.1
+📜 Changelog - Version 1.18.2
 
 📅 Release Date: 06-08-2025
 
 🛠️ Changes & Improvements:
 
-✅ Removed a random checkbox in dropdowns added by Blizzard
+✅ Removed a random checkbox in the expansion dropdown (added by Blizzard)  
+✅ Removed a random checkbox in the settings window dropdown (added by Blizzard)  
 ✅ Update for 11.2  
 ✅ Embed Libstub  
 ✅ Embed CallbackHandler-1.0  
@@ -21,6 +22,7 @@
 ⚠️ Known Issues / Notes:
 
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀
+
 
 
 
