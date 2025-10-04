@@ -47,14 +47,24 @@ local minimapButton = LDB:NewDataObject("DungeonTeleports", {
   type = "data source",
   text = L["ADDON_TITLE"],
   icon = "Interface\\ICONS\\inv_spell_arcane_telepotdornogal",
-  OnClick = function(_, button)
-    AnalyticsEvent("minimap_click", { button = button })
-    if button == "LeftButton" then
-      ToggleDungeonTeleportsFrame("minimap_left_click")
-    elseif button == "RightButton" then
-      ToggleConfigFrame("minimap_right_click")
+OnClick = function(_, button)
+  AnalyticsEvent("minimap_click", { button = button })
+
+  if button == "LeftButton" then
+    ToggleDungeonTeleportsFrame("minimap_left_click")
+
+  elseif button == "RightButton" then
+    -- Use the new Settings opener instead of the old ToggleConfigFrame
+    if addon and type(addon.OpenConfig) == "function" then
+      addon.OpenConfig()
+    elseif Settings and Settings.OpenToCategory then
+      -- Fallback: open by category ID (set in config.lua)
+      Settings.OpenToCategory("DungeonTeleportsCategory")
+    else
+      print("DungeonTeleports: Settings UI not available.")
     end
-  end,
+  end
+end,
   OnTooltipShow = function(tooltip)
     tooltip:AddLine(L["ADDON_TITLE"]) 
     tooltip:AddLine(L["Open_Teleports"]) 
