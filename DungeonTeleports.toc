@@ -3,7 +3,7 @@
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
 ## Author: Lanni-Alonsus
-## Version: 1.20.2
+## Version: 1.20.3
 
 ## X-Wago-ID: BNBeblGx
 ## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
@@ -46,6 +46,7 @@ TeleportData.lua
 MinimapButton.lua
 DungeonTeleports.lua
 Config\config.lua
+
 
 
 
