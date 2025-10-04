@@ -1,4 +1,4 @@
-📜 Changelog - Version 1.20.2      
+📜 Changelog - Version 1.20.3      
   
 📅 Release Date: 04-10-2025  
   
@@ -10,11 +10,13 @@
 ✅ Merge pull request #12 from Hollicsh/main · Upd RU locale  
 ✅ Added itIT locale  
 ✅ Added ptBR locale  
-✅ Added esMX locale  
+✅ Added esMX locale
+✅ Micro fix RU locale  
   
 ⚠️ Known Issues / Notes:  
   
 🚀 Thank you for using Mythic Dungeon Teleports! If you encounter any issues, please report them via our Discord 🚀  
+
 
 
 
