@@ -19,7 +19,7 @@ L["Open_Settings"] = "|cFFFFFF00Right Click:|r Open Settings"
 
 
 -- Settings
-L["CONFIG_TITLE"] = "Settings"
+L["CONFIG_TITLE"] = "Mythic Dungeon Teleports"
 L["RESET_SETTINGS"] = "Reset to Default"
 L["RESET_TOOLTIP"] = "Resets all settings to default."
 L["SHOW_MINIMAP"] = "Show Minimap Button"
@@ -120,5 +120,6 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Sanctum of Domination"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcher of the First Ones"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberation of Undermine"
 L["RAID_MANAFORGE_OMEGA"] = "Manaforge Omega"
+
 
 
