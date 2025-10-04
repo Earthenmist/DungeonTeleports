@@ -37,12 +37,16 @@ Locales/frFR.lua
 Locales/esES.lua
 Locales/ruRU.lua
 Locales/koKR.lua
+Locales/ptBR.lua
+Locales/itIT.lua
+Locales/esMX.lua
 
 # Core Files
 TeleportData.lua
 MinimapButton.lua
 DungeonTeleports.lua
 Config\config.lua
+
 
 
 
