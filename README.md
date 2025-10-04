@@ -53,8 +53,7 @@ Enjoy faster dungeon teleports! 🚀
 💡 Future Features (Planned)  
 🔹 More Localisations (community translations welcome!).  
   
-💬 Feedback & Support  
-📩 Report bugs & feature requests: [Your Discord / GitHub Issue Tracker Link]  
-❤️ If you enjoy the addon, consider sharing it with friends!  
+
+
 
 
