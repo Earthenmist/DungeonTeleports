@@ -8,6 +8,7 @@ L["COOLDOWN_READY"] = "¡Listo para usar!"
 L["COOLDOWN_NOT_READY"] = "¡Aún no está listo!"
 L["CLICK_TO_TELEPORT"] = "¡Haz clic para teletransportarte!"
 L["TELEPORT_NOT_KNOWN"] = "¡Teletransporte no conocido!"
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "El tiempo de reutilización no está disponible en combate."
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: La ventana principal aún no se ha inicializado."
@@ -102,6 +103,12 @@ L["DUNGEON_CINDERBREW_BREWERY"] = "Cervecería Brasacendra"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priorato de la Llama Sagrada"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operación: Compuerta"
 L["DUNGEON_ECHO_DOME"] = "Eco-Cúpula, Al'dani"
+L["DUNGEON_MAGISTERS_TERRACE"] = "Bancal del Magister"
+L["DUNGEON_MAISARA_CAVERNS"] = "Cavernas de Maisara"
+L["DUNGEON_NEXUS_POINT"] = "Punto del Nexo"
+L["DUNGEON_WINDRUNNER_SPIRE"] = "Aguja Brisaveloz"
+L["DUNGEON_PIT_SARON"] = "Foso de Saron"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "Trono del Triunvirato"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Bóveda de los Encarnados"
@@ -112,4 +119,5 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Santuario de Dominación"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Sepulcro de los Primeros"
 L["RAID_LIBERATION_UNDERMINE"] = "Liberación de Minasombra"
 L["RAID_MANAFORGE_OMEGA"] = "Forja de maná Omega"
+
 
