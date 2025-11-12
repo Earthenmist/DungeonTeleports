@@ -1,4 +1,49 @@
 local addonName, addon = ...
+
+-- === DungeonTeleports: Safe hide/show helpers for Midnight combat restrictions ===
+local function DT_SafeHide(frame)
+  if InCombatLockdown and InCombatLockdown() then
+    frame._DT_pendingHide = true
+    frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    frame:HookScript("OnEvent", function(self, event)
+      if event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        if self._DT_pendingHide then
+          self._DT_pendingHide = nil
+          self:Hide()
+        end
+      end
+    end)
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Window will close after combat.|r")
+    end
+    return
+  end
+  frame:Hide()
+end
+
+local function DT_SafeShow(frame)
+  if InCombatLockdown and InCombatLockdown() then
+    frame._DT_pendingShow = true
+    frame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    frame:HookScript("OnEvent", function(self, event)
+      if event == "PLAYER_REGEN_ENABLED" then
+        self:UnregisterEvent("PLAYER_REGEN_ENABLED")
+        if self._DT_pendingShow then
+          self._DT_pendingShow = nil
+          self:Show()
+        end
+      end
+    end)
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Window will open after combat.|r")
+    end
+    return
+  end
+  frame:Show()
+end
+-- === End helpers ===
+
 local ok, WA = pcall(LibStub, "WagoAnalytics")
 if ok and WA and WA.Register then
   WA = WA:Register("BNBeblGx")
@@ -94,9 +139,9 @@ local closeButton = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
 closeButton:SetSize(24, 24)
 closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -10, -10)
 closeButton:SetScript("OnClick", function()
-  mainFrame:Hide()
+  DT_SafeHide(mainFrame)
   DungeonTeleportsDB.isVisible = false
-  AnalyticsEvent("ui_visibility", { visible = false }) -- optional; OnHide will also fire
+  AnalyticsEvent("ui_visibility", { visible = false })
 end)
 
 -- Add black base layer for contrast (kept for compatibility)
@@ -301,29 +346,37 @@ function createTeleportButtons(selectedExpansion)
         nameText:SetTextColor(1, 1, 0) -- Yellow for learned teleports
 
         -- Cooldown update function for known spells
-        local function UpdateCooldown()
-          local info = C_Spell.GetSpellCooldown(spellID)
-          if info and info.startTime and info.duration and info.isEnabled then
-            if info.duration > 0 and info.startTime > 0 then
-              cooldown:SetCooldown(info.startTime, info.duration)
-              cooldown:Show()
-            else
-              cooldown:Clear()
-              cooldown:Hide()
-            end
-          else
-            cooldown:Clear()
-            cooldown:Hide()
-          end
-        end
+local function UpdateCooldown()
+  -- Midnight beta: avoid reading cooldown "secret" fields during combat
+  if InCombatLockdown and InCombatLockdown() then
+    cooldown:Clear()
+    cooldown:Hide()
+    return
+  end
+
+  local info = C_Spell.GetSpellCooldown(spellID)
+  local start = info and info.startTime or nil
+  local dur   = info and info.duration  or nil
+
+  if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
+    cooldown:SetCooldown(start, dur)
+    cooldown:Show()
+  else
+    cooldown:Clear()
+    cooldown:Hide()
+  end
+end
+
 
         -- Register cooldown update events only if the spell is known
         button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
         button:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
         button:RegisterEvent("PLAYER_ENTERING_WORLD")
-        button:SetScript("OnEvent", function()
-          UpdateCooldown()
-        end)
+        button:RegisterEvent("PLAYER_REGEN_ENABLED")
+	button:SetScript("OnEvent", function(_, evt)
+  	  UpdateCooldown()
+	end)
+
 
         -- Force immediate cooldown update on button creation
         UpdateCooldown()
@@ -341,26 +394,36 @@ function createTeleportButtons(selectedExpansion)
         GameTooltip:SetSpellByID(spellID)
 
         -- Function to update the tooltip in real-time
-        local function updateTooltip()
-          GameTooltip:ClearLines()
-          GameTooltip:SetSpellByID(spellID)
+local function updateTooltip()
+  GameTooltip:ClearLines()
+  GameTooltip:SetSpellByID(spellID)
 
-          if IsSpellKnown(spellID) then
-            local cooldownInfo = C_Spell.GetSpellCooldown(spellID)
-            if cooldownInfo and cooldownInfo.isEnabled and cooldownInfo.duration > 0 then
-              local remaining = (cooldownInfo.startTime + cooldownInfo.duration) - GetTime()
-              GameTooltip:AddLine(L["COOLDOWN_NOT_READY"], 1, 0, 0)
-              GameTooltip:AddLine("Cooldown: " .. SecondsToTime(remaining), 1, 0, 0)
-            else
-              GameTooltip:AddLine(L["COOLDOWN_READY"], 0, 1, 0)
-              GameTooltip:AddLine(L["CLICK_TO_TELEPORT"], 0, 1, 0)
-            end
-          else
-            GameTooltip:AddLine(L["TELEPORT_NOT_KNOWN"], 1, 0, 0)
-          end
+  if InCombatLockdown and InCombatLockdown() then
+    GameTooltip:AddLine(L["COOLDOWN_UNKNOWN_IN_COMBAT"] or "Cooldown info hidden in combat (beta).", 1, 0, 0)
+    GameTooltip:Show()
+    return
+  end
 
-          GameTooltip:Show()
-        end
+  if IsSpellKnown(spellID) then
+    local info  = C_Spell.GetSpellCooldown(spellID)
+    local start = info and info.startTime or nil
+    local dur   = info and info.duration  or nil
+
+    if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
+      local remaining = (start + dur) - GetTime()
+      GameTooltip:AddLine(L["COOLDOWN_NOT_READY"], 1, 0, 0)
+      GameTooltip:AddLine("Cooldown: " .. SecondsToTime(math.max(0, remaining)), 1, 0, 0)
+    else
+      GameTooltip:AddLine(L["COOLDOWN_READY"], 0, 1, 0)
+      GameTooltip:AddLine(L["CLICK_TO_TELEPORT"], 0, 1, 0)
+    end
+  else
+    GameTooltip:AddLine(L["TELEPORT_NOT_KNOWN"], 1, 0, 0)
+  end
+
+  GameTooltip:Show()
+end
+
 
         -- Show tooltip immediately
         updateTooltip()
