@@ -3,6 +3,18 @@ local L = addon.L
 local LDB = LibStub:GetLibrary("LibDataBroker-1.1")
 local LDBIcon = LibStub("LibDBIcon-1.0")
 
+-- Prevent UI open/close while in combat via minimap clicks
+local function DT_CombatBlocked(action)
+  if InCombatLockdown and InCombatLockdown() then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: "..(action or "That action").." is blocked during combat.|r")
+    end
+    return true
+  end
+  return false
+end
+
+
 -- Analytics helper (no-op if shim/client isn't present)
 local function AnalyticsEvent(name, data)
   local A = _G.DungeonTeleportsAnalytics
@@ -18,11 +30,13 @@ local function ToggleDungeonTeleportsFrame(source)
   end
 
   if DungeonTeleportsMainFrame:IsShown() then
-    DungeonTeleportsMainFrame:Hide()
+    -- Block toggling in combat from minimap
+    if DT_CombatBlocked("Opening/Closing the teleports window") then return end
+    if type(DT_SafeHide)=="function" then DT_SafeHide(DungeonTeleportsMainFrame) else DungeonTeleportsMainFrame:Hide() end
     DungeonTeleportsDB.isVisible = false
     AnalyticsEvent("ui_visibility", { visible = false, source = source or "minimap" })
   else
-    DungeonTeleportsMainFrame:Show()
+    if DT_CombatBlocked("Opening the teleports window") then return end; if type(DT_SafeShow)=="function" then DT_SafeShow(DungeonTeleportsMainFrame) else DungeonTeleportsMainFrame:Show() end
     DungeonTeleportsDB.isVisible = true
     AnalyticsEvent("ui_visibility", { visible = true, source = source or "minimap" })
   end
@@ -51,10 +65,12 @@ OnClick = function(_, button)
   AnalyticsEvent("minimap_click", { button = button })
 
   if button == "LeftButton" then
+    if DT_CombatBlocked("Opening the teleports window") then return end
     ToggleDungeonTeleportsFrame("minimap_left_click")
 
   elseif button == "RightButton" then
     -- Use the new Settings opener instead of the old ToggleConfigFrame
+    if DT_CombatBlocked("Opening settings") then return end
     if addon and type(addon.OpenConfig) == "function" then
       addon.OpenConfig()
     elseif Settings and Settings.OpenToCategory then
@@ -93,10 +109,10 @@ MinimapHandler:SetScript("OnEvent", function()
 
   -- Restore main frame visibility from last session
   if DungeonTeleportsDB.isVisible and DungeonTeleportsMainFrame then
-    DungeonTeleportsMainFrame:Show()
+    if DT_CombatBlocked("Opening the teleports window") then return end; if type(DT_SafeShow)=="function" then DT_SafeShow(DungeonTeleportsMainFrame) else DungeonTeleportsMainFrame:Show() end
     AnalyticsEvent("ui_visibility", { visible = true, source = "login_restore" })
   elseif DungeonTeleportsMainFrame then
-    DungeonTeleportsMainFrame:Hide()
+    if type(DT_SafeHide)=="function" then DT_SafeHide(DungeonTeleportsMainFrame) else DungeonTeleportsMainFrame:Hide() end
     AnalyticsEvent("ui_visibility", { visible = false, source = "login_restore" })
   end
 end)

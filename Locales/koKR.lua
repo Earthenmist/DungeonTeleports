@@ -9,6 +9,7 @@ L["COOLDOWN_READY"] = "사용 가능!"
 L["COOLDOWN_NOT_READY"] = "아직 사용할 수 없습니다!"
 L["CLICK_TO_TELEPORT"] = "클릭하여 순간이동!"
 L["TELEPORT_NOT_KNOWN"] = "순간이동을 알지 못합니다!"
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "전투 중에는 재사용 대기시간을 확인할 수 없습니다."
 
 -- Minimap
 
@@ -107,6 +108,12 @@ L["DUNGEON_CINDERBREW_BREWERY"] = "잿불맥주 양조장"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "신성한 불꽃의 수도원"
 L["DUNGEON_OPERATION_FLOODGATE"] = "작전명: 수문"
 L["DUNGEON_ECHO_DOME"] = "에코 돔, 알다니"
+L["DUNGEON_MAGISTERS_TERRACE"] = "마법학자의 정원"
+L["DUNGEON_MAISARA_CAVERNS"] = "마이사라 동굴"
+L["DUNGEON_NEXUS_POINT"] = "연합의 요점"
+L["DUNGEON_WINDRUNNER_SPIRE"] = "윈드러너 첨탑"
+L["DUNGEON_PIT_SARON"] = "사론의 구덩이"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "삼두정의 권좌"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "현신의 금고"

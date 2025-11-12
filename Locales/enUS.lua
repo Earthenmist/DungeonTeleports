@@ -8,7 +8,7 @@ L["COOLDOWN_READY"] = "Ready to use!"
 L["COOLDOWN_NOT_READY"] = "Not ready yet!"
 L["CLICK_TO_TELEPORT"] = "Click to teleport!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport not known!"
-
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "Cooldown not available in combat."
 
 
 -- Minimap
@@ -38,6 +38,7 @@ L["OPACITY_SLIDER"] = "Background Image Opacity"
 
 
 -- Expansions
+L["Wotlk"] = "Wrath of the Lich King"
 L["Cataclysm"] = "Cataclysm"
 L["Mists of Pandaria"] = "Mists of Pandaria"
 L["Warlords of Draenor"] = "Warlords of Draenor"
@@ -110,6 +111,12 @@ L["DUNGEON_CINDERBREW_BREWERY"] = "Cinderbrew Meadery"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priory of the Sacred Flame"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operation: Floodgate"
 L["DUNGEON_ECHO_DOME"] = "Eco-Dome, Al'dani"
+L["DUNGEON_MAGISTERS_TERRACE"] = "Magisters Terrace"
+L["DUNGEON_MAISARA_CAVERNS"] = "Maisara Caverns"
+L["DUNGEON_NEXUS_POINT"] = "Nexus Point"
+L["DUNGEON_WINDRUNNER_SPIRE"] = "Windrunner Spire"
+L["DUNGEON_PIT_SARON"] = "Pit of Saron"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "Seat of the Triumvirate"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Vault of the Incarnates"

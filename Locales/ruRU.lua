@@ -8,6 +8,7 @@ L["COOLDOWN_READY"] = "Готово к использованию!"
 L["COOLDOWN_NOT_READY"] = "Пока не готово!"
 L["CLICK_TO_TELEPORT"] = "Нажмите, чтобы телепортироваться!"
 L["TELEPORT_NOT_KNOWN"] = "Телепорт неизвестен!"
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "В бою время восстановления недоступно."
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Основное окно еще не инициализировано."
@@ -107,6 +108,12 @@ L["DUNGEON_CINDERBREW_BREWERY"] = "Искроварня"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Приорат Священного Пламени"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Операция: Шлюз"
 L["DUNGEON_ECHO_DOME"] = "Заповедник Аль'дани"
+L["DUNGEON_MAGISTERS_TERRACE"] = "Терраса Магистров"
+L["DUNGEON_MAISARA_CAVERNS"] = "Пещеры Майсары"
+L["DUNGEON_NEXUS_POINT"] = "Точка Нексуса"
+L["DUNGEON_WINDRUNNER_SPIRE"] = "Шпиль Ветрокрылых"
+L["DUNGEON_PIT_SARON"] = "Яма Сарона"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "Престол Триумвирата"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Хранилище Воплощений"
@@ -117,3 +124,4 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
 L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
 L["RAID_MANAFORGE_OMEGA"] = "Манагорн Омега"
+

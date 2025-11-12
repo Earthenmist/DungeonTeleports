@@ -8,6 +8,7 @@ L["COOLDOWN_READY"] = "Bereit zur Nutzung!"
 L["COOLDOWN_NOT_READY"] = "Noch nicht bereit!"
 L["CLICK_TO_TELEPORT"] = "Klicken, um zu teleportieren!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport nicht bekannt!"
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "Abklingzeit im Kampf nicht verfügbar."
 
 
 -- Minimap
@@ -32,6 +33,7 @@ L["OPACITY_SLIDER"] = "Hintergrund-Deckkraft"
 
 
 -- Expansions
+L["Wotlk"] = "Wrath of the Lich King"
 L["Cataclysm"] = "Cataclysm"
 L["Mists of Pandaria"] = "Mists of Pandaria"
 L["Warlords of Draenor"] = "Warlords of Draenor"
@@ -104,6 +106,12 @@ L["DUNGEON_CINDERBREW_BREWERY"] = "Metbrauerei Glutbräu"
 L["DUNGEON_PRIORY_OF_THE_SACRED_FLAME"] = "Priorat der Heiligen Flamme"
 L["DUNGEON_OPERATION_FLOODGATE"] = "Operation: Schleuse"
 L["DUNGEON_ECHO_DOME"] = "Echokuppel, Al'dani"
+L["DUNGEON_MAGISTERS_TERRACE"] = "Terrasse der Magister"
+L["DUNGEON_MAISARA_CAVERNS"] = "Maisara-Höhlen"
+L["DUNGEON_NEXUS_POINT"] = "Knotenpunkt des Nexus"
+L["DUNGEON_WINDRUNNER_SPIRE"] = "Turm der Windläufer"
+L["DUNGEON_PIT_SARON"] = "Grube von Saron"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "Sitz des Triumvirats"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Gewölbe der Inkarnationen"
@@ -114,4 +122,5 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Sanktum der Herrschaft"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Mausoleum der Ersten"
 L["RAID_LIBERATION_UNDERMINE"] = "Befreiung von Lorenhall"
 L["RAID_MANAFORGE_OMEGA"] = "Manaschmiede Omega"
+
 
