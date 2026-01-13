@@ -34,7 +34,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Selecione com qual Expansão a Tela Principal 
 L["OPACITY_TOOLTIP"] = "Ajusta a opacidade da imagem de fundo."
 L["OPACITY_WARNING"] = "As alterações terão efeito em tempo real."
 L["OPACITY_SLIDER"] = "Opacidade da Imagem de Fundo"
-
+L["AUTO_INSERT_KEYSTONE"] = "Inserir Pedra-chave Mítica automaticamente"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Insere automaticamente sua Pedra-chave Mítica quando a janela da pedra-chave é aberta."
 
 -- Expansions
 L["Cataclysm"] = "Cataclismo"
