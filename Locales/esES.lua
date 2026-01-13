@@ -29,6 +29,8 @@ L["DISABLE_BACKGROUND_TOOLTIP"] = "Activar o desactivar las imágenes de fondo. 
 L["OPACITY_TOOLTIP"] = "Ajusta la opacidad del fondo."
 L["OPACITY_WARNING"] = "Los cambios no se aplicarán hasta que el complemento se cierre y vuelva a abrir."
 L["OPACITY_SLIDER"] = "Opacidad del fondo"
+L["AUTO_INSERT_KEYSTONE"] = "Insertar piedra angular mítica automáticamente"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Inserta automáticamente tu piedra angular mítica cuando se abre la ventana de la piedra angular."
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
