@@ -87,6 +87,7 @@ end)
 if not DungeonTeleportsDB then
   DungeonTeleportsDB = {}
 end
+if DungeonTeleportsDB.autoInsertKeystone == nil then DungeonTeleportsDB.autoInsertKeystone = false end
 
 -- ================================
 -- Mythic+ Keystone helper (Retail + Midnight Beta)
@@ -133,6 +134,7 @@ local function DT_SetupKeystoneFrame()
     end
 
     local function DT_TrySlotKeystone(retries)
+      if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
       if InCombatLockdown and InCombatLockdown() then return end
       if DT_KeystoneIsSlotted() then return end
 
@@ -186,6 +188,7 @@ local function DT_SetupKeystoneFrame()
     end
 
     kf:HookScript("OnShow", function()
+      if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
       -- Delay a tick so the UI + roster state is ready (notably on Midnight Beta)
       C_Timer.After(0.1, function()
         DT_TrySlotKeystone(10) -- retry for ~2 seconds total
