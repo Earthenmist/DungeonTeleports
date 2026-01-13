@@ -35,7 +35,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Select which Expansion the Addon Main Screen o
 L["OPACITY_TOOLTIP"] = "Adjusts the opacity of the background image."
 L["OPACITY_WARNING"] = "Changes will take effect in real time."
 L["OPACITY_SLIDER"] = "Background Image Opacity"
-
+L["AUTO_INSERT_KEYSTONE"] = "Auto-insert Mythic Keystone"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Automatically inserts your Mythic Keystone when the keystone window opens."
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"
