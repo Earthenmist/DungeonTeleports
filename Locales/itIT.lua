@@ -34,7 +34,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Seleziona con quale espansione si apre la sche
 L["OPACITY_TOOLTIP"] = "Regola l'opacità dell'immagine di sfondo."
 L["OPACITY_WARNING"] = "Le modifiche avranno effetto in tempo reale."
 L["OPACITY_SLIDER"] = "Opacità dell'Immagine di Sfondo"
-
+L["AUTO_INSERT_KEYSTONE"] = "Inserisci automaticamente la Chiave Mitica"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Inserisce automaticamente la tua Chiave Mitica quando si apre la finestra della chiave."
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
