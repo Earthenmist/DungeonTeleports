@@ -33,7 +33,8 @@ L["DISABLE_BACKGROUND_TOOLTIP"] = "배경 이미지를 켜거나 끕니다. 변�
 L["OPACITY_TOOLTIP"] = "배경의 불투명도를 조절합니다."
 L["OPACITY_WARNING"] = "변경 사항은 실시간으로 적용됩니다."
 L["OPACITY_SLIDER"] = "배경 불투명도"
-
+L["AUTO_INSERT_KEYSTONE"] = "신화 쐐기돌 자동 삽입"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "쐐기돌 창이 열릴 때 신화 쐐기돌을 자동으로 삽입합니다."
 
 -- Expansions
 L["Cataclysm"] = "대격변"
