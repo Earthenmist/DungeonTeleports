@@ -34,6 +34,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Selecciona con qué expansión se abrirá la p
 L["OPACITY_TOOLTIP"] = "Ajusta la opacidad de la imagen de fondo."
 L["OPACITY_WARNING"] = "Los cambios se aplicarán en tiempo real."
 L["OPACITY_SLIDER"] = "Opacidad de la Imagen de Fondo"
+L["AUTO_INSERT_KEYSTONE"] = "Insertar piedra angular mítica automáticamente"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Inserta automáticamente tu piedra angular mítica cuando se abre la ventana de la piedra angular."
 
 
 -- Expansions
