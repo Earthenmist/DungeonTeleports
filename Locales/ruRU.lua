@@ -33,7 +33,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Выберите, с каким дополне
 L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона"
 L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени"
 L["OPACITY_SLIDER"] = "Непрозрачность фона"
-
+L["AUTO_INSERT_KEYSTONE"] = "Автоматически вставлять мифический ключ"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Автоматически вставляет ваш мифический ключ при открытии окна ключа."
 
 -- Expansions
 L["Cataclysm"] = "Катаклизм"
