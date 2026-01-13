@@ -88,6 +88,135 @@ if not DungeonTeleportsDB then
   DungeonTeleportsDB = {}
 end
 
+-- ================================
+-- Mythic+ Keystone helper (Retail + Midnight Beta)
+-- - Auto-slot the keystone when the receptacle window opens
+-- - Make the keystone window movable and persist its position
+-- ================================
+local function DT_SetupKeystoneFrame()
+  local kf = _G.ChallengesKeystoneFrame
+  if not kf then return end
+
+  -- Make movable (only needs to be done once)
+  if not kf._DT_movableApplied then
+    kf:SetMovable(true)
+    kf:EnableMouse(true)
+    kf:RegisterForDrag("LeftButton")
+    kf:SetClampedToScreen(true)
+
+    kf:HookScript("OnDragStart", function(self)
+      if InCombatLockdown and InCombatLockdown() then return end
+      self:StartMoving()
+    end)
+
+    kf:HookScript("OnDragStop", function(self)
+      self:StopMovingOrSizing()
+      local point, relativeTo, relativePoint, x, y = self:GetPoint()
+      DungeonTeleportsDB.keystoneFramePos = DungeonTeleportsDB.keystoneFramePos or {}
+      DungeonTeleportsDB.keystoneFramePos.point = point
+      DungeonTeleportsDB.keystoneFramePos.relativeTo = (relativeTo and relativeTo.GetName and relativeTo:GetName()) or "UIParent"
+      DungeonTeleportsDB.keystoneFramePos.relativePoint = relativePoint
+      DungeonTeleportsDB.keystoneFramePos.x = x
+      DungeonTeleportsDB.keystoneFramePos.y = y
+    end)
+
+    -- Auto-slot keystone when the receptacle window opens
+    local function DT_KeystoneIsSlotted()
+      if C_ChallengeMode and C_ChallengeMode.GetSlottedKeystoneInfo then
+        local mapID = C_ChallengeMode.GetSlottedKeystoneInfo()
+        return mapID ~= nil
+      end
+      if C_ChallengeMode and C_ChallengeMode.HasSlottedKeystone then
+        return C_ChallengeMode.HasSlottedKeystone()
+      end
+      return false
+    end
+
+    local function DT_TrySlotKeystone(retries)
+      if InCombatLockdown and InCombatLockdown() then return end
+      if DT_KeystoneIsSlotted() then return end
+
+      -- Prefer Blizzard API if it works
+      if C_ChallengeMode and C_ChallengeMode.SlotKeystone then
+        pcall(C_ChallengeMode.SlotKeystone)
+        if DT_KeystoneIsSlotted() then return end
+      end
+
+      -- Fallback: mimic "Pickup keystone -> click socket" behavior (works on some beta builds)
+      local IDs = { [138019]=true, [151086]=true, [158923]=true, [180653]=true }
+      local function FindKeystoneInBags()
+        if not C_Container or not C_Container.GetContainerNumSlots then return end
+        for bag = 0, (NUM_BAG_FRAMES or 4) do
+          local slots = C_Container.GetContainerNumSlots(bag)
+          for slot = 1, slots do
+            local itemID = C_Container.GetContainerItemID(bag, slot)
+            if itemID and IDs[itemID] then
+              return bag, slot
+            end
+          end
+        end
+      end
+
+      local bag, slot = FindKeystoneInBags()
+      if bag and slot and C_Container and C_Container.PickupContainerItem then
+        ClearCursor()
+        C_Container.PickupContainerItem(bag, slot)
+
+        local clickTargets = {
+          kf.KeystoneSlot,
+          kf.KeystoneButton,
+          kf.InsertButton,
+          kf.SocketButton,
+          kf.KeystoneFrame and kf.KeystoneFrame.KeystoneSlot,
+        }
+
+        for _, btn in ipairs(clickTargets) do
+          if btn and btn.Click then
+            pcall(function() btn:Click() end)
+            break
+          end
+        end
+
+        ClearCursor()
+      end
+
+      if retries and retries > 0 and not DT_KeystoneIsSlotted() then
+        C_Timer.After(0.2, function() DT_TrySlotKeystone(retries - 1) end)
+      end
+    end
+
+    kf:HookScript("OnShow", function()
+      -- Delay a tick so the UI + roster state is ready (notably on Midnight Beta)
+      C_Timer.After(0.1, function()
+        DT_TrySlotKeystone(10) -- retry for ~2 seconds total
+      end)
+    end)
+kf._DT_movableApplied = true
+  end
+
+  -- Restore saved position (safe if target frame no longer exists)
+  local pos = DungeonTeleportsDB.keystoneFramePos
+  if pos and pos.point and pos.relativePoint and pos.x and pos.y then
+    kf:ClearAllPoints()
+    local rel = _G[pos.relativeTo] or UIParent
+    kf:SetPoint(pos.point, rel, pos.relativePoint, pos.x, pos.y)
+  end
+end
+
+-- Keystone frame may not exist until Blizzard_ChallengesUI loads
+do
+  local kfLoader = CreateFrame("Frame")
+  kfLoader:RegisterEvent("ADDON_LOADED")
+  kfLoader:RegisterEvent("PLAYER_ENTERING_WORLD")
+  kfLoader:SetScript("OnEvent", function(_, event, name)
+    if event == "ADDON_LOADED" and name ~= "Blizzard_ChallengesUI" then return end
+    if event == "PLAYER_ENTERING_WORLD" then
+      if IsAddOnLoaded and not IsAddOnLoaded("Blizzard_ChallengesUI") then return end
+    end
+    DT_SetupKeystoneFrame()
+  end)
+end
+
 local DungeonTeleports = CreateFrame("Frame")
 local createdButtons = {}
 local createdTexts = {}
