@@ -119,9 +119,27 @@ local function BuildConfigUI(parent)
   end)
   cooldownCheckbox:SetScript("OnLeave", GameTooltip_Hide)
 
+
+  -- Row: Auto-insert Mythic Keystone
+  local autoKeyCheckbox = CreateFrame("CheckButton", "DungeonTeleports_AutoKeyCheckbox", frame, "ChatConfigCheckButtonTemplate")
+  autoKeyCheckbox:SetPoint("TOPLEFT", cooldownCheckbox, "BOTTOMLEFT", 0, -12)
+  autoKeyCheckbox.Text:SetText(L["AUTO_INSERT_KEYSTONE"] or "Auto-insert Mythic Keystone")
+  autoKeyCheckbox:SetScript("OnClick", function(self)
+    local v = self:GetChecked()
+    DungeonTeleportsDB.autoInsertKeystone = v
+    AnalyticsEvent("setting_changed", { key = "autoInsertKeystone", value = v })
+  end)
+  autoKeyCheckbox:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(L["AUTO_INSERT_KEYSTONE"] or "Auto-insert Mythic Keystone", 1, 1, 0)
+    GameTooltip:AddLine(L["AUTO_INSERT_KEYSTONE_TOOLTIP"] or "Automatically inserts your Mythic Keystone when the keystone window opens.", 1, 1, 1, true)
+    GameTooltip:Show()
+  end)
+  autoKeyCheckbox:SetScript("OnLeave", GameTooltip_Hide)
+
   -- Row: Default expansion label + dropdown
   local expansionLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  expansionLabel:SetPoint("TOPLEFT", cooldownCheckbox, "BOTTOMLEFT", 0, -18)
+  expansionLabel:SetPoint("TOPLEFT", autoKeyCheckbox, "BOTTOMLEFT", 0, -18)
   expansionLabel:SetText(L["DEFAULT_EXPANSION"])
 
   local expansionDropdown = CreateFrame("Frame", "DungeonTeleportsExpansionDropdown", frame, "UIDropDownMenuTemplate")
@@ -183,6 +201,7 @@ local function BuildConfigUI(parent)
   reset:SetScript("OnClick", function()
     AnalyticsEvent("settings_reset", {})
     DungeonTeleportsDB = {}
+    DungeonTeleportsDB.autoInsertKeystone = false
     ReloadUI()
   end)
   reset:SetScript("OnEnter", function(self)
@@ -197,6 +216,7 @@ local function BuildConfigUI(parent)
   widgets.minimapCheckbox    = minimapCheckbox
   widgets.backgroundCheckbox = backgroundCheckbox
   widgets.cooldownCheckbox   = cooldownCheckbox
+  widgets.autoKeyCheckbox     = autoKeyCheckbox
   widgets.slider             = slider
   widgets.expansionDropdown  = expansionDropdown
 
@@ -218,11 +238,13 @@ local function RegisterSettingsCategory()
     DungeonTeleportsDB.disableBackground = false
     DungeonTeleportsDB.disableCooldownOverlay = false
     DungeonTeleportsDB.backgroundAlpha = 0.7
+    DungeonTeleportsDB.autoInsertKeystone = false
     DungeonTeleportsDB.defaultExpansion = nil
 
     if widgets.minimapCheckbox then widgets.minimapCheckbox:SetChecked(true) end
     if widgets.backgroundCheckbox then widgets.backgroundCheckbox:SetChecked(false) end
     if widgets.cooldownCheckbox then widgets.cooldownCheckbox:SetChecked(false) end
+    if widgets.autoKeyCheckbox then widgets.autoKeyCheckbox:SetChecked(false) end
     if widgets.slider then widgets.slider:SetValue(0.7) end
     if widgets.expansionDropdown then UIDropDownMenu_SetText(widgets.expansionDropdown, L["Current Season"]) end
 
@@ -234,6 +256,7 @@ local function RegisterSettingsCategory()
     if widgets.minimapCheckbox then widgets.minimapCheckbox:SetChecked(not (db.minimap and db.minimap.hidden)) end
     if widgets.backgroundCheckbox then widgets.backgroundCheckbox:SetChecked(db.disableBackground or false) end
     if widgets.cooldownCheckbox then widgets.cooldownCheckbox:SetChecked(db.disableCooldownOverlay or false) end
+    if widgets.autoKeyCheckbox then widgets.autoKeyCheckbox:SetChecked(db.autoInsertKeystone == true) end
     if widgets.slider then widgets.slider:SetValue(db.backgroundAlpha or 0.7) end
     if widgets.expansionDropdown then UIDropDownMenu_SetText(widgets.expansionDropdown, db.defaultExpansion or L["Current Season"]) end
     AnalyticsEvent("config_visibility", { visible = true, source = "blizzard_settings" })
