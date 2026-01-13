@@ -29,6 +29,8 @@ L["DISABLE_BACKGROUND_TOOLTIP"] = "Activer ou désactiver les images de fond. La
 L["OPACITY_TOOLTIP"] = "Ajuste l'opacité de l'arrière-plan."
 L["OPACITY_WARNING"] = "Les modifications ne prendront effet qu'après la fermeture et la réouverture de l'addon."
 L["OPACITY_SLIDER"] = "Opacité de l'arrière-plan"
+L["AUTO_INSERT_KEYSTONE"] = "Insérer automatiquement la clé mythique"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Insère automatiquement votre clé mythique lorsque la fenêtre de la clé s’ouvre."
 
 -- Expansions
 L["Cataclysm"] = "Cataclysm"
