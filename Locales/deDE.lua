@@ -30,7 +30,8 @@ L["DISABLE_BACKGROUND_TOOLTIP"] = "Hintergrundbilder ein- oder ausschalten. Das 
 L["OPACITY_TOOLTIP"] = "Passt die Deckkraft des Hintergrunds an."
 L["OPACITY_WARNING"] = "Änderungen werden erst wirksam, wenn das Addon geschlossen und erneut geöffnet wird."
 L["OPACITY_SLIDER"] = "Hintergrund-Deckkraft"
-
+L["AUTO_INSERT_KEYSTONE"] = "Mythischen Schlüsselstein automatisch einsetzen"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Setzt deinen mythischen Schlüsselstein automatisch ein, wenn sich das Schlüsselsteinfenster öffnet."
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"
