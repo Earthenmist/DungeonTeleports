@@ -269,9 +269,17 @@ local function RegisterSettingsCategory()
   -- Register the category under AddOns
   local title = L["CONFIG_TITLE"] or "Dungeon Teleports"
   local category = Settings.RegisterCanvasLayoutCategory(panel, title)
-  category.ID = "DungeonTeleportsCategory"
-  categoryID = category.ID
   Settings.RegisterAddOnCategory(category)
+  addon._settingsCategory = category
+  local _, _, _, tocVersion = GetBuildInfo()
+  addon._retailCategoryKey = "DungeonTeleportsCategory"
+  -- Retail prefers a stable string Category ID for OpenToCategory()
+  if tocVersion and tocVersion < 120000 then
+    category.ID = "DungeonTeleportsCategory"
+    categoryID = "DungeonTeleportsCategory"
+  else
+    categoryID = (category.GetID and category:GetID()) or category.ID
+  end
 end
 
 -- =========================================================
@@ -290,18 +298,74 @@ initFrame:SetScript("OnEvent", function(_, event, arg1)
   end
 end)
 
+
+local function DT_ResolveSettingsCategoryID()
+  -- Prefer cached category object
+  if addon._settingsCategory and addon._settingsCategory.GetID then
+    local id = addon._settingsCategory:GetID()
+    if type(id) == "number" then return id end
+  end
+
+  -- Try to locate by scanning categories (Midnight beta tends to require numeric IDs)
+  if Settings and Settings.GetCategoryList then
+    local list = Settings.GetCategoryList()
+    if type(list) == "table" then
+      for _, cat in ipairs(list) do
+        if cat and cat.GetName and cat:GetName() == (L["CONFIG_TITLE"] or "Dungeon Teleports") then
+          if cat.GetID then
+            local id = cat:GetID()
+            if type(id) == "number" then
+              addon._settingsCategory = cat
+              return id
+            end
+          end
+        end
+      end
+    end
+  end
+
+  return nil
+end
+
 -- --- Openers / legacy shims ---
 local function OpenSettingsCategory()
   if not categoryID then
     RegisterSettingsCategory()
   end
-  if Settings and Settings.OpenToCategory then
-    Settings.OpenToCategory(categoryID)
-  else
-    -- Retail-only file, but add a guard just in case
-    print("DungeonTeleports: Blizzard Settings API unavailable.")
+
+  local _, _, _, tocVersion = GetBuildInfo()
+
+  -- Midnight / 12.x: OpenSettingsPanel requires a numeric category ID
+  if tocVersion and tocVersion >= 120000 and C_SettingsUtil and C_SettingsUtil.OpenSettingsPanel then
+    local id = DT_ResolveSettingsCategoryID()
+    if type(id) == "number" then
+      C_SettingsUtil.OpenSettingsPanel(id)
+      return
+    end
   end
+
+  -- Retail (11.x): OpenToCategory reliably jumps when using the stable string Category ID
+  if tocVersion and tocVersion < 120000 and Settings and Settings.OpenToCategory then
+    Settings.OpenToCategory("DungeonTeleportsCategory")
+    return
+  end
+
+  -- Fallback: try opening by category object or numeric id
+  if Settings and Settings.OpenToCategory then
+    if addon._settingsCategory then
+      Settings.OpenToCategory(addon._settingsCategory)
+      return
+    end
+    if type(categoryID) == "number" then
+      Settings.OpenToCategory(categoryID)
+      return
+    end
+  end
+
+  print("DungeonTeleports: Unable to open settings category.")
 end
+
+
 
 -- Global shim for any old callers (minimap, keybinds, etc.)
 function ToggleConfig()
