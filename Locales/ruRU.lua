@@ -8,7 +8,7 @@ L["COOLDOWN_READY"] = "Готово к использованию!"
 L["COOLDOWN_NOT_READY"] = "Пока не готово!"
 L["CLICK_TO_TELEPORT"] = "Нажмите, чтобы телепортироваться!"
 L["TELEPORT_NOT_KNOWN"] = "Телепорт неизвестен!"
-L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "В бою время восстановления недоступно."
+L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "Восстановление недоступно во время боя."
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Основное окно еще не инициализировано."
@@ -33,8 +33,8 @@ L["DEFAULT_EXPANSION_TOOLTIP"] = "Выберите, с каким дополне
 L["OPACITY_TOOLTIP"] = "Регулирует непрозрачность фона"
 L["OPACITY_WARNING"] = "Изменения вступят в силу в режиме реального времени"
 L["OPACITY_SLIDER"] = "Непрозрачность фона"
-L["AUTO_INSERT_KEYSTONE"] = "Автоматически вставлять мифический ключ"
-L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Автоматически вставляет ваш мифический ключ при открытии окна ключа."
+L["AUTO_INSERT_KEYSTONE"] = "Автоматически вставлять М+ ключ"
+L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Автоматически вставляет Ваш М+ ключ в Чашу силы"
 
 -- Expansions
 L["Cataclysm"] = "Катаклизм"
@@ -125,4 +125,3 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
 L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
 L["RAID_MANAFORGE_OMEGA"] = "Манагорн Омега"
-
