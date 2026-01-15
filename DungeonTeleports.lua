@@ -128,11 +128,16 @@ local function DT_SetupKeystoneFrame()
     if not kf._DT_wrongKeyWatcher then
       local watcher = CreateFrame("Frame")
       watcher:RegisterEvent("UI_ERROR_MESSAGE")
-      watcher:SetScript("OnEvent", function(_, _, _, msg)
-        -- msg is localized; match both the global string (if present) and a safe substring.
-        if msg == (ERR_CHALLENGE_MODE_WRONG_KEYSTONE or nil)
-          or (type(msg) == "string" and msg:lower():find("different dungeon", 1, true))
-        then
+      watcher:SetScript("OnEvent", function(_, event, errorType, msg)
+        -- Midnight+: use errorType (locale-safe). 1012 = "Keystone is for a different dungeon"
+        if event ~= "UI_ERROR_MESSAGE" then return end
+        if errorType == 1012 then
+          kf._DT_stopAutoInsert = true
+          ClearCursor()
+          return
+        end
+        -- Fallback: localized text match (older/odd builds)
+        if type(msg) == "string" and msg:lower():find("different dungeon", 1, true) then
           kf._DT_stopAutoInsert = true
           ClearCursor()
         end
