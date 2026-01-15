@@ -1,30 +1,26 @@
-📜 Changelog – Version 1.22.1 (Release)  
+📜 Changelog – Version 1.22.2 (Release)  
   
-📅 Release Date: 14-01-2026  
+📅 Release Date: 15-01-2026  
   
 🛠️ Changes & Improvements  
-✅ Settings & Minimap Fixes  
+✅ Keystone Handling Improvements  
   
-Fixed an issue on Midnight Beta where right-clicking the minimap icon caused a Settings API error.  
-Restored correct behaviour on Retail, where opening settings via the minimap now jumps directly to the Dungeon Teleports addon page (as before).  
-Settings access is now handled correctly across Retail (11.x) and Midnight (12.x) clients.  
+Fixed an issue where auto-insert Mythic Keystone would repeatedly retry when attempting to insert a keystone for the wrong dungeon.  
+The addon now detects the Blizzard UI error “That Keystone is for a different dungeon” and immediately stops further insertion attempts.  
+Prevents repeated warning spam and unintended retry loops when the incorrect keystone is present.  
+Behaviour applies consistently across Retail (11.x) and Midnight (12.x) clients.  
   
-✅ Keystone Handling  
+🌍 Localisation Updates  
   
-Auto-insert Mythic Keystone remains disabled by default.  
-Reset to Defaults now correctly disables auto-insert and applies immediately without requiring a toggle.  
-Keystone insertion logic now respects the setting state consistently on all clients.  
-  
-✅ Data & Version Handling  
-  
-Automatic runtime selection between TeleportData.lua and TeleportData-12.lua based on game version (12.0.0+).  
-No user configuration required; the correct data set is chosen automatically.  
+Updated ruRU localisation strings.  
+Improvements supplied via Pull Request #15 by Hollicsh — thank you for the contribution! ❤️  
+Ensures clearer and more accurate Russian language support throughout the addon.  
   
 ✅ Stability & Compatibility  
   
-Improved Blizzard Settings API handling to prevent invalid category ID errors.  
-Verified compatibility with Retail 11.2.5 and Midnight 12.x.  
-General polish and robustness improvements.  
+Improved resilience of keystone handling logic during Challenge Mode interactions.  
+Further hardened retry safeguards to prevent unintended behaviour during dungeon setup.  
+Verified compatibility with Retail 11.2.7 and Midnight 12.x clients.  
   
 ⚠️ Known Issues / Notes  
   
@@ -32,5 +28,5 @@ During combat, cooldown overlays and tooltip timers remain intentionally suppres
 The minimap button will not open the main window during combat (by design).  
   
 🚀 Thank you for using Mythic Dungeon Teleports!  
-If you encounter any issues or have feedback, please report them via Github. 🚀  
-
+If you encounter any issues or have feedback, please report them via GitHub.  
+  
