@@ -503,22 +503,36 @@ function createTeleportButtons(selectedExpansion)
 
         -- Cooldown update function for known spells
 local function UpdateCooldown()
-  -- Midnight beta: avoid reading cooldown "secret" fields during combat
-  if InCombatLockdown and InCombatLockdown() then
-    cooldown:Clear()
+  -- Midnight: cooldown fields may be returned as "secret" values in some protected states.
+  -- Never compare/arithmetic on secret values; only operate on plain numbers.
+  if (InCombatLockdown and InCombatLockdown()) or (UnitAffectingCombat and UnitAffectingCombat("player")) then
+    if cooldown.Clear then cooldown:Clear() end
     cooldown:Hide()
     return
   end
 
-  local info = C_Spell.GetSpellCooldown(spellID)
-  local start = info and info.startTime or nil
-  local dur   = info and info.duration  or nil
+  local ok, info = pcall(C_Spell.GetSpellCooldown, spellID)
+  if not ok or not info then
+    if cooldown.Clear then cooldown:Clear() end
+    cooldown:Hide()
+    return
+  end
 
-  if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
-    cooldown:SetCooldown(start, dur)
-    cooldown:Show()
+  -- tonumber() safely converts "secret" number wrappers to nil (or a plain number),
+  -- avoiding the forbidden direct comparisons that throw errors.
+  local start = tonumber(info.startTime)
+  local dur   = tonumber(info.duration)
+
+  if start and dur and start > 0 and dur > 0 then
+    local okSet = pcall(cooldown.SetCooldown, cooldown, start, dur)
+    if okSet then
+      cooldown:Show()
+    else
+      if cooldown.Clear then cooldown:Clear() end
+      cooldown:Hide()
+    end
   else
-    cooldown:Clear()
+    if cooldown.Clear then cooldown:Clear() end
     cooldown:Hide()
   end
 end
