@@ -1,9 +1,9 @@
-## Interface: 110207, 120000, 120001
+## Interface: 120000, 120001
 ## Title: Mythic Dungeon Teleports
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
 ## Author: Lanni-Alonsus
-## Version: 1.22.2
+## Version: 1.22.3
 
 ## X-Wago-ID: BNBeblGx
 ## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
@@ -47,6 +47,7 @@ TeleportData-12.lua
 MinimapButton.lua
 DungeonTeleports.lua
 Config\config.lua
+
 
 
 
