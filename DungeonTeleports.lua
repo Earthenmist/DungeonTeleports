@@ -1,5 +1,30 @@
 local addonName, addon = ...
 
+-- Midnight-safe helpers: "secret value" protection can make numeric compares error.
+local function SafeCooldownActive(startTime, duration)
+  if startTime == nil or duration == nil then return false end
+  local ok, active = pcall(function()
+    return startTime > 0 and duration > 0
+  end)
+  if ok then
+    return active
+  end
+  -- If values are "secret", avoid comparing; try to show and let cooldown frame handle rendering.
+  return true
+end
+
+local function SafeSetCooldown(cooldownFrame, startTime, duration, modRate)
+  if not cooldownFrame then return end
+  local ok = pcall(function()
+    if cooldownFrame.SetCooldown then
+      cooldownFrame:SetCooldown(startTime, duration, modRate)
+    elseif CooldownFrame_Set then
+      CooldownFrame_Set(cooldownFrame, startTime, duration, modRate)
+    end
+  end)
+  return ok
+end
+
 -- === DungeonTeleports: Safe hide/show helpers for Midnight combat restrictions ===
 local function DT_SafeHide(frame)
   if InCombatLockdown and InCombatLockdown() then
@@ -122,28 +147,6 @@ local function DT_SetupKeystoneFrame()
     end)
 
     -- Auto-slot keystone when the receptacle window opens
-
-    -- Stop auto-insert retries if Blizzard reports the keystone is for a different dungeon.
-    -- (Midnight+ can repeatedly fire the same UI error if we keep trying.)
-    if not kf._DT_wrongKeyWatcher then
-      local watcher = CreateFrame("Frame")
-      watcher:RegisterEvent("UI_ERROR_MESSAGE")
-      watcher:SetScript("OnEvent", function(_, event, errorType, msg)
-        -- Midnight+: use errorType (locale-safe). 1012 = "Keystone is for a different dungeon"
-        if event ~= "UI_ERROR_MESSAGE" then return end
-        if errorType == 1012 then
-          kf._DT_stopAutoInsert = true
-          ClearCursor()
-          return
-        end
-        -- Fallback: localized text match (older/odd builds)
-        if type(msg) == "string" and msg:lower():find("different dungeon", 1, true) then
-          kf._DT_stopAutoInsert = true
-          ClearCursor()
-        end
-      end)
-      kf._DT_wrongKeyWatcher = watcher
-    end
     local function DT_KeystoneIsSlotted()
       if C_ChallengeMode and C_ChallengeMode.GetSlottedKeystoneInfo then
         local mapID = C_ChallengeMode.GetSlottedKeystoneInfo()
@@ -158,7 +161,6 @@ local function DT_SetupKeystoneFrame()
     local function DT_TrySlotKeystone(retries)
       if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
       if InCombatLockdown and InCombatLockdown() then return end
-      if kf._DT_stopAutoInsert then return end
       if DT_KeystoneIsSlotted() then return end
 
       -- Prefer Blizzard API if it works
@@ -212,7 +214,6 @@ local function DT_SetupKeystoneFrame()
 
     kf:HookScript("OnShow", function()
       if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
-      kf._DT_stopAutoInsert = false
       -- Delay a tick so the UI + roster state is ready (notably on Midnight Beta)
       C_Timer.After(0.1, function()
         DT_TrySlotKeystone(10) -- retry for ~2 seconds total
@@ -503,36 +504,25 @@ function createTeleportButtons(selectedExpansion)
 
         -- Cooldown update function for known spells
 local function UpdateCooldown()
-  -- Midnight: cooldown fields may be returned as "secret" values in some protected states.
-  -- Never compare/arithmetic on secret values; only operate on plain numbers.
-  if (InCombatLockdown and InCombatLockdown()) or (UnitAffectingCombat and UnitAffectingCombat("player")) then
-    if cooldown.Clear then cooldown:Clear() end
+  if InCombatLockdown() or UnitAffectingCombat("player") or (IsEncounterInProgress and IsEncounterInProgress()) then
+    return
+  end
+  -- Midnight beta: avoid reading cooldown "secret" fields during combat
+  if InCombatLockdown and InCombatLockdown() then
+    cooldown:Clear()
     cooldown:Hide()
     return
   end
 
-  local ok, info = pcall(C_Spell.GetSpellCooldown, spellID)
-  if not ok or not info then
-    if cooldown.Clear then cooldown:Clear() end
-    cooldown:Hide()
-    return
-  end
+  local info = C_Spell.GetSpellCooldown(spellID)
+  local start = info and info.startTime or nil
+  local dur   = info and info.duration  or nil
 
-  -- tonumber() safely converts "secret" number wrappers to nil (or a plain number),
-  -- avoiding the forbidden direct comparisons that throw errors.
-  local start = tonumber(info.startTime)
-  local dur   = tonumber(info.duration)
-
-  if start and dur and start > 0 and dur > 0 then
-    local okSet = pcall(cooldown.SetCooldown, cooldown, start, dur)
-    if okSet then
-      cooldown:Show()
-    else
-      if cooldown.Clear then cooldown:Clear() end
-      cooldown:Hide()
-    end
+  if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
+    SafeSetCooldown(cooldown, start, dur, info and info.modRate)
+    cooldown:Show()
   else
-    if cooldown.Clear then cooldown:Clear() end
+    cooldown:Clear()
     cooldown:Hide()
   end
 end
