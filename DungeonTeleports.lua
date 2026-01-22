@@ -68,6 +68,92 @@ local function DT_SafeShow(frame)
   frame:Show()
 end
 -- === End helpers ===
+-- === Mythic+ suppression guard (Midnight-safe) ===
+-- Midnight can return "secret" cooldown values during an active Challenge Mode run.
+-- Safest approach: completely suppress the UI + cooldown checks for the duration of the run,
+-- then automatically re-enable after the run ends AND you leave the instance/zone.
+addon._DT_mplus_suppressed = addon._DT_mplus_suppressed or false
+addon._DT_keystone_slotted_at = addon._DT_keystone_slotted_at or nil
+addon._DT_mplus_completed = addon._DT_mplus_completed or nil
+
+local function DT_SetMPlusSuppressed(state)
+  state = state and true or false
+  addon._DT_mplus_suppressed = state
+
+  -- If suppressing, close the window immediately (combat-safe).
+  if state and DungeonTeleportsMainFrame and DungeonTeleportsMainFrame.IsShown and DungeonTeleportsMainFrame:IsShown() then
+    DT_SafeHide(DungeonTeleportsMainFrame)
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Suppressed during Mythic+ run (Midnight safety).|r")
+    end
+  end
+end
+
+local function DT_IsChallengeModeActive()
+  local ok, active = pcall(function()
+    return C_ChallengeMode and C_ChallengeMode.IsChallengeModeActive and C_ChallengeMode.IsChallengeModeActive()
+  end)
+  return ok and active or false
+end
+
+local function DT_ShouldUnsuppress()
+  -- Only unsuppress once the run is not active AND you have zone-changed out of the instance.
+  if DT_IsChallengeModeActive() then return false end
+  local inInstance, instanceType = IsInInstance()
+  if inInstance and (instanceType == "party" or instanceType == "scenario") then
+    return false
+  end
+  return true
+end
+
+local mplusGuardFrame = CreateFrame("Frame")
+mplusGuardFrame:RegisterEvent("CHALLENGE_MODE_KEYSTONE_SLOTTED")
+mplusGuardFrame:RegisterEvent("CHALLENGE_MODE_START")
+mplusGuardFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
+mplusGuardFrame:RegisterEvent("CHALLENGE_MODE_RESET")
+mplusGuardFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+mplusGuardFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+mplusGuardFrame:SetScript("OnEvent", function(_, event)
+  if event == "CHALLENGE_MODE_KEYSTONE_SLOTTED" then
+    addon._DT_keystone_slotted_at = GetTime()
+    addon._DT_mplus_completed = nil
+    return
+  end
+
+  if event == "CHALLENGE_MODE_START" then
+    -- Only suppress after a key has been slotted (someone inserted it) AND the run starts.
+    -- If we missed the slotted event for any reason, still suppress for safety.
+    if addon._DT_keystone_slotted_at then
+      DT_SetMPlusSuppressed(true)
+    else
+      DT_SetMPlusSuppressed(true)
+    end
+    return
+  end
+
+  if event == "CHALLENGE_MODE_COMPLETED" or event == "CHALLENGE_MODE_RESET" then
+    -- Keep suppressed until the player leaves the instance / zone changes.
+    addon._DT_mplus_completed = true
+    return
+  end
+
+  -- World/zone transitions: enforce suppression while active; otherwise re-enable once out.
+  if DT_IsChallengeModeActive() then
+    DT_SetMPlusSuppressed(true)
+    return
+  end
+
+  if addon._DT_mplus_suppressed and DT_ShouldUnsuppress() then
+    addon._DT_keystone_slotted_at = nil
+    addon._DT_mplus_completed = nil
+    DT_SetMPlusSuppressed(false)
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00DungeonTeleports: Re-enabled after Mythic+ run.|r")
+    end
+  end
+end)
+-- === End Mythic+ suppression guard ===
+
 
 local ok, WA = pcall(LibStub, "WagoAnalytics")
 if ok and WA and WA.Register then
@@ -507,6 +593,13 @@ local function UpdateCooldown()
   if InCombatLockdown() or UnitAffectingCombat("player") or (IsEncounterInProgress and IsEncounterInProgress()) then
     return
   end
+  -- Suppress all cooldown/UI checks during an active Mythic+ (Midnight safety).
+  if addon._DT_mplus_suppressed then
+    cooldown:Clear()
+    cooldown:Hide()
+    return
+  end
+
   -- Midnight beta: avoid reading cooldown "secret" fields during combat
   if InCombatLockdown and InCombatLockdown() then
     cooldown:Clear()
@@ -518,8 +611,13 @@ local function UpdateCooldown()
   local start = info and info.startTime or nil
   local dur   = info and info.duration  or nil
 
-  if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
-    SafeSetCooldown(cooldown, start, dur, info and info.modRate)
+  local okS, s = pcall(tonumber, start)
+  local okD, d = pcall(tonumber, dur)
+  local okM, m = pcall(tonumber, info and info.modRate)
+
+  if okS and okD and type(s) == "number" and type(d) == "number" and s > 0 and d > 0 then
+    -- Use numeric values only; Midnight "secret" values can explode on compare.
+    SafeSetCooldown(cooldown, s, d, (okM and m) or nil)
     cooldown:Show()
   else
     cooldown:Clear()
@@ -677,6 +775,13 @@ SlashCmdList["DUNGEONTELEPORTS"] = function()
     DungeonTeleportsDB.isVisible = false
     AnalyticsEvent("ui_visibility", { visible = false })
   else
+    if addon._DT_mplus_suppressed then
+      if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Disabled during Mythic+ run (re-enables after you leave the dungeon).|r")
+      end
+      return
+    end
+
     DungeonTeleportsMainFrame:Show()
     DungeonTeleportsDB.isVisible = true
     AnalyticsEvent("ui_visibility", { visible = true })
