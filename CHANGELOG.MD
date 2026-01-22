@@ -1,10 +1,17 @@
-📜 Changelog – Version 1.22.3 (Release)  
+📜 Changelog – Version 1.22.4 (Release)  
   
-📅 Release Date: 21-01-2026  
+📅 Release Date: 22-01-2026  
 🎯 Expansion: The War Within / Midnight  
   
 🛠️ Fixes & Improvements  
 ⏱️ Midnight Cooldown Crash Fix (Updated)  
+  
+Fixed a Midnight-specific error that could occur when starting boss encounters in M+.  
+Addresses Blizzard returning “secret” cooldown values that can error when compared or used in arithmetic.  
+Cooldown handling is now fully secret-safe, avoiding direct comparisons on protected values and safely handling cooldown updates.  
+Eliminates errors such as:  
+attempt to compare local 'start' (a secret value)  
+Applies to dungeon teleport cooldown overlays and internal cooldown logic.  
   
 Fixed a Midnight-specific error that could occur when starting boss encounters in raids.  
 Addresses Blizzard returning “secret” cooldown values that can error when compared or used in arithmetic.  
@@ -30,3 +37,4 @@ Safe to update mid-session.
   
 🚀 Thank you for using Mythic Dungeon Teleports!  
 If you encounter any issues or have feedback, please report them via GitHub.  
+
