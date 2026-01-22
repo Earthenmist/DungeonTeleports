@@ -22,7 +22,16 @@ local function ToggleDungeonTeleportsFrame(source)
     DungeonTeleportsDB.isVisible = false
     AnalyticsEvent("ui_visibility", { visible = false, source = source or "minimap" })
   else
-    DungeonTeleportsMainFrame:Show()
+      if addon and addon._DT_mplus_suppressed then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Disabled during Mythic+ run (re-enables after you leave the dungeon).|r")
+    else
+      print("DungeonTeleports: Disabled during Mythic+ run.")
+    end
+    return
+  end
+
+  DungeonTeleportsMainFrame:Show()
     DungeonTeleportsDB.isVisible = true
     AnalyticsEvent("ui_visibility", { visible = true, source = source or "minimap" })
   end
@@ -38,7 +47,16 @@ local function ToggleConfigFrame(source)
     DungeonTeleportsConfigFrame:Hide()
     AnalyticsEvent("config_visibility", { visible = false, source = source or "minimap" })
   else
-    DungeonTeleportsConfigFrame:Show()
+      if addon and addon._DT_mplus_suppressed then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Settings disabled during Mythic+ run.|r")
+    else
+      print("DungeonTeleports: Settings disabled during Mythic+ run.")
+    end
+    return
+  end
+
+  DungeonTeleportsConfigFrame:Show()
     AnalyticsEvent("config_visibility", { visible = true, source = source or "minimap" })
   end
 end
