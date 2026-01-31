@@ -3,7 +3,7 @@ Version 1.22.16
   
 🎉 New Feature – Group Reminder Module  
 - Added a new optional Group Reminder module.  
-- Displays a popup when you accept a Mythic+ group invite.  
+- Displays a pop-up when you accept a Mythic+ group invite.  
 - Shows:  
   - Dungeon name (from LFG)  
   - Group name  
