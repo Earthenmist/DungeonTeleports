@@ -1,5 +1,5 @@
 📜 Mythic Dungeon Teleports – Latest Release Changelog  
-Version 1.22.15  
+Version 1.22.16  
   
 🎉 New Feature – Group Reminder Module  
 - Added a new optional Group Reminder module.  
@@ -31,6 +31,7 @@ Version 1.22.15
 - Cooldown visuals now match the main teleport panel style.  
   
 ✅ Stability & Compatibility  
+- Restored the auto-insert keystone safeguard: if the UI reports the keystone is for a different dungeon, the addon stops further insertion retries (prevents warning spam / retry loops).  
 - Fixed Lua errors that could prevent the Group Reminder module from loading.  
 - Improved handling of protected cooldown values introduced in Midnight.  
 - Verified compatibility with Retail and Midnight clients.  

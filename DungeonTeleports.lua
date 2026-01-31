@@ -232,6 +232,29 @@ local function DT_SetupKeystoneFrame()
       DungeonTeleportsDB.keystoneFramePos.y = y
     end)
 
+    -- Stop auto-insert retries if Blizzard reports the keystone is for a different dungeon.
+    -- (Midnight+ can repeatedly fire the same UI error if we keep trying.)
+    if not kf._DT_wrongKeyWatcher then
+      local watcher = CreateFrame("Frame")
+      watcher:RegisterEvent("UI_ERROR_MESSAGE")
+      watcher:SetScript("OnEvent", function(_, event, errorType, msg)
+        if event ~= "UI_ERROR_MESSAGE" then return end
+        -- Midnight+: use errorType (locale-safe). 1012 = "Keystone is for a different dungeon"
+        if errorType == 1012 then
+          kf._DT_stopAutoInsert = true
+          ClearCursor()
+          return
+        end
+        -- Fallback: localized text match (older/odd builds)
+        if type(msg) == "string" and msg:lower():find("different dungeon", 1, true) then
+          kf._DT_stopAutoInsert = true
+          ClearCursor()
+        end
+      end)
+      kf._DT_wrongKeyWatcher = watcher
+    end
+
+
     -- Auto-slot keystone when the receptacle window opens
     local function DT_KeystoneIsSlotted()
       if C_ChallengeMode and C_ChallengeMode.GetSlottedKeystoneInfo then
@@ -247,6 +270,7 @@ local function DT_SetupKeystoneFrame()
     local function DT_TrySlotKeystone(retries)
       if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
       if InCombatLockdown and InCombatLockdown() then return end
+      if kf._DT_stopAutoInsert then return end
       if DT_KeystoneIsSlotted() then return end
 
       -- Prefer Blizzard API if it works
@@ -300,6 +324,7 @@ local function DT_SetupKeystoneFrame()
 
     kf:HookScript("OnShow", function()
       if not (DungeonTeleportsDB and DungeonTeleportsDB.autoInsertKeystone == true) then return end
+      kf._DT_stopAutoInsert = false
       -- Delay a tick so the UI + roster state is ready (notably on Midnight Beta)
       C_Timer.After(0.1, function()
         DT_TrySlotKeystone(10) -- retry for ~2 seconds total
