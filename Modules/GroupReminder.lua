@@ -406,15 +406,42 @@ end
 -- Clickable chat link: opens the popup again
 if not addon._DT_GR_chatLinkHooked then
   addon._DT_GR_chatLinkHooked = true
-  hooksecurefunc("SetItemRef", function(link)
+
+  -- Some addons replace SetItemRef or SetItemRef can be overridden after we load.
+  -- Preferred approach: hook chat frame hyperlink clicks directly; keep SetItemRef as fallback.
+  local function DT_GR_HandleLink(link)
     if type(link) ~= "string" then return end
     local linkType = strsplit(":", link, 2)
     if linkType ~= "dtpreminder" then return end
     if addon and addon.DT_GR_ShowLastReminder then
       addon:DT_GR_ShowLastReminder()
     end
+  end
+
+  -- Hook OnHyperlinkClick on available chat frames (most reliable across UI mods)
+  local num = _G.NUM_CHAT_WINDOWS or 10
+  for i = 1, num do
+    local cf = _G["ChatFrame"..i]
+    if cf and cf.HookScript then
+      cf:HookScript("OnHyperlinkClick", function(_, link)
+        DT_GR_HandleLink(link)
+      end)
+    end
+  end
+
+  -- Some clients expose a global ChatFrame_OnHyperlinkShow; only hook if it exists.
+  if type(_G.ChatFrame_OnHyperlinkShow) == "function" then
+    hooksecurefunc("ChatFrame_OnHyperlinkShow", function(_, link)
+      DT_GR_HandleLink(link)
+    end)
+  end
+
+  -- Fallback: also hook SetItemRef (works on many clients)
+  hooksecurefunc("SetItemRef", function(link)
+    DT_GR_HandleLink(link)
   end)
 end
+
 
 local function IsMythicPlusActivity(activityID)
   local t = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
