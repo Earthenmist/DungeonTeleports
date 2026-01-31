@@ -14,7 +14,7 @@ local function EnsureDefaults()
 
   if db.enabled == nil then db.enabled = true end
   if db.showPopup == nil then db.showPopup = true end
-  if db.showChat == nil then db.showChat = false end
+  if db.showChat == nil then db.showChat = true end
   if db.showDungeonName == nil then db.showDungeonName = true end
   if db.showGroupName == nil then db.showGroupName = true end
   if db.showGroupDescription == nil then db.showGroupDescription = false end
