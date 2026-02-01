@@ -250,9 +250,20 @@ end
 local function EnsurePopup()
   if addon._DT_GR_popup then return addon._DT_GR_popup end
 
+  -- Ensure SavedVariables exist before we try to read/write popup position.
+  EnsureDefaults()
+  local db = DungeonTeleportsDB.groupReminder
+
   local f = CreateFrame("Frame", "DungeonTeleports_GroupReminderPopup", UIParent, "BackdropTemplate")
   f:SetSize(420, 220)
-  f:SetPoint("CENTER")
+
+  -- Restore the last position (if moved) instead of always centering.
+  if db.popupPos and db.popupPos.point and db.popupPos.relPoint and db.popupPos.x and db.popupPos.y then
+    f:SetPoint(db.popupPos.point, UIParent, db.popupPos.relPoint, db.popupPos.x, db.popupPos.y)
+  else
+    f:SetPoint("CENTER")
+  end
+
   f:Hide()
   f:SetFrameStrata("DIALOG")
   f:SetClampedToScreen(true)
@@ -260,7 +271,27 @@ local function EnsurePopup()
   f:SetMovable(true)
   f:RegisterForDrag("LeftButton")
   f:SetScript("OnDragStart", f.StartMoving)
-  f:SetScript("OnDragStop", f.StopMovingOrSizing)
+  f:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+
+    -- Persist the frame position in SavedVariables (account-wide).
+    -- We store relative to UIParent so it survives UI scale changes reasonably well.
+    local point, _, relPoint, xOfs, yOfs = self:GetPoint(1)
+    if point and relPoint and xOfs and yOfs and DungeonTeleportsDB and DungeonTeleportsDB.groupReminder then
+      DungeonTeleportsDB.groupReminder.popupPos = {
+        point = point,
+        relPoint = relPoint,
+        x = xOfs,
+        y = yOfs,
+      }
+    end
+
+    -- Also mark it as user-placed so the client can remember it in layout cache
+    -- on some setups (harmless if it doesn't apply).
+    if self.SetUserPlaced then
+      self:SetUserPlaced(true)
+    end
+  end)
 
   f:SetBackdrop({
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",

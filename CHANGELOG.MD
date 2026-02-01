@@ -1,4 +1,11 @@
 📜 Mythic Dungeon Teleports – Latest Release Changelog  
+Version 1.22.17  
+  
+🛠️ Fixes & Improvements  
+- Group Reminder popup now remembers where you moved it and reopens in that position (saved account-wide).  
+  
+---  
+  
 Version 1.22.16  
   
 🎉 New Feature – Group Reminder Module  
