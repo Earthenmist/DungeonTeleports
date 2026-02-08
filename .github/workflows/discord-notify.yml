@@ -4,7 +4,7 @@ on:
   release:
     types: [published]
   push:
-    branches: ["main", "master"]
+    branches: [main, master]
   issues:
     types: [opened, reopened, closed]
   pull_request:
@@ -13,19 +13,17 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Build Discord message
-        id: msg
+      - name: Decide webhook + build message
+        id: build
         shell: bash
         run: |
-          set -e
+          set -euo pipefail
 
           EVENT="${{ github.event_name }}"
           REPO="${{ github.repository }}"
-          ACTOR="${{ github.actor }}"
 
-          # Default to dev webhook; override for releases
+          # Default: dev channel
           WEBHOOK="${{ secrets.DISCORD_WEBHOOK_DEV }}"
 
           if [ "$EVENT" = "release" ]; then
@@ -33,68 +31,44 @@ jobs:
             NAME="${{ github.event.release.name }}"
             TAG="${{ github.event.release.tag_name }}"
             URL="${{ github.event.release.html_url }}"
-            BODY="## 🚀 ${NAME:-New Release} (${TAG})\n**Repo:** ${REPO}\n**Link:** ${URL}"
+            MSG="## 🚀 ${NAME:-New Release} (${TAG})\n**Repo:** ${REPO}\n**Link:** ${URL}"
 
           elif [ "$EVENT" = "push" ]; then
-            # Only show the top commit to keep it readable
             BRANCH="${{ github.ref_name }}"
             COMMIT_MSG="${{ github.event.head_commit.message }}"
-            COMMIT_URL="${{ github.event.head_commit.url }}"
             SHORT_SHA="$(echo "${{ github.sha }}" | cut -c1-7)"
-
-            # Trim commit message to first line
-            COMMIT_FIRST_LINE="$(echo "$COMMIT_MSG" | head -n 1)"
-
-            BODY="**📝 Push** to \`${BRANCH}\` — \`${SHORT_SHA}\`\n**Repo:** ${REPO}\n**Message:** ${COMMIT_FIRST_LINE}\n**Link:** ${COMMIT_URL}"
+            COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+            FIRST_LINE="$(echo "$COMMIT_MSG" | head -n 1)"
+            MSG="**📝 Push** to \`${BRANCH}\` — \`${SHORT_SHA}\`\n**Repo:** ${REPO}\n**Message:** ${FIRST_LINE}\n**Link:** ${COMMIT_URL}"
 
           elif [ "$EVENT" = "issues" ]; then
             ACTION="${{ github.event.action }}"
             NUM="${{ github.event.issue.number }}"
             TITLE="${{ github.event.issue.title }}"
             URL="${{ github.event.issue.html_url }}"
-
-            EMOJI="🪲"
-            if [ "$ACTION" = "closed" ]; then EMOJI="✅"; fi
-
-            BODY="**${EMOJI} Issue ${ACTION}** — #${NUM}\n**Repo:** ${REPO}\n**Title:** ${TITLE}\n**Link:** ${URL}"
+            MSG="**🪲 Issue ${ACTION}** — #${NUM}\n**Repo:** ${REPO}\n**Title:** ${TITLE}\n**Link:** ${URL}"
 
           elif [ "$EVENT" = "pull_request" ]; then
             ACTION="${{ github.event.action }}"
             NUM="${{ github.event.pull_request.number }}"
             TITLE="${{ github.event.pull_request.title }}"
             URL="${{ github.event.pull_request.html_url }}"
-
-            EMOJI="🔀"
-            if [ "$ACTION" = "closed" ]; then
-              # If merged, show a nicer status
-              if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
-                ACTION="merged"
-                EMOJI="✅"
-              else
-                EMOJI="🚫"
-              fi
-            fi
-
-            BODY="**${EMOJI} PR ${ACTION}** — #${NUM}\n**Repo:** ${REPO}\n**Title:** ${TITLE}\n**Link:** ${URL}"
+            MSG="**🔀 PR ${ACTION}** — #${NUM}\n**Repo:** ${REPO}\n**Title:** ${TITLE}\n**Link:** ${URL}"
 
           else
-            BODY="GitHub event: ${EVENT} in ${REPO} by ${ACTOR}"
+            MSG="GitHub event: ${EVENT} in ${REPO}"
           fi
 
-          # Escape quotes for JSON
-          BODY_ESCAPED=$(python3 - << 'PY'
-import json, os
-print(json.dumps({"content": os.environ["BODY"]}))
-PY
-          )
           echo "webhook=$WEBHOOK" >> "$GITHUB_OUTPUT"
-          echo "payload=$BODY_ESCAPED" >> "$GITHUB_OUTPUT"
-        env:
-          BODY: ${{ env.BODY }}
+          printf '%s' "$MSG" > message.txt
 
-      - name: Send to Discord
+      - name: Send message to Discord
         shell: bash
         run: |
-          curl -sS -H "Content-Type: application/json" \
-            -d '${{ steps.msg.outputs.payload }}' \
-            '${{ steps.msg.outputs.webhook }}'
+          python3 - << 'PY' > payload.json
+          import json
+          msg = open("message.txt", "r", encoding="utf-8").read()
+          print(json.dumps({"content": msg}))
+          PY
+
+          curl -sS -H "Content-Type: application/json"             --data-binary @payload.json             "${{ steps.build.outputs.webhook }}"
