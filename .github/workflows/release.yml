@@ -48,21 +48,16 @@ jobs:
           body=os.environ.get("BODY","").strip()
 
           msg = (
-            f"## 🚀 Addon Release: {tag}
-"
-            f"**Repo:** {repo}
-"
-            f"✅ Published to **CurseForge** + **Wago**
-"
-            f"**GitHub:** <{url}>
-
-"
+            f"## Addon Release: {tag}\n"
+            f"**Repo:** {repo}\n"
+            f"Published to **CurseForge** + **Wago**\n"
+            f"**GitHub:** <{url}>\n\n"
             f"{body}"
           ).strip()
 
           print(json.dumps({
             "content": msg,
-            "flags": 4  # SUPPRESS_EMBEDS
+            "flags": 4
           }))
           PY
 
