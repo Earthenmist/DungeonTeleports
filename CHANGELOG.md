@@ -1,9 +1,9 @@
-## :jigsaw: Addon Updates (2026-02-09)
+## 🧩 Addon Updates (2026-02-09)
 
-**Mythic Dungeon Teleports** — v1.22.17  
+**Mythic Dungeon Teleports** — v1.22.18  
 
 **Changes:**  
-• Group Reminder popup now remembers where you moved it and reopens in that position (saved account-wide).
+• Release packaging update (standardised changelog + cleaner zip output).  
 
 **Fixes:**  
 • None.
