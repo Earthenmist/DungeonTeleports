@@ -33,29 +33,36 @@ jobs:
 
           TAG="${GITHUB_REF_NAME}"
           REPO="${GITHUB_REPOSITORY}"
-          URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${TAG}"
+          URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/releases/tag/${GITHUB_REF_NAME}"
 
           # Keep short to avoid Discord limits
-          BODY="$(head -n 40 CHANGELOG.md || true)"
+          BODY="$(head -n 40 CHANGELOG.md 2>/dev/null || true)"
+
+          export TAG REPO URL BODY
 
           python3 - << 'PY' > payload.json
           import json, os
-          tag=os.environ.get("TAG","")
-          repo=os.environ.get("REPO","")
-          url=os.environ.get("URL","")
+          tag=os.environ.get("TAG","").strip()
+          repo=os.environ.get("REPO","").strip()
+          url=os.environ.get("URL","").strip()
           body=os.environ.get("BODY","").strip()
 
           msg = (
-            f"## 🚀 Addon Release: {tag}\n"
-            f"**Repo:** {repo}\n"
-            f"✅ Published to **CurseForge** + **Wago**\n"
-            f"**GitHub:** <{url}>\n\n"
+            f"## 🚀 Addon Release: {tag}
+"
+            f"**Repo:** {repo}
+"
+            f"✅ Published to **CurseForge** + **Wago**
+"
+            f"**GitHub:** <{url}>
+
+"
             f"{body}"
           ).strip()
 
           print(json.dumps({
             "content": msg,
-            "flags": 4
+            "flags": 4  # SUPPRESS_EMBEDS
           }))
           PY
 
