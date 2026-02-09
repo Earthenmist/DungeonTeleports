@@ -5,6 +5,7 @@
 ## Author: Lanni-Alonsus
 ## Version: 1.22.17
 
+## X-Curse-Project-ID: 1194926
 ## X-Wago-ID: BNBeblGx
 ## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
 ## DefaultState: Enabled
