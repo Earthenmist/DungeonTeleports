@@ -1,0 +1,124 @@
+name: Bug Report
+description: Report a bug or unexpected behavior.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue!
+
+        Please include as much detail as you can. The more complete this is, the faster it gets fixed.
+
+  - type: input
+    id: addon
+    attributes:
+      label: Addon Name
+      description: Which addon is this for?
+      placeholder: e.g. TheQuartermaster
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Addon Version
+      description: The addon version shown in the AddOns list or in the changelog.
+      placeholder: e.g. v1.0.14c
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client
+    attributes:
+      label: WoW Client
+      description: Which WoW client are you using?
+      options:
+        - Retail (The War Within)
+        - Midnight (Beta)
+        - Classic Era
+        - Hardcore
+        - Season of Discovery
+        - TBC Classic
+        - Wrath Classic
+        - Mists of Pandaria Classic
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: interface
+    attributes:
+      label: Interface Version (optional)
+      description: Found in the .toc file (## Interface:).
+      placeholder: e.g. 110205
+    validations:
+      required: false
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the problem in plain language.
+      placeholder: e.g. When I open the window and click Watchlist, the frame errors and closes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Tell us how to reproduce the issue.
+      placeholder: |
+        1. Log in on a character in a guild
+        2. Open /tq
+        3. Go to Watchlist
+        4. Click Export to Auctionator
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: e.g. A themed export window should open with the reagent list.
+    validations:
+      required: false
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: e.g. A Lua error appears and no window opens.
+    validations:
+      required: false
+
+  - type: textarea
+    id: errors
+    attributes:
+      label: Lua errors / stack trace (if any)
+      description: Paste the FULL error here. Please do not screenshot errors unless you absolutely have to.
+      render: text
+      placeholder: |
+        1x AddOn/File.lua:123: attempt to index field 'x' (a nil value)
+        [AddOn/File.lua]:123: in function <AddOn/File.lua:120>
+        ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: other_addons
+    attributes:
+      label: Other addons installed (important)
+      description: If you suspect a conflict, list any major UI addons (ElvUI, Bartender, AddOnSkins, Auctionator, etc.)
+      placeholder: e.g. ElvUI, WeakAuras, AddOnSkins, Auctionator
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Extra notes / screenshots
+      description: Add anything else that might help.
+    validations:
+      required: false
