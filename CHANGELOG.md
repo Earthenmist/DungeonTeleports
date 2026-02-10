@@ -3,11 +3,11 @@
 **Mythic Dungeon Teleports** — v1.24.2  
 
 **Changes:**  
-• Added a new **LDB Quick Cast Menu** for supported broker displays (e.g. ElvUI DataTexts), allowing instant teleport casting directly from the broker hover menu.  
-• Added a **DataText Menu** in the settings menu for the LDB menu:  
+- Added a new **LDB Quick Cast Menu** for supported broker displays (e.g. ElvUI DataTexts), allowing instant teleport casting directly from the broker hover menu.  
+- Added a **DataText Menu** in the settings menu for the LDB menu:  
   - **Full (Icons)** — the original menu layout  
   - **Minimal (Text only)** — a compact menu with no teleport icons  
-• Added optional **Hearthstone** + **Dalaran Hearthstone** buttons to the LDB menu (enabled by default).   
+- Added optional **Hearthstone** + **Dalaran Hearthstone** buttons to the LDB menu (enabled by default).   
 
 **Fixes:**  
 • None.
