@@ -2,6 +2,33 @@ local addonName, addon = ...
 local RefreshExpansionList -- forward decl (used by expansion row handlers)
 local L = addon.L
 
+-- Saved setting: LDB menu style ("full" | "minimal")
+local function GetLDBStyle()
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  local v = DungeonTeleportsDB.ldbMenuStyle
+  if v ~= "minimal" and v ~= "full" then v = "full" end
+  return v
+end
+
+local function SetLDBStyle(v)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  if v ~= "minimal" and v ~= "full" then v = "full" end
+  DungeonTeleportsDB.ldbMenuStyle = v
+end
+
+local function GetLDBShowHearthButtons()
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  if DungeonTeleportsDB.ldbShowHearthButtons == nil then
+    DungeonTeleportsDB.ldbShowHearthButtons = true
+  end
+  return DungeonTeleportsDB.ldbShowHearthButtons
+end
+
+local function SetLDBShowHearthButtons(v)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.ldbShowHearthButtons = (v and true) or false
+end
+
 -- =========================================================
 -- LDB Quick Cast Menu (hover broker text/icon)
 --
@@ -68,6 +95,32 @@ end
 
 local menu
 local hideTimer
+
+local function IsMouseOverQuickCastMenu()
+  if menu and menu:IsShown() and menu:IsMouseOver() then return true end
+  if expArea and expArea:IsShown() and expArea:IsMouseOver() then return true end
+  if tpArea and tpArea:IsShown() and tpArea:IsMouseOver() then return true end
+  if hearthBtn and hearthBtn:IsShown() and hearthBtn:IsMouseOver() then return true end
+  if dalaranBtn and dalaranBtn:IsShown() and dalaranBtn:IsMouseOver() then return true end
+  return false
+end
+
+local function CancelMenuHide()
+  if hideTimer then
+    hideTimer:Cancel()
+    hideTimer = nil
+  end
+end
+
+local function ScheduleMenuHide()
+  if hideTimer then hideTimer:Cancel() end
+  hideTimer = C_Timer.NewTimer(0.30, function()
+    if menu and menu:IsShown() and (not IsMouseOverQuickCastMenu()) then
+      menu:Hide()
+    end
+  end)
+end
+
 local selectedExpansion
 
 local expArea, expContent
@@ -127,8 +180,8 @@ menu:SetClampedToScreen(true)
   expArea:SetPoint("BOTTOMLEFT", 10, 12)
   expArea:SetWidth(200)
   expArea:SetBackdrop({
-    bgFile = "Interface\ChatFrame\ChatFrameBackground",
-    edgeFile = "Interface\Tooltips\UI-Tooltip-Border",
+    --bgFile = "Interface\ChatFrame\ChatFrameBackground",
+    --edgeFile = "Interface\Tooltips\UI-Tooltip-Border",
     tile = false,
     edgeSize = 14,
     insets = { left = 3, right = 3, top = 3, bottom = 3 },
@@ -144,8 +197,8 @@ menu:SetClampedToScreen(true)
   tpArea:SetPoint("TOPLEFT", 242, -72)
   tpArea:SetPoint("BOTTOMRIGHT", -10, 12)
   tpArea:SetBackdrop({
-    bgFile = "Interface\ChatFrame\ChatFrameBackground",
-    edgeFile = "Interface\Tooltips\UI-Tooltip-Border",
+    --bgFile = "Interface\ChatFrame\ChatFrameBackground",
+    --edgeFile = "Interface\Tooltips\UI-Tooltip-Border",
     tile = false,
     edgeSize = 14,
     insets = { left = 3, right = 3, top = 3, bottom = 3 },
@@ -167,15 +220,134 @@ menu:SetClampedToScreen(true)
   end)
   menu:SetScript("OnLeave", function()
     if hideTimer then hideTimer:Cancel() end
-    hideTimer = C_Timer.NewTimer(0.30, function()
-      if menu and menu:IsShown() then
-        menu:Hide()
-      end
-    end)
+    ScheduleMenuHide()
   end)
 
   menu:Hide()
   return menu
+end
+
+
+
+local hearthBtn, dalaranBtn
+
+local function SetupUtilityButton(btn, itemID, fallbackIcon)
+  -- Secure item usage (reliable click-to-use)
+  btn:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
+  -- Mirror teleport buttons: use primary attributes
+  btn:SetAttribute("type", "item")
+  btn:SetAttribute("item", "item:" .. itemID)
+  -- Also set button-specific attributes for safety
+  btn:SetAttribute("type1", "item")
+  btn:SetAttribute("item1", "item:" .. itemID)
+local icon = fallbackIcon
+  if C_Item and C_Item.GetItemIconByID then
+    icon = C_Item.GetItemIconByID(itemID) or icon
+  end
+  if btn.icon then
+    btn.icon:SetTexture(icon)
+  end
+
+  btn:SetScript("OnEnter", function(self)
+    CancelMenuHide()
+    if GameTooltip then
+      GameTooltip:SetOwner(self, "ANCHOR_TOP")
+      GameTooltip:SetItemByID(itemID)
+      GameTooltip:Show()
+    end
+  end)
+  btn:SetScript("OnLeave", function()
+    if GameTooltip then GameTooltip:Hide() end
+    ScheduleMenuHide()
+  end)
+end
+
+local function EnsureUtilityButtons()
+  if not menu then return end
+  -- (fixed) no recursion here
+  local show = GetLDBShowHearthButtons()
+
+  if not hearthBtn then
+    hearthBtn = CreateFrame("Button", nil, menu, "SecureActionButtonTemplate")
+    hearthBtn:SetSize(26, 26)
+    hearthBtn:SetHitRectInsets(-6, -6, -6, -6)
+    hearthBtn.icon = hearthBtn:CreateTexture(nil, "ARTWORK")
+    hearthBtn.icon:SetPoint("TOPLEFT", 2, -2)
+    hearthBtn.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+    hearthBtn.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    hearthBtn:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    SetupUtilityButton(hearthBtn, 6948, 134414)
+  end
+
+  if not dalaranBtn then
+    dalaranBtn = CreateFrame("Button", nil, menu, "SecureActionButtonTemplate")
+    dalaranBtn:SetSize(26, 26)
+    dalaranBtn:SetHitRectInsets(-6, -6, -6, -6)
+    dalaranBtn.icon = dalaranBtn:CreateTexture(nil, "ARTWORK")
+    dalaranBtn.icon:SetPoint("TOPLEFT", 2, -2)
+    dalaranBtn.icon:SetPoint("BOTTOMRIGHT", -2, 2)
+    dalaranBtn.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    dalaranBtn:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    SetupUtilityButton(dalaranBtn, 140192, 134414)
+  end
+
+  hearthBtn:SetShown(show)
+  dalaranBtn:SetShown(show)
+
+  -- Position (top-right of menu, within header area)
+  dalaranBtn:ClearAllPoints()
+  dalaranBtn:SetPoint("TOPRIGHT", menu, "TOPRIGHT", -10, -10)
+
+  hearthBtn:ClearAllPoints()
+  hearthBtn:SetPoint("RIGHT", dalaranBtn, "LEFT", -6, 0)
+end
+
+local function ApplyMenuStyle()
+  if not menu then return end
+  EnsureUtilityButtons()
+  local style = GetLDBStyle()
+  -- Hide any previously-created teleport buttons (even if they are not tracked in tpButtons)
+  if tpContent and tpContent.GetChildren then
+    local kids = { tpContent:GetChildren() }
+    for _, child in ipairs(kids) do
+      if child and child.Hide and (child._DT_QC_TP or child:GetAttribute("type") or child:GetAttribute("type1")) then
+        child:Hide()
+      end
+    end
+  end
+  for _, btn in ipairs(tpButtons) do
+    btn:Hide()
+  end
+
+  if style == "minimal" then
+    -- Minimal: single column, ~12 teleports visible
+    menu:SetWidth(430)
+    menu:SetHeight(360)
+
+    if expArea then expArea:SetWidth(210) end
+    if tpArea then
+      tpArea:ClearAllPoints()
+      tpArea:SetPoint("TOPLEFT", menu, "TOPLEFT", 232, -72)
+      tpArea:SetPoint("BOTTOMRIGHT", menu, "BOTTOMRIGHT", -10, 14)
+    end
+  else
+    -- Full: 2 columns, ~6 rows visible
+    menu:SetWidth(720)
+    menu:SetHeight(340)
+
+    if expArea then expArea:SetWidth(210) end
+    if tpArea then
+      tpArea:ClearAllPoints()
+      tpArea:SetPoint("TOPLEFT", menu, "TOPLEFT", 232, -72)
+      tpArea:SetPoint("BOTTOMRIGHT", menu, "BOTTOMRIGHT", -10, 14)
+    end
+  end
+
+  if divider then
+    divider:ClearAllPoints()
+    divider:SetPoint("TOPLEFT", menu, "TOPLEFT", 204, -66)
+    divider:SetPoint("BOTTOMLEFT", menu, "BOTTOMLEFT", 204, 14)
+  end
 end
 
 local function GetConstants()
@@ -185,6 +357,34 @@ end
 local function ClearTeleportButtons()
   for i = 1, #tpButtons do
     tpButtons[i]:Hide()
+  end
+end
+
+local function ApplyTeleportButtonStyle(b, style, colWidth)
+  if style == "minimal" then
+    b:SetHeight(20)
+    b:SetWidth(colWidth)
+    b.icon:Hide()
+    b.label:ClearAllPoints()
+    b.label:SetPoint("LEFT", b, "LEFT", 8, 0)
+    b.label:SetWidth(colWidth - 16)
+    b.label:SetFontObject("GameFontHighlightSmall")
+    b.label:SetTextColor(1, 1, 1)
+    b.rowHL:SetAllPoints()
+  else
+    -- Full (icons) style
+    b:SetHeight(30)
+    b:SetWidth(210)
+    b.icon:Show()
+    b.icon:SetSize(26, 26)
+    b.icon:ClearAllPoints()
+    b.icon:SetPoint("LEFT", b, "LEFT", 6, 0)
+    b.label:ClearAllPoints()
+    b.label:SetPoint("LEFT", b.icon, "RIGHT", 8, 0)
+    b.label:SetWidth(210 - (6 + 26 + 8 + 6))
+    b.label:SetFontObject("GameFontHighlight")
+    b.label:SetTextColor(1, 1, 0)
+    b.rowHL:SetAllPoints()
   end
 end
 
@@ -223,14 +423,11 @@ local function EnsureTeleportButton(i)
   b:SetScript("OnLeave", function()
     if GameTooltip then GameTooltip:Hide() end
     if hideTimer then hideTimer:Cancel() end
-    hideTimer = C_Timer.NewTimer(0.30, function()
-      if menu and menu:IsShown() then
-        menu:Hide()
-      end
-    end)
+    ScheduleMenuHide()
   end)
 
   tpButtons[i] = b
+    b._DT_QC_TP = true
   return b
 end
 
@@ -243,11 +440,16 @@ local function RefreshTeleportsForExpansion(expansion)
   local mapIDs = constants.mapExpansionToMapID and constants.mapExpansionToMapID[expansion] or nil
   if not mapIDs then return end
 
+  local style = GetLDBStyle()
   local shown = 0
-  local startY = 0
-  local areaWidth = (tpArea and tpArea:GetWidth() or 480)
-  local colWidth = math.floor((areaWidth - 12) / 2)
-  local xLabelMax = colWidth
+  local areaWidth = (tpArea and tpArea:GetWidth() or 0)
+  if areaWidth <= 1 and menu then
+    areaWidth = (menu:GetWidth() or 480) - 250
+  end
+  if areaWidth <= 1 then areaWidth = 480 end
+  local columns = (style == "minimal") and 1 or 2
+  local colWidth = (columns == 1) and (areaWidth - 12) or math.floor((areaWidth - 12) / 2)
+  local rowStep = (style == "minimal") and 22 or 40
 
   for _, mapID in ipairs(mapIDs) do
     local spellID = constants.mapIDtoSpellID and constants.mapIDtoSpellID[mapID] or nil
@@ -256,12 +458,13 @@ local function RefreshTeleportsForExpansion(expansion)
       if known then
         shown = shown + 1
         local b = EnsureTeleportButton(shown)
+        ApplyTeleportButtonStyle(b, style, colWidth)
         b:ClearAllPoints()
         local idx = shown - 1
-        local col = idx % 2
-        local row = math.floor(idx / 2)
-        local x = col * colWidth
-        local y = -row * 40
+        local col = idx % columns
+        local row = math.floor(idx / columns)
+        local x = col * (colWidth + (colGap or 0))
+        local y = -row * rowStep
         b:SetPoint("TOPLEFT", tpContent, "TOPLEFT", x, y)
         b:Show()
 
@@ -278,20 +481,26 @@ local function RefreshTeleportsForExpansion(expansion)
           b:SetAttribute("spell", spellID)
         end
 
-        b.icon:SetTexture(C_Spell.GetSpellTexture(spellID))
+        if style ~= "minimal" then
+          b.icon:SetTexture(C_Spell.GetSpellTexture(spellID))
+        end
 
         local name = (constants.mapIDtoDungeonName and constants.mapIDtoDungeonName[mapID]) or (C_Spell.GetSpellName(spellID)) or ""
         b.label:SetText(name)
+        if style == "minimal" then
+          b.label:SetWidth(colWidth - 16)
+          b.label:SetTextColor(1, 1, 1)
+        else
           b.label:SetWidth(210 - (6 + 26 + 8 + 6))
-        b.label:SetTextColor(1, 1, 0)
+          end
       end
     end
   end
 
   -- Ensure scroll child is tall enough
   if tpContent and tpArea then
-    local rows = math.ceil(shown / 2)
-    local contentHeight = math.max(1, (rows * 40) + 10)
+    local rows = math.ceil(shown / columns)
+    local contentHeight = math.max(1, (rows * rowStep) + 10)
     tpContent:SetHeight(contentHeight)
   end
 
@@ -350,11 +559,7 @@ local function EnsureExpansionButton(i)
 
   b:SetScript("OnLeave", function()
     if hideTimer then hideTimer:Cancel() end
-    hideTimer = C_Timer.NewTimer(0.30, function()
-      if menu and menu:IsShown() then
-        menu:Hide()
-      end
-    end)
+    ScheduleMenuHide()
   end)
   expButtons[i] = b
   return b
@@ -417,6 +622,8 @@ local function ShowMenu(anchorFrame)
   EnsureMenu()
   RefreshExpansionList()
   AnchorMenuTo(anchorFrame)
+  EnsureUtilityButtons()
+  ApplyMenuStyle()
   menu:Show()
 end
 
@@ -470,10 +677,92 @@ HookFrame:SetScript("OnEvent", function()
     end
 
     if hideTimer then hideTimer:Cancel() end
-    hideTimer = C_Timer.NewTimer(0.30, function()
-      if menu and menu:IsShown() then
-        menu:Hide()
-      end
-    end)
+    ScheduleMenuHide()
   end
 end)
+
+-- =========================================================
+-- Settings Subcategory: DataText Menu
+-- =========================================================
+function addon:DT_LDB_BuildConfigPanel(parent, outWidgets)
+  local widgets = outWidgets or {}
+
+  local panel = CreateFrame("Frame", nil, parent)
+  panel:SetAllPoints(true)
+  panel:Hide() -- prevent showing in-world before Settings parents it
+
+  local title = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+  title:SetPoint("TOPLEFT", 16, -16)
+  title:SetText(L["LDB_MENU_TITLE"] or "DataText Menu")
+
+  local sub = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  sub:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
+  sub:SetText(L["LDB_MENU_DESC"] or "Choose how the broker hover menu is displayed.")
+
+  -- Radio: Full
+  local full = CreateFrame("CheckButton", nil, panel, "UIRadioButtonTemplate")
+  full:SetPoint("TOPLEFT", sub, "BOTTOMLEFT", 0, -14)
+  full.text:SetText(L["LDB_STYLE_FULL"] or "Full (Icons)")
+  full.value = "full"
+
+  local fullPreview = panel:CreateTexture(nil, "ARTWORK")
+  fullPreview:SetSize(350, 174)
+  fullPreview:SetPoint("TOPLEFT", full, "BOTTOMLEFT", 28, -6)
+  -- Placeholder preview texture (swap later)
+  fullPreview:SetTexture("Interface\\AddOns\\DungeonTeleports\\Images\\LDBMenuPreview_Full.tga")
+  fullPreview:SetTexCoord(0, 1, 0, 1)
+  fullPreview:SetAlpha(0.75)
+
+  -- Radio: Minimal
+  local minimal = CreateFrame("CheckButton", nil, panel, "UIRadioButtonTemplate")
+  minimal:SetPoint("TOPLEFT", fullPreview, "BOTTOMLEFT", -28, -14)
+  minimal.text:SetText(L["LDB_STYLE_MINIMAL"] or "Minimal (Text only)")
+  minimal.value = "minimal"
+
+  local minimalPreview = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  minimalPreview:SetPoint("TOPLEFT", minimal, "BOTTOMLEFT", 28, -8)
+  minimalPreview:SetText("• Teleport 1\n• Teleport 2\n• Teleport 3")
+  minimalPreview:SetTextColor(1, 1, 1)
+  minimalPreview:SetAlpha(0.75)
+
+  local hs = CreateFrame("CheckButton", nil, panel, "InterfaceOptionsCheckButtonTemplate")
+  hs:SetPoint("TOPLEFT", minimalPreview, "BOTTOMLEFT", -28, -18)
+  hs.Text:SetText(L["LDB_SHOW_HEARTH"] or "Show Hearthstone buttons (Normal & Dalaran)")
+  hs.tooltipText = L["LDB_SHOW_HEARTH_DESC"] or "Adds Hearthstone and Dalaran Hearthstone icons to the top-right of the hover menu."
+
+
+  local function SetSelected(v)
+    full:SetChecked(v == "full")
+    minimal:SetChecked(v == "minimal")
+  end
+
+  local function Apply(v)
+    SetLDBStyle(v)
+    SetSelected(v)
+    -- If menu is open, refresh contents/layout
+    if menu and menu:IsShown() then
+      ApplyMenuStyle()
+      if selectedExpansion then RefreshTeleportsForExpansion(selectedExpansion) end
+    end
+  end
+
+  full:SetScript("OnClick", function() Apply("full") end)
+  minimal:SetScript("OnClick", function() Apply("minimal") end)
+
+  panel:SetScript("OnShow", function()
+    SetSelected(GetLDBStyle())
+    hs:SetChecked(GetLDBShowHearthButtons())
+  end)
+
+  hs:SetScript("OnClick", function(self)
+    SetLDBShowHearthButtons(self:GetChecked())
+    if menu and menu:IsShown() then
+      EnsureUtilityButtons()
+    end
+  end)
+
+  return panel
+end
+
+-- Shim for config.lua to detect this module
+function addon.DT_LDB_UpdateRegistration() end

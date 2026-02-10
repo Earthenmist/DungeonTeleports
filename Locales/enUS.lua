@@ -150,3 +150,11 @@ L["GROUP_REMINDER_OPEN"] = "Open reminder"
 
 
 
+
+L["LDB_MENU_TITLE"] = "DataText Menu"
+L["LDB_MENU_DESC"] = "Choose how the broker hover menu is displayed."
+L["LDB_STYLE_FULL"] = "Full (Icons)"
+L["LDB_STYLE_MINIMAL"] = "Minimal (Text only)"
+
+L["LDB_SHOW_HEARTH"] = "Show Hearthstone buttons (Normal & Dalaran)"
+L["LDB_SHOW_HEARTH_DESC"] = "Adds Hearthstone and Dalaran Hearthstone icons to the top-right of the hover menu."

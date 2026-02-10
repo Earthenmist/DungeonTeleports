@@ -38,6 +38,8 @@ local widgets = {}
 local categoryID
 local groupReminderWidgets = {}
 local groupReminderCategory
+local ldbMenuWidgets = {}
+local ldbMenuCategory
 
 local function BuildConfigUI(parent)
   local frame = CreateFrame("Frame", "DungeonTeleportsOptionsPanel", parent)
@@ -290,6 +292,14 @@ local function RegisterSettingsCategory()
     if grPanel then
       local grTitle = L["GROUP_REMINDER_TITLE"] or "Group Reminder"
       groupReminderCategory = Settings.RegisterCanvasLayoutSubcategory(category, grPanel, grTitle)
+    end
+  end
+
+  if not ldbMenuCategory and addon and addon.DT_LDB_UpdateRegistration then
+    local ldbPanel = (addon.DT_LDB_BuildConfigPanel and addon:DT_LDB_BuildConfigPanel(nil, ldbMenuWidgets))
+    if ldbPanel then
+      local ldbTitle = L["LDB_MENU_TITLE"] or "DataText Menu"
+      ldbMenuCategory = Settings.RegisterCanvasLayoutSubcategory(category, ldbPanel, ldbTitle)
     end
   end
 end
