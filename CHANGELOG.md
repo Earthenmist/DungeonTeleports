@@ -10,7 +10,7 @@
 - Added optional **Hearthstone** + **Dalaran Hearthstone** buttons to the LDB menu (enabled by default).   
 
 **Fixes:**  
-• None.
+- None.
 
 **Known issues:**  
-• None currently known.
+- None currently known.
