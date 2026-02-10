@@ -46,6 +46,7 @@ Locales/esMX.lua
 TeleportData.lua
 TeleportData-12.lua
 MinimapButton.lua
+Modules\LDB_QuickCastMenu.lua
 Modules\GroupReminder.lua
 DungeonTeleports.lua
 Config\config.lua

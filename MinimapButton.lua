@@ -90,6 +90,9 @@ end,
   end,
 })
 
+-- Expose the LDB object for optional modules (keeps minimap behavior unchanged)
+addon.LDBObject = minimapButton
+
 -- Register minimap button
 local MinimapHandler = CreateFrame("Frame")
 MinimapHandler:RegisterEvent("PLAYER_LOGIN")
