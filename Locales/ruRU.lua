@@ -146,7 +146,7 @@ L["GROUP_REMINDER_AS_ROLE"] = "как %s"
 L["GROUP_REMINDER_OPEN"] = "Открыть напоминание"
 
 
----
+--- LDB Menu
 L["LDB_MENU_TITLE"] = "Текстовое меню"
 L["LDB_MENU_DESC"] = "Выберите способ отображения всплывающего меню"
 L["LDB_STYLE_FULL"] = "Полный (с иконками)"

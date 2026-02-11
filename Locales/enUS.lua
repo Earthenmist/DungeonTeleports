@@ -148,9 +148,7 @@ L["GROUP_REMINDER_INVITED"] = "You joined"
 L["GROUP_REMINDER_AS_ROLE"] = "as %s"
 L["GROUP_REMINDER_OPEN"] = "Open reminder"
 
-
-
-
+-- LDB Menu
 L["LDB_MENU_TITLE"] = "DataText Menu"
 L["LDB_MENU_DESC"] = "Choose how the broker hover menu is displayed."
 L["LDB_STYLE_FULL"] = "Full (Icons)"
