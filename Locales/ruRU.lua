@@ -125,3 +125,32 @@ L["RAID_SANCTUM_OF_DOMINATION"] = "Святилище Господства"
 L["RAID_SEPULCHER_OF_THE_FIRST_ONES"] = "Гробница Предвечных"
 L["RAID_LIBERATION_UNDERMINE"] = "Освобождение Нижней Шахты"
 L["RAID_MANAFORGE_OMEGA"] = "Манагорн Омега"
+
+-- Group Reminder
+L["GROUP_REMINDER_TITLE"] = "Напоминание о группе"
+L["GROUP_REMINDER_DESC"] = "При принятии приглашения в М+ подземелье появляется напоминание с кнопкой телепортации, если Вам известно заклинание"
+L["GROUP_REMINDER_ENABLED"] = "Включить напоминание о группе"
+L["GROUP_REMINDER_SHOW_POPUP"] = "Показывать всплывающее окно"
+L["GROUP_REMINDER_SHOW_CHAT"] = "Также выводить информацию в чат"
+L["GROUP_REMINDER_SUPPRESS_TOAST"] = "Скрыть диалоговое окно приглашения от Blizzard после принятия"
+L["GROUP_REMINDER_FIELDS"] = "Всплывающие поля"
+L["GROUP_REMINDER_DUNGEON"] = "Название подземелья"
+L["GROUP_REMINDER_GROUP"] = "Название группы"
+L["GROUP_REMINDER_DESCRIPTION"] = "Описание"
+L["GROUP_REMINDER_ROLE"] = "Выбранная роль"
+L["GROUP_REMINDER_TEST"] = "Тест"
+L["GROUP_REMINDER_TELEPORT"] = "Телепорт к подземелью"
+L["GROUP_REMINDER_TELEPORT_UNKNOWN"] = "Телепорт неизвестен"
+L["GROUP_REMINDER_INVITED"] = "Вы присоединились"
+L["GROUP_REMINDER_AS_ROLE"] = "как %s"
+L["GROUP_REMINDER_OPEN"] = "Открыть напоминание"
+
+
+---
+L["LDB_MENU_TITLE"] = "Текстовое меню"
+L["LDB_MENU_DESC"] = "Выберите способ отображения всплывающего меню"
+L["LDB_STYLE_FULL"] = "Полный (с иконками)"
+L["LDB_STYLE_MINIMAL"] = "Минимальный (только текст)"
+
+L["LDB_SHOW_HEARTH"] = "Показывать кнопки Камня Возвращения (обычный и Даларанский)"
+L["LDB_SHOW_HEARTH_DESC"] = "Добавляет иконки Камня Возвращения и Даларанского Камня Возвращения в правый верхний угол всплывающего меню"
