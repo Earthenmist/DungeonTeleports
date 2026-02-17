@@ -37,6 +37,7 @@ L["AUTO_INSERT_KEYSTONE"] = "Автоматически вставлять М+ �
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Автоматически вставляет Ваш М+ ключ в Чашу силы"
 
 -- Expansions
+L["Wotlk"] = "Король-лич"
 L["Cataclysm"] = "Катаклизм"
 L["Mists of Pandaria"] = "Пандария"
 L["Warlords of Draenor"] = "Дренор"
@@ -45,6 +46,7 @@ L["Battle for Azeroth"] = "Битва за Азерот"
 L["Shadowlands"] = "Темные Земли"
 L["Dragonflight"] = "Драконы"
 L["The War Within"] = "Война Внутри"
+L["Midnight"] = "Полночь"
 L["Current Season"] = "Текущий сезон"
 
 -- Dungeons
