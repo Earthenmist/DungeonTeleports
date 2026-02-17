@@ -48,6 +48,7 @@ L["Battle for Azeroth"] = "Battle for Azeroth"
 L["Shadowlands"] = "Shadowlands"
 L["Dragonflight"] = "Dragonflight"
 L["The War Within"] = "The War Within"
+L["Midnight"] = "Midnight"
 L["Current Season"] = "Current Season"
 
 -- Dungeons
