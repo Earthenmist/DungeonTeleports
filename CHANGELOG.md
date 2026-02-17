@@ -1,6 +1,6 @@
 ## 🧩 Addon Updates (2026-02-17)
 
-**Mythic Dungeon Teleports** — v1.24.3  
+**Mythic Dungeon Teleports** — v1.24.4  
 
 **Changes:**  
 - Updates to Locale files
