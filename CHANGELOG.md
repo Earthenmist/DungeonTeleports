@@ -1,16 +1,12 @@
-## 🧩 Addon Updates (2026-02-17)
+## 🧩 Addon Updates (2026-02-23)
 
-**Mythic Dungeon Teleports** — v1.24.4  
+**Mythic Dungeon Teleports** — v1.25  
 
 **Changes:**  
-- Updates to Locale files
-- Merge pull request #18 from **Hollicsh** - Update ruRU.lua    
+- Added to the Addon Compartment Menu    
 
 **Fixes:**  
 - None.
 
 **Known issues:**  
 - None currently known.
-
-** Special Thanks:**
- - Thanks to Hollicsh for the updates to ruRU

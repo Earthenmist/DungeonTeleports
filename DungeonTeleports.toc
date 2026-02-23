@@ -3,7 +3,7 @@
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
 ## Author: Lanni-Alonsus
-## Version: 1.24.4
+## Version: 1.25
 
 ## X-Curse-Project-ID: 1194926
 ## X-Wago-ID: BNBeblGx
