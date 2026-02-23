@@ -61,6 +61,46 @@ local function ToggleConfigFrame(source)
   end
 end
 
+
+-- Expose toggles for use by the Addon Compartment handlers (TOC-driven)
+addon.ToggleDungeonTeleportsFrame = ToggleDungeonTeleportsFrame
+
+-- Addon Compartment (Dragonflight+) - TOC metadata handlers
+-- Signature (per Blizzard docs / wiki):
+--   Click: (addonName, buttonName, menuButtonFrame)
+--   Enter: (addonName, menuButtonFrame)
+--   Leave: (addonName, menuButtonFrame)
+function _G.DungeonTeleports_OnAddonCompartmentClick(_, buttonName, _)
+  AnalyticsEvent("compartment_click", { button = buttonName })
+
+  if buttonName == "LeftButton" then
+    ToggleDungeonTeleportsFrame("compartment_left_click")
+  elseif buttonName == "RightButton" then
+    if addon and type(addon.OpenConfig) == "function" then
+      addon.OpenConfig()
+    elseif Settings and Settings.OpenToCategory then
+      Settings.OpenToCategory("DungeonTeleportsCategory")
+    else
+      print("DungeonTeleports: Settings UI not available.")
+    end
+  end
+end
+
+function _G.DungeonTeleports_OnAddonCompartmentEnter(_, menuButtonFrame)
+  if not GameTooltip or not menuButtonFrame then return end
+  GameTooltip:SetOwner(menuButtonFrame, "ANCHOR_RIGHT")
+  GameTooltip:AddLine(L["ADDON_TITLE"])
+  GameTooltip:AddLine(L["Open_Teleports"])
+  GameTooltip:AddLine(L["Open_Settings"])
+  GameTooltip:Show()
+end
+
+function _G.DungeonTeleports_OnAddonCompartmentLeave(_, _)
+  if GameTooltip and GameTooltip.Hide then
+    GameTooltip:Hide()
+  end
+end
+
 local minimapButton = LDB:NewDataObject("DungeonTeleports", {
   type = "data source",
   text = L["ADDON_TITLE"],
@@ -99,6 +139,7 @@ MinimapHandler:RegisterEvent("PLAYER_LOGIN")
 MinimapHandler:SetScript("OnEvent", function()
   DungeonTeleportsDB = DungeonTeleportsDB or {}
   DungeonTeleportsDB.minimap = DungeonTeleportsDB.minimap or {}
+  DungeonTeleportsDB.compartment = DungeonTeleportsDB.compartment or {}
 
   -- Only register if not already registered
   if not LDBIcon:IsRegistered("DungeonTeleports") then

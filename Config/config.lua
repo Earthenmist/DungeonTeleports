@@ -84,7 +84,6 @@ local function BuildConfigUI(parent)
     GameTooltip:Show()
   end)
   minimapCheckbox:SetScript("OnLeave", GameTooltip_Hide)
-
   -- Row: Disable background
   local backgroundCheckbox = CreateFrame("CheckButton", "DungeonTeleports_BackgroundCheckbox", frame, "ChatConfigCheckButtonTemplate")
   backgroundCheckbox:SetPoint("TOPLEFT", minimapCheckbox, "BOTTOMLEFT", 0, -12)

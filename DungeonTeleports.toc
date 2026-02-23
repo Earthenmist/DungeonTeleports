@@ -8,6 +8,9 @@
 ## X-Curse-Project-ID: 1194926
 ## X-Wago-ID: BNBeblGx
 ## IconTexture: Interface\AddOns\DungeonTeleports\Images\DungeonTeleportsLogo.tga
+## AddonCompartmentFunc: DungeonTeleports_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: DungeonTeleports_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: DungeonTeleports_OnAddonCompartmentLeave
 ## DefaultState: Enabled
 ## SavedVariables: DungeonTeleportsDB
 ## OptionalDeps: LibDataBroker-1.1, LibDBIcon-1.0, LibStub, CallbackHandler-1.0, WagoAnalytics
