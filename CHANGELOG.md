@@ -1,12 +1,12 @@
-## 🧩 Addon Updates (2026-02-23)
+## 🧩 Addon Updates (2026-03-26)
 
-**Mythic Dungeon Teleports** — v1.25  
+**Mythic Dungeon Teleports** — v1.26  
 
 **Changes:**  
-- Added to the Addon Compartment Menu    
+- Added 12.0.5 ready for patch    
 
 **Fixes:**  
-- None.
+- Fix for Algeth'ar Academy portal showing as unknown on Group Reminder
 
 **Known issues:**  
 - None currently known.
