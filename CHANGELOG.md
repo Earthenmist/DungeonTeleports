@@ -1,6 +1,6 @@
-## 🧩 Addon Updates (2026-03-26)
+## 🧩 Addon Updates (2026-03-27)
 
-**Mythic Dungeon Teleports** — v1.26.1  
+**Mythic Dungeon Teleports** — v1.26.2  
 
 **Changes:**  
 - Added 12.0.5 ready for patch    
@@ -8,6 +8,7 @@
 
 **Fixes:**  
 - Fix for Algeth'ar Academy portal showing as unknown on Group Reminder
+- Updated SpellID for Skyreach Portal  
 
 **Known issues:**  
 - None currently known.
