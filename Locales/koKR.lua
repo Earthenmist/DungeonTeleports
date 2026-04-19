@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "변경 사항은 실시간으로 적용됩니다."
 L["OPACITY_SLIDER"] = "배경 이미지 투명도"
 L["AUTO_INSERT_KEYSTONE"] = "신화 쐐기돌 자동 삽입"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "쐐기돌 창이 열리면 신화 쐐기돌을 자동으로 삽입합니다."
+L["QOL_TITLE"] = "편의 기능"
+L["QOL_DESC"] = "애드온의 핵심 기능과는 직접 관련이 없지만 사용 경험을 향상시킵니다."
+
+L["AUTO_INVITE_ON_WHISPER"] = "귓속말 자동 초대"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "설정한 키워드로 귓속말을 보내면 해당 플레이어를 자동으로 초대합니다."
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "설정한 키워드로 귓속말을 보내고 조건을 만족하는 플레이어를 자동으로 초대합니다."
+
+L["AUTO_INVITE_KEYWORD"] = "키워드:"
+L["AUTO_INVITE_KEYWORD_DESC"] = "자동 초대를 활성화할 키워드입니다. 예: 'invite' 또는 'inv, invite, 123'."
+L["AUTO_INVITE_KEYWORD_HINT"] = "설정한 키워드로 귓속말을 보내면 자동 초대됩니다. 예: 'invite' 또는 'inv'. 여러 개는 쉼표로 구분하세요."
+
+L["AUTO_INVITE_RESTRICTION"] = "제한 대상:"
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "자동 초대를 아래 대상에만 제한합니다."
+L["AUTO_INVITE_RESTRICTION_DESC"] = "제한 수준을 선택하세요."
+L["AUTO_INVITE_RESTRICTION_HINT"] = "낯선 사람의 자동 초대를 원하지 않는 경우 제한할 수 있습니다."
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "없음"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "친구"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "길드"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "친구 및 길드"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "모두"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "친구"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "길드"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "친구 및 길드"
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"

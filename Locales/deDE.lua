@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "Änderungen werden in Echtzeit übernommen."
 L["OPACITY_SLIDER"] = "Deckkraft des Hintergrundbilds"
 L["AUTO_INSERT_KEYSTONE"] = "Mythischen Schlüsselstein automatisch einsetzen"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Setzt deinen mythischen Schlüsselstein automatisch ein, wenn sich das Schlüsselstein-Fenster öffnet."
+L["QOL_TITLE"] = "Komfortfunktionen"
+L["QOL_DESC"] = "Verbessert die Nutzung des Addons, ohne direkt zur Kernfunktionalität zu gehören."
+
+L["AUTO_INVITE_ON_WHISPER"] = "Auto-Einladung per Flüstern"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "Lädt Spieler automatisch ein, wenn sie dir das Schlüsselwort zuflüstern."
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "Lädt Spieler automatisch ein, wenn sie dir das Schlüsselwort zuflüstern und die Einschränkungen erfüllen."
+
+L["AUTO_INVITE_KEYWORD"] = "Schlüsselwort(e):"
+L["AUTO_INVITE_KEYWORD_DESC"] = "Schlüsselwort zum Auslösen der Auto-Einladung. Beispiel: 'invite' oder 'inv, invite, 123'."
+L["AUTO_INVITE_KEYWORD_HINT"] = "Schlüsselwörter lösen eine Auto-Einladung aus. Beispiel: 'invite' oder 'inv'. Mehrere mit Komma trennen."
+
+L["AUTO_INVITE_RESTRICTION"] = "Einschränken auf:"
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Beschränkt Auto-Einladungen auf die folgende Auswahl."
+L["AUTO_INVITE_RESTRICTION_DESC"] = "Wähle den Einschränkungsgrad."
+L["AUTO_INVITE_RESTRICTION_HINT"] = "Wenn du keine Einladungen von Fremden möchtest, kannst du dies hier einschränken."
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "Keine"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Freunde"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "Gilde"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "Freunde & Gilde"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "Jeder"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Freunde"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "Gilde"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Freunde & Gilde"
 
 -- Expansions
 L["Wotlk"] = "Zorn des Lichkönigs"
