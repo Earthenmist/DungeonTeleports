@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "更改会实时生效。"
 L["OPACITY_SLIDER"] = "背景图片不透明度"
 L["AUTO_INSERT_KEYSTONE"] = "自动放入史诗钥石"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "当钥石窗口打开时自动放入你的史诗钥石。"
+L["QOL_TITLE"] = "便捷功能"
+L["QOL_DESC"] = "提升插件使用体验，但不直接影响核心功能。"
+
+L["AUTO_INVITE_ON_WHISPER"] = "密语自动邀请"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "当玩家发送包含关键词的密语时自动邀请他们。"
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "当玩家发送包含关键词的密语且满足限制条件时自动邀请他们。"
+
+L["AUTO_INVITE_KEYWORD"] = "关键词："
+L["AUTO_INVITE_KEYWORD_DESC"] = "用于触发自动邀请的关键词。例如：'invite' 或 'inv, invite, 123'。"
+L["AUTO_INVITE_KEYWORD_HINT"] = "发送包含关键词的密语会触发自动邀请。例如：'invite' 或 'inv'。多个关键词用逗号分隔。"
+
+L["AUTO_INVITE_RESTRICTION"] = "限制为："
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "将自动邀请限制在以下范围。"
+L["AUTO_INVITE_RESTRICTION_DESC"] = "选择限制级别。"
+L["AUTO_INVITE_RESTRICTION_HINT"] = "如果不想接收陌生人的自动邀请，可以在这里进行限制。"
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "无限制"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "好友"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "公会"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "好友和公会"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "任何人"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "好友"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "公会"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "好友和公会"
 
 -- Expansions
 L["Wotlk"] = "巫妖王之怒"

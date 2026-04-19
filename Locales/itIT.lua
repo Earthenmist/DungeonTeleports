@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "Le modifiche avranno effetto in tempo reale."
 L["OPACITY_SLIDER"] = "Opacità immagine di sfondo"
 L["AUTO_INSERT_KEYSTONE"] = "Inserisci automaticamente Chiave Mitica"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Inserisce automaticamente la tua Chiave Mitica quando si apre la finestra della chiave."
+L["QOL_TITLE"] = "Qualità della vita"
+L["QOL_DESC"] = "Migliora l'esperienza d'uso dell'addon senza essere direttamente legato alle funzionalità principali."
+
+L["AUTO_INVITE_ON_WHISPER"] = "Invito automatico tramite sussurro"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "Invita automaticamente i giocatori che ti inviano un sussurro con la parola chiave."
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "Invita automaticamente i giocatori che ti inviano un sussurro con la parola chiave, se soddisfano i requisiti di restrizione."
+
+L["AUTO_INVITE_KEYWORD"] = "Parola/e chiave:"
+L["AUTO_INVITE_KEYWORD_DESC"] = "Parola chiave per attivare l'invito automatico. Esempio: 'invite' oppure 'inv, invite, 123'."
+L["AUTO_INVITE_KEYWORD_HINT"] = "Le parole chiave attivano l'invito automatico. Esempio: 'invite' oppure 'inv'. Separa più parole con una virgola."
+
+L["AUTO_INVITE_RESTRICTION"] = "Limita a:"
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Limita gli inviti automatici alla selezione seguente."
+L["AUTO_INVITE_RESTRICTION_DESC"] = "Scegli il livello di restrizione."
+L["AUTO_INVITE_RESTRICTION_HINT"] = "Se non vuoi ricevere inviti automatici da sconosciuti, puoi limitarlo."
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "Nessuna"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amici"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "Gilda"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "Amici e gilda"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "Chiunque"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Amici"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "Gilda"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Amici e gilda"
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"

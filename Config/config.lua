@@ -40,6 +40,8 @@ local groupReminderWidgets = {}
 local groupReminderCategory
 local ldbMenuWidgets = {}
 local ldbMenuCategory
+local qolWidgets = {}
+local qolCategory
 
 local function BuildConfigUI(parent)
   local frame = CreateFrame("Frame", "DungeonTeleportsOptionsPanel", parent)
@@ -243,6 +245,11 @@ local function RegisterSettingsCategory()
     DungeonTeleportsDB.backgroundAlpha = 0.7
     DungeonTeleportsDB.autoInsertKeystone = false
     DungeonTeleportsDB.defaultExpansion = nil
+    DungeonTeleportsDB.qol = {
+      autoInviteOnWhisper = false,
+      autoInviteKeyword = "inv, invite, 123",
+      autoInviteRestriction = "anyone",
+    }
 
     if widgets.minimapCheckbox then widgets.minimapCheckbox:SetChecked(true) end
     if widgets.backgroundCheckbox then widgets.backgroundCheckbox:SetChecked(false) end
@@ -299,6 +306,14 @@ local function RegisterSettingsCategory()
     if ldbPanel then
       local ldbTitle = L["LDB_MENU_TITLE"] or "DataText Menu"
       ldbMenuCategory = Settings.RegisterCanvasLayoutSubcategory(category, ldbPanel, ldbTitle)
+    end
+  end
+
+  if not qolCategory and addon and addon.DT_QOL_UpdateRegistration then
+    local qolPanel = (addon.DT_QOL_BuildConfigPanel and addon:DT_QOL_BuildConfigPanel(nil, qolWidgets))
+    if qolPanel then
+      local qolTitle = L["QOL_TITLE"] or "QoL"
+      qolCategory = Settings.RegisterCanvasLayoutSubcategory(category, qolPanel, qolTitle)
     end
   end
 end

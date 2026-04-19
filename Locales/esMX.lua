@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "Los cambios se aplicarán en tiempo real."
 L["OPACITY_SLIDER"] = "Opacidad de la imagen de fondo"
 L["AUTO_INSERT_KEYSTONE"] = "Insertar piedra angular mítica automáticamente"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Inserta automáticamente tu piedra angular mítica cuando se abre la ventana de la piedra angular."
+L["QOL_TITLE"] = "Calidad de vida"
+L["QOL_DESC"] = "Mejora la experiencia al usar el addon, sin estar directamente relacionada con la funcionalidad principal."
+
+L["AUTO_INVITE_ON_WHISPER"] = "Invitación automática por susurro"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "Invita automáticamente a los jugadores que te envíen un susurro con la palabra clave."
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "Invita automáticamente a los jugadores que te envíen un susurro con la palabra clave, si cumplen con los requisitos de restricción."
+
+L["AUTO_INVITE_KEYWORD"] = "Palabra(s) clave:"
+L["AUTO_INVITE_KEYWORD_DESC"] = "Palabra clave para activar la invitación automática. Ejemplo: 'invite' o 'inv, invite, 123'."
+L["AUTO_INVITE_KEYWORD_HINT"] = "Las palabras clave activan la invitación automática. Ejemplo: 'invite' o 'inv'. Separa múltiples palabras con comas."
+
+L["AUTO_INVITE_RESTRICTION"] = "Restringir a:"
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Restringe las invitaciones automáticas a la siguiente lista."
+L["AUTO_INVITE_RESTRICTION_DESC"] = "Elige el nivel de restricción."
+L["AUTO_INVITE_RESTRICTION_HINT"] = "Si no quieres recibir invitaciones automáticas de desconocidos, puedes restringirlo."
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "Ninguno"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amigos"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "Hermandad"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "Amigos y hermandad"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "Cualquiera"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Amigos"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "Hermandad"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Amigos y hermandad"
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"

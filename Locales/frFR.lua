@@ -38,6 +38,31 @@ L["OPACITY_WARNING"] = "Les changements s’appliquent en temps réel."
 L["OPACITY_SLIDER"] = "Opacité de l’image d’arrière-plan"
 L["AUTO_INSERT_KEYSTONE"] = "Insérer automatiquement la clé mythique"
 L["AUTO_INSERT_KEYSTONE_TOOLTIP"] = "Insère automatiquement votre clé mythique lorsque la fenêtre de clé s’ouvre."
+L["QOL_TITLE"] = "Confort d’utilisation"
+L["QOL_DESC"] = "Améliore l’expérience d’utilisation de l’addon sans être directement lié à ses fonctionnalités principales."
+
+L["AUTO_INVITE_ON_WHISPER"] = "Invitation auto par chuchotement"
+L["AUTO_INVITE_ON_WHISPER_TOOLTIP"] = "Invite automatiquement les joueurs qui vous chuchotent le mot-clé."
+L["AUTO_INVITE_ON_WHISPER_DESC"] = "Invite automatiquement les joueurs qui vous chuchotent le mot-clé s’ils respectent les restrictions définies."
+
+L["AUTO_INVITE_KEYWORD"] = "Mot(s)-clé(s) :"
+L["AUTO_INVITE_KEYWORD_DESC"] = "Mot-clé déclenchant l’invitation automatique. Exemple : « invite » ou « inv, invite, 123 »."
+L["AUTO_INVITE_KEYWORD_HINT"] = "Les mots-clés déclenchent une invitation automatique. Exemple : « invite » ou « inv ». Séparez plusieurs mots avec une virgule."
+
+L["AUTO_INVITE_RESTRICTION"] = "Limiter à :"
+L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Limite les invitations automatiques à la sélection suivante."
+L["AUTO_INVITE_RESTRICTION_DESC"] = "Choisissez le niveau de restriction."
+L["AUTO_INVITE_RESTRICTION_HINT"] = "Si vous ne souhaitez pas recevoir d’invitations automatiques d’inconnus, vous pouvez restreindre cette option."
+
+L["AUTO_INVITE_RESTRICTION_NONE"] = "Aucune"
+L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amis"
+L["AUTO_INVITE_RESTRICTION_GUILD"] = "Guilde"
+L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "Amis et guilde"
+
+L["AUTO_INVITE_RESTRICT_ANYONE"] = "Tout le monde"
+L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Amis"
+L["AUTO_INVITE_RESTRICT_GUILD"] = "Guilde"
+L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Amis et guilde"
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"
