@@ -34,8 +34,40 @@ end
 
 local function NormaliseKeyword(text)
   if type(text) ~= "string" then return "" end
-  text = text:match("^%s*(.-)%s*$") or ""
-  return text:lower()
+
+  local okTrim, trimmed = pcall(string.match, text, "^%s*(.-)%s*$")
+  if not okTrim or type(trimmed) ~= "string" then
+    return ""
+  end
+
+  local okLower, lowered = pcall(string.lower, trimmed)
+  if not okLower or type(lowered) ~= "string" then
+    return ""
+  end
+
+  return lowered
+end
+
+local function IsAutoInviteAllowedHere()
+  -- Match the addon's existing safety gating for risky behaviour.
+  if InCombatLockdown and InCombatLockdown() then return false end
+  if UnitAffectingCombat and UnitAffectingCombat("player") then return false end
+  if IsEncounterInProgress and IsEncounterInProgress() then return false end
+
+  -- Respect the addon's own Mythic+ suppression flag if present.
+  if addon and addon._DT_mplus_suppressed then return false end
+
+  -- Disable in raids always.
+  local inInstance, instanceType = IsInInstance()
+  if inInstance and instanceType == "raid" then return false end
+
+  -- Disable in active Mythic+ (Challenge Mode).
+  if C_ChallengeMode and C_ChallengeMode.IsChallengeModeActive then
+    local ok, active = pcall(C_ChallengeMode.IsChallengeModeActive)
+    if ok and active then return false end
+  end
+
+  return true
 end
 
 local function GetInviteKeywords()
@@ -257,6 +289,7 @@ whisperFrame:RegisterEvent("CHAT_MSG_BN_WHISPER")
 whisperFrame:SetScript("OnEvent", function(_, event, ...)
   local db = GetDB()
   if not db.autoInviteOnWhisper then return end
+  if not IsAutoInviteAllowedHere() then return end
 
   if event == "CHAT_MSG_WHISPER" then
     local message, sender = ...
