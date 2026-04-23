@@ -496,19 +496,16 @@ mainFrame.closeButton:SetScript("OnClick", function()
 end)
 
 mainFrame.scaleLabel = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -165, 0)
 mainFrame.scaleLabel:SetText(L["UI_SCALE"] or "Scale")
 mainFrame.scaleLabel:SetTextColor(1, 1, 1)
 
 mainFrame.scaleValue = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -30, 0)
 mainFrame.scaleValue:SetText("100%")
 mainFrame.scaleValue:SetTextColor(1, 1, 1)
 
 mainFrame.pendingScale = savedScale
 mainFrame.scaleSlider = CreateFrame("Slider", "DungeonTeleportsScaleSlider", mainFrame.header, "OptionsSliderTemplate")
-mainFrame.scaleSlider:SetSize(105, 12)
-mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.scaleValue, "LEFT", -14, 0)
+mainFrame.scaleSlider:SetSize(90, 12)
 mainFrame.scaleSlider:SetMinMaxValues(UI.MIN_SCALE, UI.MAX_SCALE)
 mainFrame.scaleSlider:SetValueStep(0.01)
 mainFrame.scaleSlider:SetObeyStepOnDrag(true)
@@ -534,21 +531,46 @@ local function NudgeMainFrameScale(delta)
   ApplyMainFrameScale(newValue)
 end
 
-mainFrame.scaleDownButton = CreateFrame("Button", nil, mainFrame.header, "UIPanelButtonTemplate")
-mainFrame.scaleDownButton:SetSize(18, 16)
-mainFrame.scaleDownButton:SetPoint("RIGHT", mainFrame.scaleSlider, "LEFT", -6, 0)
-mainFrame.scaleDownButton:SetText("-")
+local function StyleScaleAdjustButton(button, glyph)
+  button:SetSize(18, 18)
+  button:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    edgeFile = "Interface\\Buttons\\WHITE8X8",
+    tile = false,
+    edgeSize = 1,
+    insets = { left = 1, right = 1, top = 1, bottom = 1 },
+  })
+  button:SetBackdropColor(0.07, 0.07, 0.09, 1)
+  button:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4] or 1)
+  button:SetNormalFontObject("GameFontHighlightSmall")
+  button:SetHighlightFontObject("GameFontNormalSmall")
+  button:SetText(glyph)
+  button:GetFontString():SetPoint("CENTER", 0, 0)
+  button:SetScript("OnEnter", function(self)
+    self:SetBackdropBorderColor(COLORS.border[1], COLORS.border[2], COLORS.border[3], COLORS.border[4] or 1)
+  end)
+  button:SetScript("OnLeave", function(self)
+    self:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4] or 1)
+  end)
+end
+
+mainFrame.scaleDownButton = CreateFrame("Button", nil, mainFrame.header, "BackdropTemplate")
+StyleScaleAdjustButton(mainFrame.scaleDownButton, "−")
 mainFrame.scaleDownButton:SetScript("OnClick", function()
   NudgeMainFrameScale(-0.01)
 end)
 
-mainFrame.scaleUpButton = CreateFrame("Button", nil, mainFrame.header, "UIPanelButtonTemplate")
-mainFrame.scaleUpButton:SetSize(18, 16)
-mainFrame.scaleUpButton:SetPoint("LEFT", mainFrame.scaleSlider, "RIGHT", 6, 0)
-mainFrame.scaleUpButton:SetText("+")
+mainFrame.scaleUpButton = CreateFrame("Button", nil, mainFrame.header, "BackdropTemplate")
+StyleScaleAdjustButton(mainFrame.scaleUpButton, "+")
 mainFrame.scaleUpButton:SetScript("OnClick", function()
   NudgeMainFrameScale(0.01)
 end)
+
+mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -10, 0)
+mainFrame.scaleUpButton:SetPoint("RIGHT", mainFrame.scaleValue, "LEFT", -8, 0)
+mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.scaleUpButton, "LEFT", -8, 0)
+mainFrame.scaleDownButton:SetPoint("RIGHT", mainFrame.scaleSlider, "LEFT", -8, 0)
+mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.scaleDownButton, "LEFT", -8, 0)
 
 mainFrame.scaleSlider:SetScript("OnValueChanged", function(self, value)
   value = ClampScale(value)
@@ -777,6 +799,10 @@ function createTeleportButtons(selectedExpansion)
       row.clickButton:SetScript("PreClick", function()
         local isKnown = IsSpellKnown(spellID) or IsPlayerSpell(spellID) or false
         AnalyticsEvent("teleport_click", { spellID = spellID, expansion = selectedExpansion, known = isKnown })
+        if isKnown and DungeonTeleportsDB and DungeonTeleportsDB.closeOnTeleport and mainFrame and mainFrame:IsShown() then
+          mainFrame:Hide()
+          DungeonTeleportsDB.isVisible = false
+        end
       end)
       row.clickButton:SetScript("OnEnter", function()
         row:GetScript("OnEnter")(row)
@@ -973,6 +999,9 @@ DungeonTeleports:SetScript("OnEvent", function()
   DungeonTeleportsDB.defaultExpansion = DungeonTeleportsDB.defaultExpansion or L["Current Season"]
   DungeonTeleportsDB.selectedExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion
   DungeonTeleportsDB.uiScale = ClampScale(DungeonTeleportsDB.uiScale)
+  if DungeonTeleportsDB.closeOnTeleport == nil then
+    DungeonTeleportsDB.closeOnTeleport = false
+  end
 
   if DungeonTeleportsDB.windowPosition then
     local pos = DungeonTeleportsDB.windowPosition

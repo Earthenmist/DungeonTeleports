@@ -81,8 +81,17 @@ local function BuildConfigUI(parent)
     AnalyticsEvent("setting_changed", { key = "autoInsertKeystone", value = not not v })
   end)
 
+  local closeOnTeleportCheckbox = CreateFrame("CheckButton", "DungeonTeleports_CloseOnTeleportCheckbox", frame, "ChatConfigCheckButtonTemplate")
+  closeOnTeleportCheckbox:SetPoint("TOPLEFT", autoKeyCheckbox, "BOTTOMLEFT", 0, -12)
+  closeOnTeleportCheckbox.Text:SetText(L["CLOSE_ON_TELEPORT"] or "Close window when a teleport is clicked")
+  closeOnTeleportCheckbox:SetScript("OnClick", function(self)
+    local v = self:GetChecked()
+    DungeonTeleportsDB.closeOnTeleport = v
+    AnalyticsEvent("setting_changed", { key = "closeOnTeleport", value = not not v })
+  end)
+
   local expansionLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  expansionLabel:SetPoint("TOPLEFT", autoKeyCheckbox, "BOTTOMLEFT", 0, -18)
+  expansionLabel:SetPoint("TOPLEFT", closeOnTeleportCheckbox, "BOTTOMLEFT", 0, -18)
   expansionLabel:SetText(L["DEFAULT_EXPANSION"])
 
   local expansionDropdown = CreateFrame("Frame", "DungeonTeleportsExpansionDropdown", frame, "UIDropDownMenuTemplate")
@@ -182,6 +191,7 @@ local function BuildConfigUI(parent)
   widgets.minimapCheckbox = minimapCheckbox
   widgets.cooldownCheckbox = cooldownCheckbox
   widgets.autoKeyCheckbox = autoKeyCheckbox
+  widgets.closeOnTeleportCheckbox = closeOnTeleportCheckbox
   widgets.expansionDropdown = expansionDropdown
   widgets.scaleSlider = scaleSlider
 
@@ -198,6 +208,7 @@ local function RegisterSettingsCategory()
     DungeonTeleportsDB.minimap = { hidden = false }
     DungeonTeleportsDB.disableCooldownOverlay = false
     DungeonTeleportsDB.autoInsertKeystone = false
+    DungeonTeleportsDB.closeOnTeleport = false
     DungeonTeleportsDB.defaultExpansion = nil
     DungeonTeleportsDB.selectedExpansion = nil
     DungeonTeleportsDB.uiScale = 1.0
@@ -210,6 +221,7 @@ local function RegisterSettingsCategory()
     if widgets.minimapCheckbox then widgets.minimapCheckbox:SetChecked(true) end
     if widgets.cooldownCheckbox then widgets.cooldownCheckbox:SetChecked(false) end
     if widgets.autoKeyCheckbox then widgets.autoKeyCheckbox:SetChecked(false) end
+    if widgets.closeOnTeleportCheckbox then widgets.closeOnTeleportCheckbox:SetChecked(false) end
     if widgets.scaleSlider then widgets.scaleSlider:SetValue(1.0) end
     if widgets.expansionDropdown then UIDropDownMenu_SetText(widgets.expansionDropdown, L["Current Season"]) end
 
@@ -221,6 +233,7 @@ local function RegisterSettingsCategory()
     if widgets.minimapCheckbox then widgets.minimapCheckbox:SetChecked(not (db.minimap and db.minimap.hidden)) end
     if widgets.cooldownCheckbox then widgets.cooldownCheckbox:SetChecked(db.disableCooldownOverlay or false) end
     if widgets.autoKeyCheckbox then widgets.autoKeyCheckbox:SetChecked(db.autoInsertKeystone == true) end
+    if widgets.closeOnTeleportCheckbox then widgets.closeOnTeleportCheckbox:SetChecked(db.closeOnTeleport == true) end
     if widgets.scaleSlider then widgets.scaleSlider:SetValue(db.uiScale or 1.0) end
     if widgets.expansionDropdown then UIDropDownMenu_SetText(widgets.expansionDropdown, L[db.defaultExpansion or L["Current Season"]] or db.defaultExpansion or L["Current Season"]) end
     AnalyticsEvent("config_visibility", { visible = true, source = "blizzard_settings" })
