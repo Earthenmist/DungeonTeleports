@@ -10,6 +10,9 @@ L["CLICK_TO_TELEPORT"] = "Click to teleport!"
 L["TELEPORT_NOT_KNOWN"] = "Teleport not known!"
 L["COOLDOWN_UNKNOWN_IN_COMBAT"] = "Cooldown not available in combat."
 
+L["TELEPORTS_LEARNED"] = "learned"
+L["TELEPORTS_BY_EXPANSION_DESC"] = "Teleport spells by expansion or current season"
+L["UI_SCALE"] = "Window Scale"
 
 -- Minimap
 L["NOT_INITIALIZED_MAIN"] = "DungeonTeleports: Main frame not initialized yet."
