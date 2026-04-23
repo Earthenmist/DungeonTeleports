@@ -501,7 +501,7 @@ mainFrame.scaleLabel:SetText(L["UI_SCALE"] or "Scale")
 mainFrame.scaleLabel:SetTextColor(1, 1, 1)
 
 mainFrame.scaleValue = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -28, 0)
+mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -30, 0)
 mainFrame.scaleValue:SetText("100%")
 mainFrame.scaleValue:SetTextColor(1, 1, 1)
 
@@ -511,7 +511,7 @@ mainFrame.scaleSlider:SetSize(105, 12)
 mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.scaleValue, "LEFT", -14, 0)
 mainFrame.scaleSlider:SetMinMaxValues(UI.MIN_SCALE, UI.MAX_SCALE)
 mainFrame.scaleSlider:SetValueStep(0.01)
-mainFrame.scaleSlider:SetObeyStepOnDrag(false)
+mainFrame.scaleSlider:SetObeyStepOnDrag(true)
 _G[mainFrame.scaleSlider:GetName() .. "Low"]:SetText("")
 _G[mainFrame.scaleSlider:GetName() .. "High"]:SetText("")
 _G[mainFrame.scaleSlider:GetName() .. "Text"]:SetText("")
@@ -526,6 +526,29 @@ local function ApplyMainFrameScale(value)
     mainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
   end
 end
+
+local function NudgeMainFrameScale(delta)
+  local current = mainFrame.pendingScale or mainFrame.scaleSlider:GetValue() or savedScale
+  local newValue = ClampScale(current + delta)
+  mainFrame.scaleSlider:SetValue(newValue)
+  ApplyMainFrameScale(newValue)
+end
+
+mainFrame.scaleDownButton = CreateFrame("Button", nil, mainFrame.header, "UIPanelButtonTemplate")
+mainFrame.scaleDownButton:SetSize(18, 16)
+mainFrame.scaleDownButton:SetPoint("RIGHT", mainFrame.scaleSlider, "LEFT", -6, 0)
+mainFrame.scaleDownButton:SetText("-")
+mainFrame.scaleDownButton:SetScript("OnClick", function()
+  NudgeMainFrameScale(-0.01)
+end)
+
+mainFrame.scaleUpButton = CreateFrame("Button", nil, mainFrame.header, "UIPanelButtonTemplate")
+mainFrame.scaleUpButton:SetSize(18, 16)
+mainFrame.scaleUpButton:SetPoint("LEFT", mainFrame.scaleSlider, "RIGHT", 6, 0)
+mainFrame.scaleUpButton:SetText("+")
+mainFrame.scaleUpButton:SetScript("OnClick", function()
+  NudgeMainFrameScale(0.01)
+end)
 
 mainFrame.scaleSlider:SetScript("OnValueChanged", function(self, value)
   value = ClampScale(value)
