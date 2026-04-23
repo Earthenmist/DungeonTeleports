@@ -113,20 +113,35 @@ local function BuildConfigUI(parent)
   scaleSlider:SetPoint("TOPLEFT", scaleLabel, "BOTTOMLEFT", 8, -16)
   scaleSlider:SetMinMaxValues(0.70, 1.15)
   scaleSlider:SetValueStep(0.01)
-  scaleSlider:SetObeyStepOnDrag(true)
+  scaleSlider:SetObeyStepOnDrag(false)
   scaleSlider:SetWidth(220)
   _G[scaleSlider:GetName() .. "Low"]:SetText("70%")
   _G[scaleSlider:GetName() .. "High"]:SetText("115%")
   _G[scaleSlider:GetName() .. "Text"]:SetText(L["UI_SCALE"] or "Window Scale")
-  scaleSlider:SetScript("OnValueChanged", function(self, value)
+
+  local function ApplyScaleSetting(value)
     DungeonTeleportsDB.uiScale = value
     AnalyticsEvent("setting_changed", { key = "uiScale", value = value })
     if DungeonTeleportsMainFrame then
       DungeonTeleportsMainFrame:SetScale(value)
+      if DungeonTeleportsMainFrame.scaleValue then
+        DungeonTeleportsMainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
+      end
       if DungeonTeleportsMainFrame.scaleSlider and math.abs((DungeonTeleportsMainFrame.scaleSlider:GetValue() or value) - value) > 0.0001 then
         DungeonTeleportsMainFrame.scaleSlider:SetValue(value)
       end
     end
+  end
+
+  scaleSlider:SetScript("OnValueChanged", function(self, value)
+    value = tonumber(value) or 1.0
+    _G[self:GetName() .. "Text"]:SetText(string.format("%s (%d%%)", L["UI_SCALE"] or "Window Scale", math.floor(value * 100 + 0.5)))
+  end)
+  scaleSlider:SetScript("OnMouseUp", function(self)
+    ApplyScaleSetting(self:GetValue())
+  end)
+  scaleSlider:SetScript("OnHide", function(self)
+    ApplyScaleSetting(self:GetValue())
   end)
 
   local reset = CreateFrame("Button", "DungeonTeleportsResetButton", frame, "UIPanelButtonTemplate")

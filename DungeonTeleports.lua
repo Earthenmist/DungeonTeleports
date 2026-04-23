@@ -496,34 +496,52 @@ mainFrame.closeButton:SetScript("OnClick", function()
 end)
 
 mainFrame.scaleLabel = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -150, 0)
+mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -165, 0)
 mainFrame.scaleLabel:SetText(L["UI_SCALE"] or "Scale")
 mainFrame.scaleLabel:SetTextColor(1, 1, 1)
 
 mainFrame.scaleValue = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleValue:SetPoint("LEFT", mainFrame.scaleLabel, "RIGHT", 8, 0)
+mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -28, 0)
 mainFrame.scaleValue:SetText("100%")
 mainFrame.scaleValue:SetTextColor(1, 1, 1)
 
+mainFrame.pendingScale = savedScale
 mainFrame.scaleSlider = CreateFrame("Slider", "DungeonTeleportsScaleSlider", mainFrame.header, "OptionsSliderTemplate")
-mainFrame.scaleSlider:SetSize(110, 12)
-mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -40, 0)
+mainFrame.scaleSlider:SetSize(105, 12)
+mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.scaleValue, "LEFT", -14, 0)
 mainFrame.scaleSlider:SetMinMaxValues(UI.MIN_SCALE, UI.MAX_SCALE)
 mainFrame.scaleSlider:SetValueStep(0.01)
-mainFrame.scaleSlider:SetObeyStepOnDrag(true)
-_G[mainFrame.scaleSlider:GetName() .. "Low"]:SetText("70%")
-_G[mainFrame.scaleSlider:GetName() .. "High"]:SetText("115%")
+mainFrame.scaleSlider:SetObeyStepOnDrag(false)
+_G[mainFrame.scaleSlider:GetName() .. "Low"]:SetText("")
+_G[mainFrame.scaleSlider:GetName() .. "High"]:SetText("")
 _G[mainFrame.scaleSlider:GetName() .. "Text"]:SetText("")
-mainFrame.scaleSlider:SetScript("OnValueChanged", function(self, value)
+
+local function ApplyMainFrameScale(value)
   value = ClampScale(value)
+  mainFrame.pendingScale = value
   mainFrame:SetScale(value)
   DungeonTeleportsDB = DungeonTeleportsDB or {}
   DungeonTeleportsDB.uiScale = value
   if mainFrame.scaleValue then
     mainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
   end
+end
+
+mainFrame.scaleSlider:SetScript("OnValueChanged", function(self, value)
+  value = ClampScale(value)
+  mainFrame.pendingScale = value
+  if mainFrame.scaleValue then
+    mainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
+  end
+end)
+mainFrame.scaleSlider:SetScript("OnMouseUp", function(self)
+  ApplyMainFrameScale(self:GetValue())
+end)
+mainFrame.scaleSlider:SetScript("OnHide", function(self)
+  ApplyMainFrameScale(self:GetValue())
 end)
 mainFrame.scaleSlider:SetValue(savedScale)
+ApplyMainFrameScale(savedScale)
 
 mainFrame.sidebar = CreateBackdropFrame(nil, mainFrame, 1)
 mainFrame.sidebar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 14, -50)
@@ -591,7 +609,7 @@ local function UpdateExpansionButtonStyles(selectedExpansion)
     else
       btn:SetBackdropColor(COLORS.bgLight[1], COLORS.bgLight[2], COLORS.bgLight[3], 1)
       btn:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
-      btn.text:SetTextColor(COLORS.text[1], COLORS.text[2], COLORS.text[3])
+      btn.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
       btn.activeBar:Hide()
     end
   end
@@ -722,22 +740,43 @@ function createTeleportButtons(selectedExpansion)
       SetPanelStyle(row, COLORS.bgCard, COLORS.borderSoft)
       row:EnableMouse(true)
 
-      row.iconButton = CreateFrame("Button", nil, row, "SecureActionButtonTemplate")
-      row.iconButton:SetSize(46, 46)
-      row.iconButton:SetPoint("LEFT", 12, 0)
+      row.clickButton = CreateFrame("Button", nil, row, "SecureActionButtonTemplate")
+      row.clickButton:SetPoint("TOPLEFT", row, "TOPLEFT", 0, 0)
+      row.clickButton:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT", 0, 0)
+      row.clickButton:SetFrameLevel(row:GetFrameLevel() + 1)
       if known then
-        row.iconButton:SetAttribute("type", "spell")
-        row.iconButton:SetAttribute("spell", spellID)
-        row.iconButton:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
+        row.clickButton:SetAttribute("type", "spell")
+        row.clickButton:SetAttribute("spell", spellID)
+        row.clickButton:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
       else
-        row.iconButton:RegisterForClicks()
+        row.clickButton:RegisterForClicks()
       end
-      row.iconButton:SetScript("PreClick", function()
+      row.clickButton:SetScript("PreClick", function()
         local isKnown = IsSpellKnown(spellID) or IsPlayerSpell(spellID) or false
         AnalyticsEvent("teleport_click", { spellID = spellID, expansion = selectedExpansion, known = isKnown })
       end)
+      row.clickButton:SetScript("OnEnter", function()
+        row:GetScript("OnEnter")(row)
+      end)
+      row.clickButton:SetScript("OnLeave", function()
+        row:GetScript("OnLeave")(row)
+      end)
 
-      local texture = row.iconButton:CreateTexture(nil, "BACKGROUND")
+      row.iconButton = CreateFrame("Frame", nil, row, "BackdropTemplate")
+      row.iconButton:SetSize(46, 46)
+      row.iconButton:SetPoint("LEFT", 12, 0)
+      row.iconButton:SetFrameLevel(row.clickButton:GetFrameLevel() + 1)
+      row.iconButton:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = false,
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+      })
+      row.iconButton:SetBackdropColor(0, 0, 0, 0.35)
+      row.iconButton:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
+
+      local texture = row.iconButton:CreateTexture(nil, "ARTWORK")
       texture:SetAllPoints(row.iconButton)
       texture:SetTexture(C_Spell.GetSpellTexture(spellID))
       texture:SetDesaturated(not known)
@@ -760,19 +799,22 @@ function createTeleportButtons(selectedExpansion)
       end
 
       row.nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -10)
+      row.nameText:SetDrawLayer("OVERLAY", 7)
+      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -6)
       row.nameText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.nameText:SetJustifyH("LEFT")
       row.nameText:SetText(dungeonName)
       row.nameText:SetTextColor(known and COLORS.warning[1] or COLORS.textDim[1], known and COLORS.warning[2] or COLORS.textDim[2], known and COLORS.warning[3] or COLORS.textDim[3])
 
       row.statusText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-      row.statusText:SetPoint("TOPLEFT", row.nameText, "BOTTOMLEFT", 0, -6)
+      row.statusText:SetDrawLayer("OVERLAY", 7)
+      row.statusText:SetPoint("TOPLEFT", row.nameText, "BOTTOMLEFT", 0, -3)
       row.statusText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.statusText:SetJustifyH("LEFT")
 
       row.detailText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-      row.detailText:SetPoint("TOPLEFT", row.statusText, "BOTTOMLEFT", 0, -4)
+      row.detailText:SetDrawLayer("OVERLAY", 7)
+      row.detailText:SetPoint("TOPLEFT", row.statusText, "BOTTOMLEFT", 0, -2)
       row.detailText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.detailText:SetJustifyH("LEFT")
 
@@ -861,13 +903,13 @@ function createTeleportButtons(selectedExpansion)
         SafeHideTooltip(self)
       end)
       row:SetScript("OnMouseDown", function()
-        if known then
-          row.iconButton:Click()
+        if known and row.clickButton and row.clickButton.Click then
+          row.clickButton:Click()
         end
       end)
 
       createdButtons[mapID] = row
-      table.insert(DungeonTeleportsMainFrame.buttons, row.iconButton)
+      table.insert(DungeonTeleportsMainFrame.buttons, row.clickButton)
       index = index + 1
     end
   end
