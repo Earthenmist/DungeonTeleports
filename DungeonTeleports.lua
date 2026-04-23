@@ -363,7 +363,9 @@ local createdTexts = {}
 local currentExpansionButtons = {}
 
 local UI = {
-  ROW_HEIGHT = 56,
+  ROW_HEIGHT = 72,
+  ROW_GAP = 10,
+  COLUMN_GAP = 12,
   DEFAULT_WIDTH = 980,
   DEFAULT_HEIGHT = 620,
   MIN_SCALE = 0.70,
@@ -386,6 +388,26 @@ local COLORS = {
   warning = {1.00, 0.82, 0.00, 1},
   danger = {0.95, 0.35, 0.35, 1},
 }
+
+local _, playerClass = UnitClass("player")
+local classColor = (RAID_CLASS_COLORS and playerClass and RAID_CLASS_COLORS[playerClass]) or NORMAL_FONT_COLOR
+if classColor then
+  COLORS.accent = {classColor.r or 0.78, classColor.g or 0.61, classColor.b or 0.43, 1}
+  COLORS.border = {COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 0.95}
+  COLORS.borderSoft = {COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 0.35}
+  COLORS.accentDark = {
+    math.max(0, (classColor.r or 0.78) * 0.45),
+    math.max(0, (classColor.g or 0.61) * 0.45),
+    math.max(0, (classColor.b or 0.43) * 0.45),
+    1,
+  }
+  COLORS.hover = {
+    math.min(1, (classColor.r or 0.78) * 0.20 + 0.08),
+    math.min(1, (classColor.g or 0.61) * 0.20 + 0.08),
+    math.min(1, (classColor.b or 0.43) * 0.20 + 0.08),
+    1,
+  }
+end
 
 local function ClampScale(scale)
   local value = tonumber(scale) or UI.DEFAULT_SCALE
@@ -423,7 +445,7 @@ end
 local mainFrame = CreateBackdropFrame("DungeonTeleportsMainFrame", UIParent, 1)
 mainFrame:SetSize(UI.DEFAULT_WIDTH, UI.DEFAULT_HEIGHT)
 mainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
-SetPanelStyle(mainFrame, COLORS.bg, COLORS.border)
+SetPanelStyle(mainFrame, COLORS.bg, {0.02, 0.02, 0.03, 0.85})
 mainFrame:SetMovable(true)
 mainFrame:EnableMouse(true)
 mainFrame:RegisterForDrag("LeftButton")
@@ -447,18 +469,12 @@ tinsert(UISpecialFrames, "DungeonTeleportsMainFrame")
 local savedScale = ClampScale(DungeonTeleportsDB and DungeonTeleportsDB.uiScale)
 mainFrame:SetScale(savedScale)
 
-mainFrame.shadow = CreateBackdropFrame(nil, mainFrame, 1)
-mainFrame.shadow:SetPoint("TOPLEFT", -6, 6)
-mainFrame.shadow:SetPoint("BOTTOMRIGHT", 6, -6)
-mainFrame.shadow:SetFrameLevel(mainFrame:GetFrameLevel() - 1)
-mainFrame.shadow:SetBackdropBorderColor(0, 0, 0, 0.8)
-mainFrame.shadow:SetBackdropColor(0, 0, 0, 0)
 
 mainFrame.header = CreateBackdropFrame(nil, mainFrame, 1)
-mainFrame.header:SetPoint("TOPLEFT", 12, -12)
-mainFrame.header:SetPoint("TOPRIGHT", -12, -12)
-mainFrame.header:SetHeight(30)
-SetPanelStyle(mainFrame.header, COLORS.accentDark, COLORS.border)
+mainFrame.header:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 1, -1)
+mainFrame.header:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -1, -1)
+mainFrame.header:SetHeight(42)
+SetPanelStyle(mainFrame.header, COLORS.accentDark, COLORS.accentDark)
 
 mainFrame.logo = mainFrame.header:CreateTexture(nil, "ARTWORK")
 mainFrame.logo:SetSize(18, 18)
@@ -480,7 +496,7 @@ mainFrame.closeButton:SetScript("OnClick", function()
 end)
 
 mainFrame.scaleLabel = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -135, 0)
+mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -150, 0)
 mainFrame.scaleLabel:SetText(L["UI_SCALE"] or "Scale")
 mainFrame.scaleLabel:SetTextColor(1, 1, 1)
 
@@ -491,7 +507,7 @@ mainFrame.scaleValue:SetTextColor(1, 1, 1)
 
 mainFrame.scaleSlider = CreateFrame("Slider", "DungeonTeleportsScaleSlider", mainFrame.header, "OptionsSliderTemplate")
 mainFrame.scaleSlider:SetSize(110, 12)
-mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -28, 0)
+mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -40, 0)
 mainFrame.scaleSlider:SetMinMaxValues(UI.MIN_SCALE, UI.MAX_SCALE)
 mainFrame.scaleSlider:SetValueStep(0.01)
 mainFrame.scaleSlider:SetObeyStepOnDrag(true)
@@ -510,20 +526,20 @@ end)
 mainFrame.scaleSlider:SetValue(savedScale)
 
 mainFrame.sidebar = CreateBackdropFrame(nil, mainFrame, 1)
-mainFrame.sidebar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 12, -50)
-mainFrame.sidebar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 12, 12)
+mainFrame.sidebar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 14, -50)
+mainFrame.sidebar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 14, 14)
 mainFrame.sidebar:SetWidth(180)
 SetPanelStyle(mainFrame.sidebar, {0.05, 0.05, 0.07, 1}, COLORS.borderSoft)
 
 mainFrame.content = CreateBackdropFrame(nil, mainFrame, 1)
 mainFrame.content:SetPoint("TOPLEFT", mainFrame.sidebar, "TOPRIGHT", 12, 0)
-mainFrame.content:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -12, 12)
+mainFrame.content:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -14, 14)
 SetPanelStyle(mainFrame.content, {0.04, 0.04, 0.06, 1}, COLORS.borderSoft)
 
 mainFrame.contentHeader = CreateBackdropFrame(nil, mainFrame.content, 1)
 mainFrame.contentHeader:SetPoint("TOPLEFT", 12, -12)
 mainFrame.contentHeader:SetPoint("TOPRIGHT", -12, -12)
-mainFrame.contentHeader:SetHeight(54)
+mainFrame.contentHeader:SetHeight(58)
 SetPanelStyle(mainFrame.contentHeader, COLORS.bgCard, COLORS.border)
 
 mainFrame.contentIcon = mainFrame.contentHeader:CreateTexture(nil, "ARTWORK")
@@ -683,8 +699,9 @@ function createTeleportButtons(selectedExpansion)
   DungeonTeleportsMainFrame.buttons = {}
 
   local knownCount, totalCount = 0, 0
-  local rowWidth = math.max(620, (mainFrame.scrollFrame:GetWidth() or 680) - 10)
-  local anchor = nil
+  local availableWidth = math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8)
+  local columnWidth = math.floor((availableWidth - UI.COLUMN_GAP) / 2)
+  local index = 0
 
   for _, mapID in ipairs(mapIDs) do
     local spellID = constants.mapIDtoSpellID[mapID]
@@ -694,19 +711,20 @@ function createTeleportButtons(selectedExpansion)
       local known = IsSpellKnown(spellID) or IsPlayerSpell(spellID)
       if known then knownCount = knownCount + 1 end
 
+      local rowIndex = math.floor(index / 2)
+      local colIndex = index % 2
+      local xOffset = colIndex * (columnWidth + UI.COLUMN_GAP)
+      local yOffset = -(rowIndex * (UI.ROW_HEIGHT + UI.ROW_GAP))
+
       local row = CreateBackdropFrame(nil, mainFrame.scrollChild, 1)
-      row:SetSize(rowWidth, UI.ROW_HEIGHT)
-      if anchor then
-        row:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -8)
-      else
-        row:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", 0, 0)
-      end
+      row:SetSize(columnWidth, UI.ROW_HEIGHT)
+      row:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", xOffset, yOffset)
       SetPanelStyle(row, COLORS.bgCard, COLORS.borderSoft)
       row:EnableMouse(true)
 
       row.iconButton = CreateFrame("Button", nil, row, "SecureActionButtonTemplate")
-      row.iconButton:SetSize(40, 40)
-      row.iconButton:SetPoint("LEFT", 10, 0)
+      row.iconButton:SetSize(46, 46)
+      row.iconButton:SetPoint("LEFT", 12, 0)
       if known then
         row.iconButton:SetAttribute("type", "spell")
         row.iconButton:SetAttribute("spell", spellID)
@@ -742,19 +760,21 @@ function createTeleportButtons(selectedExpansion)
       end
 
       row.nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -4)
-      row.nameText:SetPoint("RIGHT", row, "RIGHT", -120, 0)
+      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -10)
+      row.nameText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.nameText:SetJustifyH("LEFT")
       row.nameText:SetText(dungeonName)
       row.nameText:SetTextColor(known and COLORS.warning[1] or COLORS.textDim[1], known and COLORS.warning[2] or COLORS.textDim[2], known and COLORS.warning[3] or COLORS.textDim[3])
 
       row.statusText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-      row.statusText:SetPoint("TOPLEFT", row.nameText, "BOTTOMLEFT", 0, -4)
+      row.statusText:SetPoint("TOPLEFT", row.nameText, "BOTTOMLEFT", 0, -6)
+      row.statusText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.statusText:SetJustifyH("LEFT")
 
       row.detailText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-      row.detailText:SetPoint("RIGHT", row, "RIGHT", -12, 0)
-      row.detailText:SetJustifyH("RIGHT")
+      row.detailText:SetPoint("TOPLEFT", row.statusText, "BOTTOMLEFT", 0, -4)
+      row.detailText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
+      row.detailText:SetJustifyH("LEFT")
 
       local function UpdateCooldown()
         if InCombatLockdown() or UnitAffectingCombat("player") or (IsEncounterInProgress and IsEncounterInProgress()) then return end
@@ -848,12 +868,13 @@ function createTeleportButtons(selectedExpansion)
 
       createdButtons[mapID] = row
       table.insert(DungeonTeleportsMainFrame.buttons, row.iconButton)
-      anchor = row
+      index = index + 1
     end
   end
 
-  local totalHeight = math.max(1, totalCount * (UI.ROW_HEIGHT + 8))
-  mainFrame.scrollChild:SetSize(rowWidth, totalHeight)
+  local numRows = math.max(1, math.ceil(totalCount / 2))
+  local totalHeight = math.max(1, numRows * UI.ROW_HEIGHT + math.max(0, numRows - 1) * UI.ROW_GAP)
+  mainFrame.scrollChild:SetSize(availableWidth, totalHeight)
   mainFrame.contentTitle:SetText(L[selectedExpansion] or selectedExpansion)
   mainFrame.summaryText:SetText(string.format("%d / %d %s", knownCount, totalCount, L["TELEPORTS_LEARNED"] or "learned"))
 end
