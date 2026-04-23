@@ -2,17 +2,7 @@ local _, addon = ...
 local L = addon.L or {}
 
 -- Backgrounds for each expansion
-local mapExpansionToBackground = {
-    [L["Current Season"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WarWithinS3.tga",
-    [L["Cataclysm"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\Cataclysm.tga",
-    [L["Mists of Pandaria"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\MoP.tga",
-    [L["Warlords of Draenor"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WoD.tga",
-    [L["Legion"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\Legion.tga",
-    [L["Battle for Azeroth"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\BattleForAzeroth.tga",
-    [L["Shadowlands"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\Shadowlands.tga",
-    [L["Dragonflight"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\Dragonflight.tga",
-    [L["The War Within"]] = "Interface\\AddOns\\DungeonTeleports\\Images\\WarWithin.tga",
-}
+local mapExpansionToBackground = {}
 
 local mapExpansionToMapID = {
     -- Season 1 TWW

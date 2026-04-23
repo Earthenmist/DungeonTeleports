@@ -356,163 +356,354 @@ do
   end)
 end
 
+
 local DungeonTeleports = CreateFrame("Frame")
 local createdButtons = {}
 local createdTexts = {}
+local currentExpansionButtons = {}
 
--- Main frame with polished visuals and retained functionality
-local mainFrame = CreateFrame("Frame", "DungeonTeleportsMainFrame", UIParent, "BackdropTemplate")
-mainFrame:SetSize(295, 600)
-mainFrame:SetPoint("CENTER")
-mainFrame:SetBackdrop({
-  bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-  edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-  tile = true, tileSize = 32, edgeSize = 32,
-  insets = { left = 8, right = 8, top = 8, bottom = 8 },
-})
-mainFrame:SetBackdropColor(0.1, 0.1, 0.1, 0.95)
+local UI = {
+  ROW_HEIGHT = 72,
+  ROW_GAP = 10,
+  COLUMN_GAP = 12,
+  DEFAULT_WIDTH = 980,
+  DEFAULT_HEIGHT = 680,
+  MIN_SCALE = 0.70,
+  MAX_SCALE = 1.15,
+  DEFAULT_SCALE = 1.0,
+}
+
+local COLORS = {
+  bg = {0.05, 0.05, 0.07, 0.98},
+  bgLight = {0.08, 0.08, 0.10, 1},
+  bgCard = {0.06, 0.06, 0.08, 1},
+  border = {0.00, 0.74, 0.73, 0.95},
+  borderSoft = {0.00, 0.74, 0.73, 0.35},
+  accent = {0.00, 0.74, 0.73, 1},
+  accentDark = {0.07, 0.41, 0.38, 1},
+  hover = {0.10, 0.16, 0.18, 1},
+  text = {0.92, 0.92, 0.92, 1},
+  textDim = {0.62, 0.62, 0.65, 1},
+  success = {0.20, 0.85, 0.40, 1},
+  warning = {1.00, 0.82, 0.00, 1},
+  danger = {0.95, 0.35, 0.35, 1},
+}
+
+local _, playerClass = UnitClass("player")
+local classColor = (RAID_CLASS_COLORS and playerClass and RAID_CLASS_COLORS[playerClass]) or NORMAL_FONT_COLOR
+if classColor then
+  COLORS.accent = {classColor.r or 0.78, classColor.g or 0.61, classColor.b or 0.43, 1}
+  COLORS.border = {COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 0.95}
+  COLORS.borderSoft = {COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 0.35}
+  COLORS.accentDark = {
+    math.max(0, (classColor.r or 0.78) * 0.45),
+    math.max(0, (classColor.g or 0.61) * 0.45),
+    math.max(0, (classColor.b or 0.43) * 0.45),
+    1,
+  }
+  COLORS.hover = {
+    math.min(1, (classColor.r or 0.78) * 0.20 + 0.08),
+    math.min(1, (classColor.g or 0.61) * 0.20 + 0.08),
+    math.min(1, (classColor.b or 0.43) * 0.20 + 0.08),
+    1,
+  }
+end
+
+local function ClampScale(scale)
+  local value = tonumber(scale) or UI.DEFAULT_SCALE
+  if value < UI.MIN_SCALE then value = UI.MIN_SCALE end
+  if value > UI.MAX_SCALE then value = UI.MAX_SCALE end
+  return value
+end
+
+local function SafeHideTooltip(button)
+  if button and button.SetScript then
+    button:SetScript("OnUpdate", nil)
+  end
+  GameTooltip:Hide()
+end
+
+local function CreateBackdropFrame(name, parent, inset)
+  local frame = CreateFrame("Frame", name, parent, "BackdropTemplate")
+  frame:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    edgeFile = "Interface\\Buttons\\WHITE8X8",
+    tile = false,
+    edgeSize = 1,
+    insets = { left = inset or 1, right = inset or 1, top = inset or 1, bottom = inset or 1 },
+  })
+  return frame
+end
+
+local function SetPanelStyle(frame, bg, border)
+  bg = bg or COLORS.bgCard
+  border = border or COLORS.borderSoft
+  frame:SetBackdropColor(bg[1], bg[2], bg[3], bg[4] or 1)
+  frame:SetBackdropBorderColor(border[1], border[2], border[3], border[4] or 1)
+end
+
+local mainFrame = CreateBackdropFrame("DungeonTeleportsMainFrame", UIParent, 1)
+mainFrame:SetSize(UI.DEFAULT_WIDTH, UI.DEFAULT_HEIGHT)
+mainFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
+SetPanelStyle(mainFrame, COLORS.bg, {0.02, 0.02, 0.03, 0.85})
 mainFrame:SetMovable(true)
 mainFrame:EnableMouse(true)
 mainFrame:RegisterForDrag("LeftButton")
 mainFrame:SetScript("OnDragStart", mainFrame.StartMoving)
-mainFrame:SetScript("OnDragStop", mainFrame.StopMovingOrSizing)
+mainFrame:SetScript("OnDragStop", function(self)
+  self:StopMovingOrSizing()
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  local point, _, relativePoint, x, y = self:GetPoint()
+  DungeonTeleportsDB.windowPosition = {
+    point = point,
+    relativePoint = relativePoint,
+    x = x,
+    y = y,
+  }
+end)
 mainFrame:SetFrameStrata("DIALOG")
 mainFrame:SetToplevel(true)
+mainFrame:SetClampedToScreen(true)
 tinsert(UISpecialFrames, "DungeonTeleportsMainFrame")
 
--- Soft rounded border and shadow
-if not mainFrame.shadow then
-  mainFrame.shadow = CreateFrame("Frame", nil, mainFrame, "BackdropTemplate")
-  mainFrame.shadow:SetPoint("TOPLEFT", -5, 5)
-  mainFrame.shadow:SetPoint("BOTTOMRIGHT", 5, -5)
-  mainFrame.shadow:SetBackdrop({
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
-    edgeSize = 16,
-  })
-  mainFrame.shadow:SetBackdropBorderColor(0, 0, 0, 0.75)
-end
+local savedScale = ClampScale(DungeonTeleportsDB and DungeonTeleportsDB.uiScale)
+mainFrame:SetScale(savedScale)
 
--- Title
-local title = mainFrame:CreateFontString(nil, "OVERLAY")
-title:SetFontObject("GameFontHighlightLarge")
-title:SetFont(select(1, title:GetFont()), 18, "OUTLINE") -- Increased size & bold outline
-title:SetShadowOffset(1, -1)
-title:SetShadowColor(0, 0, 0, 0.75)
-title:SetPoint("TOP", mainFrame, "TOP", 0, -35)
-title:SetText(L["ADDON_TITLE"])
-title:SetTextColor(1, 1, 0)
 
--- Close button
-local closeButton = CreateFrame("Button", nil, mainFrame, "UIPanelCloseButton")
-closeButton:SetSize(24, 24)
-closeButton:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -10, -10)
-closeButton:SetScript("OnClick", function()
+mainFrame.header = CreateBackdropFrame(nil, mainFrame, 1)
+mainFrame.header:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 1, -1)
+mainFrame.header:SetPoint("TOPRIGHT", mainFrame, "TOPRIGHT", -1, -1)
+mainFrame.header:SetHeight(42)
+SetPanelStyle(mainFrame.header, COLORS.accentDark, COLORS.accentDark)
+
+mainFrame.logo = mainFrame.header:CreateTexture(nil, "ARTWORK")
+mainFrame.logo:SetSize(18, 18)
+mainFrame.logo:SetPoint("LEFT", 8, 0)
+mainFrame.logo:SetTexture("Interface\\AddOns\\DungeonTeleports\\Images\\DungeonTeleportsLogo.tga")
+
+mainFrame.title = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+mainFrame.title:SetPoint("LEFT", mainFrame.logo, "RIGHT", 8, 0)
+mainFrame.title:SetText(L["ADDON_TITLE"])
+mainFrame.title:SetTextColor(1, 1, 1)
+
+mainFrame.closeButton = CreateFrame("Button", nil, mainFrame.header, "UIPanelCloseButton")
+mainFrame.closeButton:SetSize(24, 24)
+mainFrame.closeButton:SetPoint("RIGHT", -4, 0)
+mainFrame.closeButton:SetScript("OnClick", function()
   DT_SafeHide(mainFrame)
   DungeonTeleportsDB.isVisible = false
   AnalyticsEvent("ui_visibility", { visible = false })
 end)
 
--- Add black base layer for contrast (kept for compatibility)
-local baseBackground = mainFrame:CreateTexture(nil, "BACKGROUND")
-baseBackground:SetAllPoints(mainFrame)
-baseBackground:SetColorTexture(0, 0, 0, 1)
+mainFrame.scaleLabel = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+mainFrame.scaleLabel:SetText(L["UI_SCALE"] or "Scale")
+mainFrame.scaleLabel:SetTextColor(1, 1, 1)
 
--- Optional background image/alpha texture
-local backgroundTexture = mainFrame:CreateTexture(nil, "ARTWORK")
-backgroundTexture:SetAllPoints(mainFrame)
-backgroundTexture:SetColorTexture(0, 0, 0, DungeonTeleportsDB.backgroundAlpha or 0.7)
-backgroundTexture:SetDrawLayer("ARTWORK", -1)  -- Ensure it draws behind the border
-mainFrame.backgroundTexture = backgroundTexture
+mainFrame.scaleValue = mainFrame.header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+mainFrame.scaleValue:SetText("100%")
+mainFrame.scaleValue:SetTextColor(1, 1, 1)
 
--- Keep border opaque regardless of alpha slider
-mainFrame.SetBackdropColor = function(self, r, g, b, a)
-  getmetatable(self).__index.SetBackdropColor(self, r, g, b, 0.95)
+mainFrame.pendingScale = savedScale
+mainFrame.scaleSlider = CreateFrame("Slider", "DungeonTeleportsScaleSlider", mainFrame.header, "OptionsSliderTemplate")
+mainFrame.scaleSlider:SetSize(90, 12)
+mainFrame.scaleSlider:SetMinMaxValues(UI.MIN_SCALE, UI.MAX_SCALE)
+mainFrame.scaleSlider:SetValueStep(0.01)
+mainFrame.scaleSlider:SetObeyStepOnDrag(true)
+_G[mainFrame.scaleSlider:GetName() .. "Low"]:SetText("")
+_G[mainFrame.scaleSlider:GetName() .. "High"]:SetText("")
+_G[mainFrame.scaleSlider:GetName() .. "Text"]:SetText("")
+
+local function ApplyMainFrameScale(value)
+  value = ClampScale(value)
+  mainFrame.pendingScale = value
+  mainFrame:SetScale(value)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.uiScale = value
+  if mainFrame.scaleValue then
+    mainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
+  end
 end
 
--- Export frame to addon
-_G.DungeonTeleportsMainFrame = mainFrame
-addon.mainFrame = mainFrame
+local function NudgeMainFrameScale(delta)
+  local current = mainFrame.pendingScale or mainFrame.scaleSlider:GetValue() or savedScale
+  local newValue = ClampScale(current + delta)
+  mainFrame.scaleSlider:SetValue(newValue)
+  ApplyMainFrameScale(newValue)
+end
 
--- UI visibility analytics
-mainFrame:HookScript("OnShow", function()
-  AnalyticsEvent("ui_visibility", { visible = true })
+local function StyleScaleAdjustButton(button, glyph)
+  button:SetSize(18, 18)
+  button:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8X8",
+    edgeFile = "Interface\\Buttons\\WHITE8X8",
+    tile = false,
+    edgeSize = 1,
+    insets = { left = 1, right = 1, top = 1, bottom = 1 },
+  })
+  button:SetBackdropColor(0.07, 0.07, 0.09, 1)
+  button:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4] or 1)
+  button:SetNormalFontObject("GameFontHighlightSmall")
+  button:SetHighlightFontObject("GameFontNormalSmall")
+  button:SetText(glyph)
+  button:GetFontString():SetPoint("CENTER", 0, 0)
+  button:SetScript("OnEnter", function(self)
+    self:SetBackdropBorderColor(COLORS.border[1], COLORS.border[2], COLORS.border[3], COLORS.border[4] or 1)
+  end)
+  button:SetScript("OnLeave", function(self)
+    self:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4] or 1)
+  end)
+end
+
+mainFrame.scaleDownButton = CreateFrame("Button", nil, mainFrame.header, "BackdropTemplate")
+StyleScaleAdjustButton(mainFrame.scaleDownButton, "−")
+mainFrame.scaleDownButton:SetScript("OnClick", function()
+  NudgeMainFrameScale(-0.01)
 end)
 
-mainFrame:HookScript("OnHide", function()
+mainFrame.scaleUpButton = CreateFrame("Button", nil, mainFrame.header, "BackdropTemplate")
+StyleScaleAdjustButton(mainFrame.scaleUpButton, "+")
+mainFrame.scaleUpButton:SetScript("OnClick", function()
+  NudgeMainFrameScale(0.01)
+end)
+
+mainFrame.scaleValue:SetPoint("RIGHT", mainFrame.closeButton, "LEFT", -10, 0)
+mainFrame.scaleUpButton:SetPoint("RIGHT", mainFrame.scaleValue, "LEFT", -8, 0)
+mainFrame.scaleSlider:SetPoint("RIGHT", mainFrame.scaleUpButton, "LEFT", -8, 0)
+mainFrame.scaleDownButton:SetPoint("RIGHT", mainFrame.scaleSlider, "LEFT", -8, 0)
+mainFrame.scaleLabel:SetPoint("RIGHT", mainFrame.scaleDownButton, "LEFT", -8, 0)
+
+mainFrame.scaleSlider:SetScript("OnValueChanged", function(self, value)
+  value = ClampScale(value)
+  mainFrame.pendingScale = value
+  if mainFrame.scaleValue then
+    mainFrame.scaleValue:SetText(string.format("%d%%", math.floor(value * 100 + 0.5)))
+  end
+end)
+mainFrame.scaleSlider:SetScript("OnMouseUp", function(self)
+  ApplyMainFrameScale(self:GetValue())
+end)
+mainFrame.scaleSlider:SetScript("OnHide", function(self)
+  ApplyMainFrameScale(self:GetValue())
+end)
+mainFrame.scaleSlider:SetValue(savedScale)
+ApplyMainFrameScale(savedScale)
+
+mainFrame.sidebar = CreateBackdropFrame(nil, mainFrame, 1)
+mainFrame.sidebar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 14, -50)
+mainFrame.sidebar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 14, 14)
+mainFrame.sidebar:SetWidth(180)
+SetPanelStyle(mainFrame.sidebar, {0.05, 0.05, 0.07, 1}, COLORS.borderSoft)
+
+mainFrame.content = CreateBackdropFrame(nil, mainFrame, 1)
+mainFrame.content:SetPoint("TOPLEFT", mainFrame.sidebar, "TOPRIGHT", 12, 0)
+mainFrame.content:SetPoint("BOTTOMRIGHT", mainFrame, "BOTTOMRIGHT", -14, 14)
+SetPanelStyle(mainFrame.content, {0.04, 0.04, 0.06, 1}, COLORS.borderSoft)
+
+mainFrame.contentHeader = CreateBackdropFrame(nil, mainFrame.content, 1)
+mainFrame.contentHeader:SetPoint("TOPLEFT", 12, -12)
+mainFrame.contentHeader:SetPoint("TOPRIGHT", -12, -12)
+mainFrame.contentHeader:SetHeight(58)
+SetPanelStyle(mainFrame.contentHeader, COLORS.bgCard, COLORS.border)
+
+mainFrame.contentIcon = mainFrame.contentHeader:CreateTexture(nil, "ARTWORK")
+mainFrame.contentIcon:SetSize(30, 30)
+mainFrame.contentIcon:SetPoint("LEFT", 12, 0)
+mainFrame.contentIcon:SetTexture("Interface\\Icons\\inv_relics_hourglass")
+
+mainFrame.contentTitle = mainFrame.contentHeader:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+mainFrame.contentTitle:SetPoint("TOPLEFT", mainFrame.contentIcon, "TOPRIGHT", 10, -2)
+mainFrame.contentTitle:SetJustifyH("LEFT")
+mainFrame.contentTitle:SetTextColor(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3])
+
+mainFrame.contentSubtitle = mainFrame.contentHeader:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+mainFrame.contentSubtitle:SetPoint("TOPLEFT", mainFrame.contentTitle, "BOTTOMLEFT", 0, -4)
+mainFrame.contentSubtitle:SetJustifyH("LEFT")
+mainFrame.contentSubtitle:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+mainFrame.contentSubtitle:SetText(L["TELEPORTS_BY_EXPANSION_DESC"] or "Teleport spells by expansion or current season")
+
+mainFrame.summaryText = mainFrame.contentHeader:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+mainFrame.summaryText:SetPoint("RIGHT", -12, 0)
+mainFrame.summaryText:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+
+mainFrame.scrollFrame = CreateFrame("ScrollFrame", "DungeonTeleportsScrollFrame", mainFrame.content, "UIPanelScrollFrameTemplate")
+mainFrame.scrollFrame:SetPoint("TOPLEFT", mainFrame.contentHeader, "BOTTOMLEFT", 0, -12)
+mainFrame.scrollFrame:SetPoint("BOTTOMRIGHT", mainFrame.content, "BOTTOMRIGHT", -30, 12)
+
+mainFrame.scrollChild = CreateFrame("Frame", nil, mainFrame.scrollFrame)
+mainFrame.scrollChild:SetSize(1, 1)
+mainFrame.scrollFrame:SetScrollChild(mainFrame.scrollChild)
+
+mainFrame:SetScript("OnShow", function()
+  AnalyticsEvent("ui_visibility", { visible = true })
+end)
+mainFrame:SetScript("OnHide", function()
   AnalyticsEvent("ui_visibility", { visible = false })
 end)
 
--- Background updater method (defined once, not inside loops)
-function DungeonTeleportsMainFrame:UpdateBackground()
-  if not self.bg then
-    self.bg = self:CreateTexture(nil, "BACKGROUND")
-    self.bg:SetAllPoints()
-    self.bg:SetColorTexture(0, 0, 0, 0.5) -- fallback color
-  end
+_G.DungeonTeleportsMainFrame = mainFrame
+addon.mainFrame = mainFrame
 
-  local expansion = DungeonTeleportsDB.selectedExpansion or constants.orderedExpansions[1]
-  local tex = constants.mapExpansionToBackground[expansion]
-
-  if tex then
-    self.bg:SetTexture(tex)
-  else
-    self.bg:SetTexture(nil)
-  end
-
-  self.bg:SetShown(not DungeonTeleportsDB.disableBackground)
-end
-
--- Dropdown Menu for Expansions
-local dropdown = CreateFrame("Frame", "DungeonTeleportsDropdown", mainFrame, "UIDropDownMenuTemplate")
-dropdown:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 10, -75)
-UIDropDownMenu_SetWidth(dropdown, 200)
-UIDropDownMenu_SetText(dropdown, L["SELECT_EXPANSION"])
-
--- Function to update the background when switching expansions
-function addon.updateBackground(selectedExpansion)
-  local background = DungeonTeleportsMainFrame.backgroundTexture
-  if not background then return end
-
-  local alpha = DungeonTeleportsDB.backgroundAlpha or 0.7
-  local bgPath = addon.constants.mapExpansionToBackground[selectedExpansion]
-
-  if DungeonTeleportsDB.disableBackground then
-    background:SetTexture(nil)
-    background:SetColorTexture(0, 0, 0, alpha)
-    return
-  end
-
-  if bgPath then
-    background:SetTexture(bgPath)
-    background:SetAlpha(alpha)
-  else
-    background:SetTexture(nil)
-    background:SetColorTexture(0, 0, 0, alpha)
+local function UpdateExpansionButtonStyles(selectedExpansion)
+  for expansion, btn in pairs(currentExpansionButtons) do
+    local active = expansion == selectedExpansion
+    if active then
+      btn:SetBackdropColor(COLORS.accentDark[1], COLORS.accentDark[2], COLORS.accentDark[3], 1)
+      btn:SetBackdropBorderColor(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 1)
+      btn.text:SetTextColor(1, 1, 1)
+      btn.activeBar:Show()
+    else
+      btn:SetBackdropColor(COLORS.bgLight[1], COLORS.bgLight[2], COLORS.bgLight[3], 1)
+      btn:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
+      btn.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+      btn.activeBar:Hide()
+    end
   end
 end
 
--- Dropdown selection handler (declared before Initialize so it's in scope)
-local function OnExpansionSelected(self, arg1)
-  UIDropDownMenu_SetText(dropdown, arg1)
-  DungeonTeleportsDB.lastExpansion = arg1 -- Save selection
-  AnalyticsEvent("expansion_selected", { expansion = arg1 })
+local function EnsureExpansionButtons()
+  if mainFrame.expansionButtonsBuilt then return end
+  mainFrame.expansionButtonsBuilt = true
 
-  -- Ensure Background Resets Correctly
-  addon.updateBackground(arg1)
-  createTeleportButtons(arg1)
-end
+  local anchor = nil
+  for _, expansion in ipairs(constants.orderedExpansions or {}) do
+    local btn = CreateBackdropFrame(nil, mainFrame.sidebar, 1)
+    btn:SetSize(144, 32)
+    if anchor then
+      btn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -8)
+    else
+      btn:SetPoint("TOPLEFT", mainFrame.sidebar, "TOPLEFT", 16, -16)
+    end
+    SetPanelStyle(btn, COLORS.bgLight, COLORS.borderSoft)
+    btn:EnableMouse(true)
 
--- Initialize the dropdown
-UIDropDownMenu_Initialize(dropdown, function(self, level, menuList)
-  local info = UIDropDownMenu_CreateInfo()
-  info.notCheckable = true
-  for _, expansion in ipairs(constants.orderedExpansions) do
-    info.text = L[expansion] or expansion
-    info.arg1 = expansion
-    info.func = OnExpansionSelected
-    UIDropDownMenu_AddButton(info)
+    btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    btn.text:SetPoint("LEFT", 12, 0)
+    btn.text:SetJustifyH("LEFT")
+    btn.text:SetText(L[expansion] or expansion)
+
+    btn.activeBar = btn:CreateTexture(nil, "ARTWORK")
+    btn.activeBar:SetPoint("TOPLEFT", 0, 0)
+    btn.activeBar:SetPoint("BOTTOMLEFT", 0, 0)
+    btn.activeBar:SetWidth(4)
+    btn.activeBar:SetColorTexture(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 1)
+    btn.activeBar:Hide()
+
+    btn:SetScript("OnEnter", function(self)
+      if DungeonTeleportsDB.selectedExpansion ~= expansion then
+        self:SetBackdropColor(COLORS.hover[1], COLORS.hover[2], COLORS.hover[3], 1)
+      end
+    end)
+    btn:SetScript("OnLeave", function(self)
+      UpdateExpansionButtonStyles(DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])
+    end)
+    btn:SetScript("OnMouseDown", function()
+      addon.SelectExpansion(expansion)
+    end)
+
+    currentExpansionButtons[expansion] = btn
+    anchor = btn
   end
-end)
+end
 
 -- Set faction-specific spell IDs (e.g. Siege of Boralus)
 local function SetFactionSpecificSpells()
@@ -524,258 +715,304 @@ local function SetFactionSpecificSpells()
     constants.mapIDtoSpellID[506] = 464256 -- Horde spell ID for Siege of Boralus
     constants.mapIDtoSpellID[507] = 467555 -- Horde spell ID for The Motherlode!!
   else
-    constants.mapIDtoSpellID[506] = nil -- No teleport if faction is unknown
-    constants.mapIDtoSpellID[507] = nil -- No teleport if faction is unknown
+    constants.mapIDtoSpellID[506] = nil
+    constants.mapIDtoSpellID[507] = nil
   end
 end
 
--- Function to create teleport buttons
+local function GetRowStatus(spellID)
+  if IsSpellKnown(spellID) or IsPlayerSpell(spellID) then
+    local info = C_Spell.GetSpellCooldown(spellID)
+    local start = info and info.startTime or nil
+    local dur = info and info.duration or nil
+    if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
+      local remaining = math.max(0, (start + dur) - GetTime())
+      return L["COOLDOWN_NOT_READY"] or "Not ready yet!", SecondsToTime(remaining), COLORS.warning
+    end
+    return L["COOLDOWN_READY"] or "Ready to use!", L["CLICK_TO_TELEPORT"] or "Click to teleport!", COLORS.success
+  end
+  return L["TELEPORT_NOT_KNOWN"] or "Teleport not known!", nil, COLORS.textDim
+end
+
 function createTeleportButtons(selectedExpansion)
+  EnsureExpansionButtons()
+
+  selectedExpansion = selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
+  DungeonTeleportsDB.selectedExpansion = selectedExpansion
+  UpdateExpansionButtonStyles(selectedExpansion)
+
   local mapIDs = constants.mapExpansionToMapID[selectedExpansion]
   if not mapIDs then return end
 
-  -- Clear existing buttons and texts before creating new ones
   for _, button in pairs(createdButtons) do
+    SafeHideTooltip(button)
     button:Hide()
     button:SetParent(nil)
   end
   wipe(createdButtons)
 
-  for _, text in pairs(createdTexts) do
-    text:Hide()
-    text:SetParent(nil)
+  for _, textObj in pairs(createdTexts) do
+    if textObj and textObj.Hide then
+      textObj:Hide()
+      textObj:SetParent(nil)
+    end
   end
   wipe(createdTexts)
 
-  -- Track buttons globally so the config checkbox can update them live
   DungeonTeleportsMainFrame.buttons = {}
 
+  local knownCount, totalCount = 0, 0
+  local availableWidth = math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8)
+  local columnWidth = math.floor((availableWidth - UI.COLUMN_GAP) / 2)
   local index = 0
-  local buttonHeight = 50 -- Height per button (including padding)
-  local topPadding = 20 -- Padding at the top (dropdown + title space)
-  local bottomPadding = 140 -- Padding at the bottom
 
   for _, mapID in ipairs(mapIDs) do
     local spellID = constants.mapIDtoSpellID[mapID]
     local dungeonName = constants.mapIDtoDungeonName[mapID] or "Unknown Dungeon"
+    if spellID and spellID > 0 then
+      totalCount = totalCount + 1
+      local known = IsSpellKnown(spellID) or IsPlayerSpell(spellID)
+      if known then knownCount = knownCount + 1 end
 
-    if spellID then
-      local button = CreateFrame("Button", "DungeonTeleportButton" .. mapID, mainFrame, "SecureActionButtonTemplate")
-      button:SetSize(40, 40)
-      button:SetPoint("TOPLEFT", dropdown, "BOTTOMLEFT", 20, -(index * buttonHeight + topPadding))
+      local rowIndex = math.floor(index / 2)
+      local colIndex = index % 2
+      local xOffset = colIndex * (columnWidth + UI.COLUMN_GAP)
+      local yOffset = -(rowIndex * (UI.ROW_HEIGHT + UI.ROW_GAP))
 
-      -- Teleport click analytics (fires before the secure action)
-      button:SetScript("PreClick", function()
-        local known = IsSpellKnown(spellID) or IsPlayerSpell(spellID) or false
-        AnalyticsEvent("teleport_click", {
-          spellID = spellID,
-          expansion = selectedExpansion,
-          known = known,
-        })
+      local row = CreateBackdropFrame(nil, mainFrame.scrollChild, 1)
+      row:SetSize(columnWidth, UI.ROW_HEIGHT)
+      row:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", xOffset, yOffset)
+      SetPanelStyle(row, COLORS.bgCard, COLORS.borderSoft)
+      row:EnableMouse(true)
+
+      row.clickButton = CreateFrame("Button", nil, row, "SecureActionButtonTemplate")
+      row.clickButton:SetPoint("TOPLEFT", row, "TOPLEFT", 0, 0)
+      row.clickButton:SetPoint("BOTTOMRIGHT", row, "BOTTOMRIGHT", 0, 0)
+      row.clickButton:SetFrameLevel(row:GetFrameLevel() + 1)
+      if known then
+        row.clickButton:SetAttribute("type", "spell")
+        row.clickButton:SetAttribute("spell", spellID)
+        row.clickButton:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
+      else
+        row.clickButton:RegisterForClicks()
+      end
+      row.clickButton:SetScript("PreClick", function()
+        local isKnown = IsSpellKnown(spellID) or IsPlayerSpell(spellID) or false
+        AnalyticsEvent("teleport_click", { spellID = spellID, expansion = selectedExpansion, known = isKnown })
+        if isKnown and DungeonTeleportsDB and DungeonTeleportsDB.closeOnTeleport and mainFrame and mainFrame:IsShown() then
+          mainFrame:Hide()
+          DungeonTeleportsDB.isVisible = false
+        end
+      end)
+      row.clickButton:SetScript("OnEnter", function()
+        row:GetScript("OnEnter")(row)
+      end)
+      row.clickButton:SetScript("OnLeave", function()
+        row:GetScript("OnLeave")(row)
       end)
 
-      -- Button icon
-      local texture = button:CreateTexture(nil, "BACKGROUND")
-      texture:SetAllPoints(button)
-      texture:SetTexture(C_Spell.GetSpellTexture(spellID))
+      row.iconButton = CreateFrame("Frame", nil, row, "BackdropTemplate")
+      row.iconButton:SetSize(46, 46)
+      row.iconButton:SetPoint("LEFT", 12, 0)
+      row.iconButton:SetFrameLevel(row.clickButton:GetFrameLevel() + 1)
+      row.iconButton:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        tile = false,
+        edgeSize = 1,
+        insets = { left = 1, right = 1, top = 1, bottom = 1 },
+      })
+      row.iconButton:SetBackdropColor(0, 0, 0, 0.35)
+      row.iconButton:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
 
-      -- Cooldown overlay (must be a named child of a secure button)
-      local cooldown = CreateFrame("Cooldown", "$parentCooldown", button, "CooldownFrameTemplate")
+      local texture = row.iconButton:CreateTexture(nil, "ARTWORK")
+      texture:SetAllPoints(row.iconButton)
+      texture:SetTexture(C_Spell.GetSpellTexture(spellID))
+      texture:SetDesaturated(not known)
+
+      local cooldown = CreateFrame("Cooldown", "$parentCooldown", row.iconButton, "CooldownFrameTemplate")
       cooldown:SetAllPoints()
-      cooldown:SetFrameLevel(button:GetFrameLevel() + 1)
-      cooldown:SetSwipeTexture("Interface\\Cooldown\\ping4") -- optional visual
+      cooldown:SetFrameLevel(row.iconButton:GetFrameLevel() + 1)
+      cooldown:SetSwipeTexture("Interface\\Cooldown\\ping4")
       cooldown:SetSwipeColor(0, 0, 0, 0.6)
       cooldown:SetDrawBling(false)
       cooldown:SetDrawEdge(true)
       cooldown:SetHideCountdownNumbers(false)
       cooldown:Hide()
 
-      -- Optional disabling of cooldown overlay
       if DungeonTeleportsDB.disableCooldownOverlay then
-        cooldown:SetSwipeColor(0, 0, 0, 0)  -- Fully transparent
+        cooldown:SetSwipeColor(0, 0, 0, 0)
         cooldown:SetDrawEdge(false)
         cooldown:SetDrawBling(false)
         cooldown:SetHideCountdownNumbers(true)
       end
 
-      -- Dungeon name text
-      local nameText = DungeonTeleportsMainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-      nameText:SetPoint("LEFT", button, "RIGHT", 10, 0)
-      nameText:SetFont("Fonts\\FRIZQT__.TTF", 12, "OUTLINE")
-      nameText:SetText(dungeonName)
-      createdTexts[mapID] = nameText -- Track the text for clearing later
+      row.nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+      row.nameText:SetDrawLayer("OVERLAY", 7)
+      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -6)
+      row.nameText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
+      row.nameText:SetJustifyH("LEFT")
+      row.nameText:SetText(dungeonName)
+      row.nameText:SetTextColor(known and COLORS.warning[1] or COLORS.textDim[1], known and COLORS.warning[2] or COLORS.textDim[2], known and COLORS.warning[3] or COLORS.textDim[3])
 
-      -- Check if the spell is known
-      if IsSpellKnown(spellID) then
-        button:SetAttribute("type", "spell")
-        button:SetAttribute("spell", spellID)
-        button:RegisterForClicks("LeftButtonUp", "LeftButtonDown")
-        texture:SetDesaturated(false)
-        nameText:SetTextColor(1, 1, 0) -- Yellow for learned teleports
+      row.statusText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+      row.statusText:SetDrawLayer("OVERLAY", 7)
+      row.statusText:SetPoint("TOPLEFT", row.nameText, "BOTTOMLEFT", 0, -3)
+      row.statusText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
+      row.statusText:SetJustifyH("LEFT")
 
-        -- Cooldown update function for known spells
-local function UpdateCooldown()
-  if InCombatLockdown() or UnitAffectingCombat("player") or (IsEncounterInProgress and IsEncounterInProgress()) then
-    return
-  end
-  -- Suppress all cooldown/UI checks during an active Mythic+ (Midnight safety).
-  if addon._DT_mplus_suppressed then
-    cooldown:Clear()
-    cooldown:Hide()
-    return
-  end
+      row.detailText = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+      row.detailText:SetDrawLayer("OVERLAY", 7)
+      row.detailText:SetPoint("TOPLEFT", row.statusText, "BOTTOMLEFT", 0, -2)
+      row.detailText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
+      row.detailText:SetJustifyH("LEFT")
 
-  -- Midnight beta: avoid reading cooldown "secret" fields during combat
-  if InCombatLockdown and InCombatLockdown() then
-    cooldown:Clear()
-    cooldown:Hide()
-    return
-  end
+      local function UpdateCooldown()
+        if InCombatLockdown() or UnitAffectingCombat("player") or (IsEncounterInProgress and IsEncounterInProgress()) then return end
+        if addon._DT_mplus_suppressed then
+          cooldown:Clear()
+          cooldown:Hide()
+          return
+        end
+        if InCombatLockdown and InCombatLockdown() then
+          cooldown:Clear()
+          cooldown:Hide()
+          return
+        end
+        local info = C_Spell.GetSpellCooldown(spellID)
+        local start = info and info.startTime or nil
+        local dur = info and info.duration or nil
+        local okS, s = pcall(tonumber, start)
+        local okD, d = pcall(tonumber, dur)
+        local okM, m = pcall(tonumber, info and info.modRate)
+        if okS and okD and type(s) == "number" and type(d) == "number" and s > 0 and d > 0 then
+          SafeSetCooldown(cooldown, s, d, (okM and m) or nil)
+          cooldown:Show()
+        else
+          cooldown:Clear()
+          cooldown:Hide()
+        end
 
-  local info = C_Spell.GetSpellCooldown(spellID)
-  local start = info and info.startTime or nil
-  local dur   = info and info.duration  or nil
-
-  local okS, s = pcall(tonumber, start)
-  local okD, d = pcall(tonumber, dur)
-  local okM, m = pcall(tonumber, info and info.modRate)
-
-  if okS and okD and type(s) == "number" and type(d) == "number" and s > 0 and d > 0 then
-    -- Use numeric values only; Midnight "secret" values can explode on compare.
-    SafeSetCooldown(cooldown, s, d, (okM and m) or nil)
-    cooldown:Show()
-  else
-    cooldown:Clear()
-    cooldown:Hide()
-  end
-end
-
-
-        -- Register cooldown update events only if the spell is known
-        button:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-        button:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
-        button:RegisterEvent("PLAYER_ENTERING_WORLD")
-        button:RegisterEvent("PLAYER_REGEN_ENABLED")
-	button:SetScript("OnEvent", function(_, evt)
-  	  UpdateCooldown()
-	end)
-
-
-        -- Force immediate cooldown update on button creation
-        UpdateCooldown()
-      else
-        texture:SetDesaturated(true)
-        button:SetEnabled(true)
-        button:RegisterForClicks()
-        nameText:SetTextColor(0.5, 0.5, 0.5) -- Grey for unlearned teleports
-        cooldown:Hide() -- Hide cooldown overlay if teleport not known
+        local status, detail, color = GetRowStatus(spellID)
+        row.statusText:SetText(status or "")
+        row.statusText:SetTextColor(color[1], color[2], color[3], color[4] or 1)
+        row.detailText:SetText(detail or "")
+        row.detailText:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3], 1)
       end
 
-      -- Tooltip setup with live updates
-      button:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+      if known then
+        row.iconButton:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+        row.iconButton:RegisterEvent("ACTIONBAR_UPDATE_COOLDOWN")
+        row.iconButton:RegisterEvent("PLAYER_ENTERING_WORLD")
+        row.iconButton:RegisterEvent("PLAYER_REGEN_ENABLED")
+        row.iconButton:SetScript("OnEvent", function() UpdateCooldown() end)
+        UpdateCooldown()
+      else
+        local status, detail, color = GetRowStatus(spellID)
+        row.statusText:SetText(status or "")
+        row.statusText:SetTextColor(color[1], color[2], color[3], color[4] or 1)
+        row.detailText:SetText(detail or "")
+        row.detailText:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3], 1)
+      end
+
+      local function UpdateTooltip()
+        GameTooltip:ClearLines()
+        GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
         GameTooltip:SetSpellByID(spellID)
+        if InCombatLockdown and InCombatLockdown() then
+          GameTooltip:AddLine(L["COOLDOWN_UNKNOWN_IN_COMBAT"] or "Cooldown info hidden in combat (beta).", 1, 0, 0)
+          GameTooltip:Show()
+          return
+        end
+        if known then
+          local info = C_Spell.GetSpellCooldown(spellID)
+          local start = info and info.startTime or nil
+          local dur = info and info.duration or nil
+          if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
+            local remaining = (start + dur) - GetTime()
+            GameTooltip:AddLine(L["COOLDOWN_NOT_READY"], 1, 0, 0)
+            GameTooltip:AddLine("Cooldown: " .. SecondsToTime(math.max(0, remaining)), 1, 0, 0)
+          else
+            GameTooltip:AddLine(L["COOLDOWN_READY"], 0, 1, 0)
+            GameTooltip:AddLine(L["CLICK_TO_TELEPORT"], 0, 1, 0)
+          end
+        else
+          GameTooltip:AddLine(L["TELEPORT_NOT_KNOWN"], 1, 0, 0)
+        end
+        GameTooltip:Show()
+      end
 
-        -- Function to update the tooltip in real-time
-local function updateTooltip()
-  GameTooltip:ClearLines()
-  GameTooltip:SetSpellByID(spellID)
-
-  if InCombatLockdown and InCombatLockdown() then
-    GameTooltip:AddLine(L["COOLDOWN_UNKNOWN_IN_COMBAT"] or "Cooldown info hidden in combat (beta).", 1, 0, 0)
-    GameTooltip:Show()
-    return
-  end
-
-  if IsSpellKnown(spellID) then
-    local info  = C_Spell.GetSpellCooldown(spellID)
-    local start = info and info.startTime or nil
-    local dur   = info and info.duration  or nil
-
-    if type(start) == "number" and type(dur) == "number" and start > 0 and dur > 0 then
-      local remaining = (start + dur) - GetTime()
-      GameTooltip:AddLine(L["COOLDOWN_NOT_READY"], 1, 0, 0)
-      GameTooltip:AddLine("Cooldown: " .. SecondsToTime(math.max(0, remaining)), 1, 0, 0)
-    else
-      GameTooltip:AddLine(L["COOLDOWN_READY"], 0, 1, 0)
-      GameTooltip:AddLine(L["CLICK_TO_TELEPORT"], 0, 1, 0)
-    end
-  else
-    GameTooltip:AddLine(L["TELEPORT_NOT_KNOWN"], 1, 0, 0)
-  end
-
-  GameTooltip:Show()
-end
-
-
-        -- Show tooltip immediately
-        updateTooltip()
-
-        -- Start updating tooltip in real-time
-        self:SetScript("OnUpdate", function()
-          updateTooltip()
-        end)
+      row:SetScript("OnEnter", function(self)
+        self:SetBackdropBorderColor(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 0.8)
+        UpdateTooltip()
+        self:SetScript("OnUpdate", function() UpdateTooltip() end)
+      end)
+      row:SetScript("OnLeave", function(self)
+        self:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
+        SafeHideTooltip(self)
+      end)
+      row:SetScript("OnMouseDown", function()
+        if known and row.clickButton and row.clickButton.Click then
+          row.clickButton:Click()
+        end
       end)
 
-      -- Stop updating tooltip when mouse leaves
-      button:SetScript("OnLeave", function(self)
-        self:SetScript("OnUpdate", nil) -- Stop updating tooltip
-        GameTooltip:Hide()
-      end)
-
-      createdButtons[mapID] = button
-      table.insert(DungeonTeleportsMainFrame.buttons, button)
+      createdButtons[mapID] = row
+      table.insert(DungeonTeleportsMainFrame.buttons, row.clickButton)
       index = index + 1
     end
   end
 
-  -- Adjust frame height based on the number of buttons
-  local totalHeight = topPadding + (index * buttonHeight) + bottomPadding
-  local minHeight = 450 -- Minimum frame height
-  local maxHeight = 800 -- Maximum frame height to prevent it from being too tall
-
-  -- Apply height, clamped between min and max values
-  totalHeight = math.max(minHeight, math.min(totalHeight, maxHeight))
-  mainFrame:SetHeight(totalHeight)
+  local numRows = math.max(1, math.ceil(totalCount / 2))
+  local totalHeight = math.max(1, numRows * UI.ROW_HEIGHT + math.max(0, numRows - 1) * UI.ROW_GAP)
+  mainFrame.scrollChild:SetSize(availableWidth, totalHeight)
+  mainFrame.contentTitle:SetText(L[selectedExpansion] or selectedExpansion)
+  mainFrame.summaryText:SetText(string.format("%d / %d %s", knownCount, totalCount, L["TELEPORTS_LEARNED"] or "learned"))
 end
 
-SetFactionSpecificSpells() -- Set faction-specific spell IDs
+function addon.RefreshTeleportUI(selectedExpansion)
+  createTeleportButtons(selectedExpansion or DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])
+end
 
--- Now set the OnShow script AFTER dropdown is ready
+function addon.SelectExpansion(expansion)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.selectedExpansion = expansion
+  DungeonTeleportsDB.defaultExpansion = expansion
+  AnalyticsEvent("expansion_selected", { expansion = expansion })
+  addon.RefreshTeleportUI(expansion)
+end
+
+function addon.updateBackground(selectedExpansion)
+  -- No-op in v2. Background images have been intentionally retired.
+end
+
+SetFactionSpecificSpells()
+
 mainFrame:SetScript("OnShow", function()
-  local defaultExpansion = DungeonTeleportsDB.defaultExpansion or L["Current Season"]
-
-  -- Only set text if dropdown exists
-  if dropdown then
-    UIDropDownMenu_SetText(dropdown, defaultExpansion)
-  else
-    print("Dropdown not initialized!")
-  end
-
-  createTeleportButtons(defaultExpansion)
-  C_Timer.After(0.5, function()
-    addon.updateBackground(DungeonTeleportsDB.defaultExpansion or L["Current Season"])
-  end)
+  local defaultExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
+  addon.RefreshTeleportUI(defaultExpansion)
 end)
 
--- Load default expansion on login
 DungeonTeleports:RegisterEvent("PLAYER_LOGIN")
 DungeonTeleports:SetScript("OnEvent", function()
   DungeonTeleportsDB = DungeonTeleportsDB or {}
-
-  -- Ensure Defaults
   DungeonTeleportsDB.defaultExpansion = DungeonTeleportsDB.defaultExpansion or L["Current Season"]
-  DungeonTeleportsDB.backgroundAlpha = DungeonTeleportsDB.backgroundAlpha or 0.7
+  DungeonTeleportsDB.selectedExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion
+  DungeonTeleportsDB.uiScale = ClampScale(DungeonTeleportsDB.uiScale)
+  if DungeonTeleportsDB.closeOnTeleport == nil then
+    DungeonTeleportsDB.closeOnTeleport = false
+  end
 
-  -- Reset Background First Before UI Loads
-  addon.updateBackground(DungeonTeleportsDB.defaultExpansion)
+  if DungeonTeleportsDB.windowPosition then
+    local pos = DungeonTeleportsDB.windowPosition
+    mainFrame:ClearAllPoints()
+    mainFrame:SetPoint(pos.point or "CENTER", UIParent, pos.relativePoint or "CENTER", pos.x or 0, pos.y or 40)
+  end
 
-  -- Now Apply UI Elements
-  UIDropDownMenu_SetText(dropdown, DungeonTeleportsDB.defaultExpansion)
-  createTeleportButtons(DungeonTeleportsDB.defaultExpansion)
-
+  mainFrame.scaleSlider:SetValue(DungeonTeleportsDB.uiScale)
   mainFrame:Hide()
   DungeonTeleportsDB.isVisible = false
+  addon.RefreshTeleportUI(DungeonTeleportsDB.defaultExpansion)
 end)
 
 -- Track actual teleport outcomes
@@ -796,28 +1033,22 @@ SLASH_DUNGEONTELEPORTS1 = "/dungeonteleports"
 SLASH_DUNGEONTELEPORTS2 = "/dtp"
 SlashCmdList["DUNGEONTELEPORTS"] = function()
   if DungeonTeleportsMainFrame:IsShown() then
-    DungeonTeleportsMainFrame:Hide()
+    DT_SafeHide(DungeonTeleportsMainFrame)
     DungeonTeleportsDB.isVisible = false
     AnalyticsEvent("ui_visibility", { visible = false })
-  else
-    if addon._DT_mplus_suppressed then
-      if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Disabled during Mythic+ run (re-enables after you leave the dungeon).|r")
-      end
-      return
-    end
-
-    DungeonTeleportsMainFrame:Show()
-    DungeonTeleportsDB.isVisible = true
-    AnalyticsEvent("ui_visibility", { visible = true })
-
-    -- Use stored default expansion or fallback to "Current Season"
-    local defaultExpansion = DungeonTeleportsDB.defaultExpansion or L["Current Season"]
-
-    UIDropDownMenu_SetText(dropdown, defaultExpansion)
-    createTeleportButtons(defaultExpansion)
-    C_Timer.After(0.5, function()
-      addon.updateBackground(DungeonTeleportsDB.defaultExpansion or L["Current Season"])
-    end)
+    return
   end
+
+  if addon._DT_mplus_suppressed then
+    if DEFAULT_CHAT_FRAME and DEFAULT_CHAT_FRAME.AddMessage then
+      DEFAULT_CHAT_FRAME:AddMessage("|cffff7f00DungeonTeleports: Disabled during Mythic+ run (re-enables after you leave the dungeon).|r")
+    end
+    return
+  end
+
+  local defaultExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or L["Current Season"]
+  addon.RefreshTeleportUI(defaultExpansion)
+  DT_SafeShow(DungeonTeleportsMainFrame)
+  DungeonTeleportsDB.isVisible = true
+  AnalyticsEvent("ui_visibility", { visible = true })
 end
