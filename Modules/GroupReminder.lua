@@ -543,55 +543,106 @@ function addon:DT_GR_UpdateRegistration()
   _G.DungeonTeleports_GroupReminder = addon
   local db = DungeonTeleportsDB.groupReminder
 
+  addon._DT_GR_pendingInvite = addon._DT_GR_pendingInvite or nil
+  addon._DT_GR_lastShownAt = addon._DT_GR_lastShownAt or 0
+
+  local function DT_GR_CanShowAgain()
+    local now = GetTime and GetTime() or 0
+    if (now - (addon._DT_GR_lastShownAt or 0)) < 2 then
+      return false
+    end
+    addon._DT_GR_lastShownAt = now
+    return true
+  end
+
+  local function DT_GR_ClearPending(searchResultID)
+    addon._DT_GR_pendingInvite = nil
+    if addon._DT_GR_roleByResult and searchResultID then
+      addon._DT_GR_roleByResult[searchResultID] = nil
+    end
+  end
+
   if not self._DT_GR_frame then
     self._DT_GR_frame = CreateFrame("Frame")
     self._DT_GR_frame:SetScript("OnEvent", function(_, event, ...)
       if event == "GROUP_LEFT" then
         addon._DT_GR_lastReminder = nil
+        addon._DT_GR_pendingInvite = nil
         if DungeonTeleportsDB and DungeonTeleportsDB.groupReminder then
           DungeonTeleportsDB.groupReminder.lastReminder = nil
         end
         return
       end
 
-      if event ~= "LFG_LIST_APPLICATION_STATUS_UPDATED" then return end
-      local searchResultID, newStatus = ...
-      if not searchResultID or not newStatus then return end
-      if newStatus ~= "inviteaccepted" then return end
+      if event == "LFG_LIST_APPLICATION_STATUS_UPDATED" then
+        local searchResultID, newStatus = ...
+        if not searchResultID or not newStatus then return end
 
-      local srd = C_LFGList.GetSearchResultInfo and C_LFGList.GetSearchResultInfo(searchResultID)
-      if not srd then return end
+        local srd = C_LFGList.GetSearchResultInfo and C_LFGList.GetSearchResultInfo(searchResultID)
+        if not srd then return end
 
-      local activityID = (srd.activityIDs and srd.activityIDs[1]) or srd.activityID
-      if not activityID then return end
-      if not IsMythicPlusActivity(activityID) then return end
+        local activityID = (srd.activityIDs and srd.activityIDs[1]) or srd.activityID
+        if not activityID or not IsMythicPlusActivity(activityID) then return end
 
-      local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
-      if not activity then return end
+        local activity = C_LFGList.GetActivityInfoTable and C_LFGList.GetActivityInfoTable(activityID)
+        if not activity then return end
 
-      if DungeonTeleportsDB.groupReminder.suppressQuickJoinToast and type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Hide then
-        if LFGListInviteDialog.IsShown and LFGListInviteDialog:IsShown() then
-          LFGListInviteDialog:Hide()
+        if newStatus == "invited" or newStatus == "inviteaccepted" then
+          addon._DT_GR_pendingInvite = {
+            searchResultID = searchResultID,
+            activity = activity,
+            srd = srd,
+          }
+        else
+          return
         end
+
+        if newStatus == "inviteaccepted" then
+          if DungeonTeleportsDB.groupReminder.suppressQuickJoinToast and type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Hide then
+            if LFGListInviteDialog.IsShown and LFGListInviteDialog:IsShown() then
+              LFGListInviteDialog:Hide()
+            end
+          end
+
+          local pending = addon._DT_GR_pendingInvite
+          if not pending or not DT_GR_CanShowAgain() then return end
+
+          C_Timer.After(0.2, function()
+            if DungeonTeleportsDB and DungeonTeleportsDB.groupReminder and DungeonTeleportsDB.groupReminder.enabled then
+              addon:DT_GR_ShowReminder(pending.searchResultID, pending.activity, pending.srd)
+            end
+            DT_GR_ClearPending(pending.searchResultID)
+          end)
+        end
+
+        return
       end
 
-      C_Timer.After(0.2, function()
-        if DungeonTeleportsDB and DungeonTeleportsDB.groupReminder and DungeonTeleportsDB.groupReminder.enabled then
-          addon:DT_GR_ShowReminder(searchResultID, activity, srd)
+      if event == "GROUP_JOINED" then
+        local pending = addon._DT_GR_pendingInvite
+        if not pending or not DT_GR_CanShowAgain() then return end
+
+        if DungeonTeleportsDB.groupReminder.suppressQuickJoinToast and type(LFGListInviteDialog) == "table" and LFGListInviteDialog.Hide then
+          if LFGListInviteDialog.IsShown and LFGListInviteDialog:IsShown() then
+            LFGListInviteDialog:Hide()
+          end
         end
 
-        -- Clear cached role after we've built the reminder
-        if addon._DT_GR_roleByResult then
-          addon._DT_GR_roleByResult[searchResultID] = nil
-        end
-      end)
-
+        C_Timer.After(0.3, function()
+          if DungeonTeleportsDB and DungeonTeleportsDB.groupReminder and DungeonTeleportsDB.groupReminder.enabled then
+            addon:DT_GR_ShowReminder(pending.searchResultID, pending.activity, pending.srd)
+          end
+          DT_GR_ClearPending(pending.searchResultID)
+        end)
+        return
+      end
     end)
   end
 
   self._DT_GR_frame:UnregisterAllEvents()
   if db.enabled then
     self._DT_GR_frame:RegisterEvent("LFG_LIST_APPLICATION_STATUS_UPDATED")
+    self._DT_GR_frame:RegisterEvent("GROUP_JOINED")
     self._DT_GR_frame:RegisterEvent("GROUP_LEFT")
   end
 end

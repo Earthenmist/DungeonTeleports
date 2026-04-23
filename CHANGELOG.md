@@ -1,6 +1,6 @@
-## 🧩 Addon Updates (2026-04-21)
+## 🧩 Addon Updates (2026-04-23)
 
-**Mythic Dungeon Teleports** — v1.27.1  
+**Mythic Dungeon Teleports** — v1.27.2  
 
 **Changes:**  
 - Added 12.0.5 ready for patch  
@@ -9,6 +9,7 @@
 
 **Fixes:**  
 - Fixed a taint-related error that could occur when processing whisper messages for Auto Invites.  
+- Improvements to the Group Reminder Window. Sometimes it was failing to open when invited to a group through LFG.  
 
 **Known issues:**  
 - None currently known.
