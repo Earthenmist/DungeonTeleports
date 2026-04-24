@@ -849,7 +849,7 @@ function createTeleportButtons(selectedExpansion)
 
       row.nameText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
       row.nameText:SetDrawLayer("OVERLAY", 7)
-      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, -6)
+      row.nameText:SetPoint("TOPLEFT", row.iconButton, "TOPRIGHT", 12, 0)
       row.nameText:SetPoint("RIGHT", row, "RIGHT", -16, 0)
       row.nameText:SetJustifyH("LEFT")
       row.nameText:SetText(dungeonName)
