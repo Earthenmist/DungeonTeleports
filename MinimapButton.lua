@@ -104,7 +104,7 @@ end
 local minimapButton = LDB:NewDataObject("DungeonTeleports", {
   type = "data source",
   text = L["ADDON_TITLE"],
-  icon = "Interface\\ICONS\\inv_spell_arcane_telepotdornogal",
+  icon = "Interface\\AddOns\\DungeonTeleports\\Images\\DungeonTeleportsLogo.tga",
 OnClick = function(_, button)
   AnalyticsEvent("minimap_click", { button = button })
 
