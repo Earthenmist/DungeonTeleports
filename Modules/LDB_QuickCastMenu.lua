@@ -454,7 +454,7 @@ local function RefreshTeleportsForExpansion(expansion)
   for _, mapID in ipairs(mapIDs) do
     local spellID = constants.mapIDtoSpellID and constants.mapIDtoSpellID[mapID] or nil
     if spellID then
-      local known = IsSpellKnown(spellID) or IsPlayerSpell(spellID)
+      local known = C_SpellBook.IsSpellInSpellBook(spellID) or C_SpellBook.IsSpellKnown(spellID)
       if known then
         shown = shown + 1
         local b = EnsureTeleportButton(shown)

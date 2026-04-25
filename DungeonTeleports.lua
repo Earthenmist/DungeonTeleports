@@ -721,7 +721,7 @@ local function SetFactionSpecificSpells()
 end
 
 local function GetRowStatus(spellID)
-  if IsSpellKnown(spellID) or IsPlayerSpell(spellID) then
+  if C_SpellBook.IsSpellInSpellBook(spellID) or C_SpellBook.IsSpellKnown(spellID) then
     local info = C_Spell.GetSpellCooldown(spellID)
     local start = info and info.startTime or nil
     local dur = info and info.duration or nil
@@ -771,7 +771,7 @@ function createTeleportButtons(selectedExpansion)
     local dungeonName = constants.mapIDtoDungeonName[mapID] or "Unknown Dungeon"
     if spellID and spellID > 0 then
       totalCount = totalCount + 1
-      local known = IsSpellKnown(spellID) or IsPlayerSpell(spellID)
+      local known = C_SpellBook.IsSpellInSpellBook(spellID) or C_SpellBook.IsSpellKnown(spellID)
       if known then knownCount = knownCount + 1 end
 
       local rowIndex = math.floor(index / 2)
@@ -797,7 +797,7 @@ function createTeleportButtons(selectedExpansion)
         row.clickButton:RegisterForClicks()
       end
       row.clickButton:SetScript("PreClick", function()
-        local isKnown = IsSpellKnown(spellID) or IsPlayerSpell(spellID) or false
+        local isKnown = C_SpellBook.IsSpellInSpellBook(spellID) or C_SpellBook.IsSpellKnown(spellID) or false
         AnalyticsEvent("teleport_click", { spellID = spellID, expansion = selectedExpansion, known = isKnown })
         if isKnown and DungeonTeleportsDB and DungeonTeleportsDB.closeOnTeleport and mainFrame and mainFrame:IsShown() then
           mainFrame:Hide()

@@ -51,11 +51,11 @@ local function DT_GR_IsSpellKnown(spellID)
   if C_Spell and C_Spell.IsSpellKnown then
     return C_Spell.IsSpellKnown(spellID)
   end
-  if IsPlayerSpell then
-    return IsPlayerSpell(spellID)
+  if C_SpellBook.IsSpellKnown then
+    return C_SpellBook.IsSpellKnown(spellID)
   end
-  if IsSpellKnown then
-    return IsSpellKnown(spellID)
+  if C_SpellBook.IsSpellInSpellBook then
+    return C_SpellBook.IsSpellInSpellBook(spellID)
   end
   return false
 end
