@@ -366,7 +366,7 @@ local UI = {
   ROW_HEIGHT = 72,
   ROW_GAP = 10,
   COLUMN_GAP = 12,
-  DEFAULT_WIDTH = 980,
+  DEFAULT_WIDTH = 1010,
   DEFAULT_HEIGHT = 680,
   MIN_SCALE = 0.70,
   MAX_SCALE = 1.15,
@@ -591,7 +591,7 @@ ApplyMainFrameScale(savedScale)
 mainFrame.sidebar = CreateBackdropFrame(nil, mainFrame, 1)
 mainFrame.sidebar:SetPoint("TOPLEFT", mainFrame, "TOPLEFT", 14, -50)
 mainFrame.sidebar:SetPoint("BOTTOMLEFT", mainFrame, "BOTTOMLEFT", 14, 14)
-mainFrame.sidebar:SetWidth(180)
+mainFrame.sidebar:SetWidth(210)
 SetPanelStyle(mainFrame.sidebar, {0.05, 0.05, 0.07, 1}, COLORS.borderSoft)
 
 mainFrame.content = CreateBackdropFrame(nil, mainFrame, 1)
@@ -667,7 +667,7 @@ local function EnsureExpansionButtons()
   local anchor = nil
   for _, expansion in ipairs(constants.orderedExpansions or {}) do
     local btn = CreateBackdropFrame(nil, mainFrame.sidebar, 1)
-    btn:SetSize(144, 32)
+    btn:SetSize(178, 32)
     if anchor then
       btn:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -8)
     else
@@ -678,7 +678,9 @@ local function EnsureExpansionButtons()
 
     btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     btn.text:SetPoint("LEFT", 12, 0)
+    btn.text:SetPoint("RIGHT", -10, 0)
     btn.text:SetJustifyH("LEFT")
+    btn.text:SetWordWrap(false)
     btn.text:SetText(L[expansion] or expansion)
 
     btn.activeBar = btn:CreateTexture(nil, "ARTWORK")
