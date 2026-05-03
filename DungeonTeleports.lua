@@ -199,6 +199,7 @@ if not DungeonTeleportsDB then
   DungeonTeleportsDB = {}
 end
 if DungeonTeleportsDB.autoInsertKeystone == nil then DungeonTeleportsDB.autoInsertKeystone = false end
+if DungeonTeleportsDB.keystoneModuleEnabled == nil then DungeonTeleportsDB.keystoneModuleEnabled = true end
 
 -- ================================
 -- Mythic+ Keystone helper (Retail + Midnight Beta)
@@ -633,17 +634,759 @@ mainFrame.scrollChild = CreateFrame("Frame", nil, mainFrame.scrollFrame)
 mainFrame.scrollChild:SetSize(1, 1)
 mainFrame.scrollFrame:SetScrollChild(mainFrame.scrollChild)
 
+
+-- =========================================================
+-- Keystone view
+-- =========================================================
+local KEYSTONE_PREFIX = "DTKEYSTONE"
+local keystoneRows = {}
+local lastKeystoneBroadcast = 0
+local keystoneRefreshTicker = nil
+local libKeystone = nil
+local libKeystoneRegistered = false
+local libKeystoneHandler = {}
+local lastLibKeystoneRequest = 0
+local KEYSTONE_VIEW_ID = "__KEYSTONES__"
+
+local function IsKeystoneModuleEnabled()
+  return not (DungeonTeleportsDB and DungeonTeleportsDB.keystoneModuleEnabled == false)
+end
+
+local function GetKeystoneSort()
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.keystonesSortKey = DungeonTeleportsDB.keystonesSortKey or "level"
+  DungeonTeleportsDB.keystonesSortAscending = DungeonTeleportsDB.keystonesSortAscending or false
+  return DungeonTeleportsDB.keystonesSortKey, DungeonTeleportsDB.keystonesSortAscending
+end
+
+local function SetKeystoneSort(key)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  if DungeonTeleportsDB.keystonesSortKey == key then
+    DungeonTeleportsDB.keystonesSortAscending = not DungeonTeleportsDB.keystonesSortAscending
+  else
+    DungeonTeleportsDB.keystonesSortKey = key
+    DungeonTeleportsDB.keystonesSortAscending = (key == "name" or key == "dungeon")
+  end
+end
+
+local function ClearTeleportRows()
+  for _, button in pairs(createdButtons) do
+    SafeHideTooltip(button)
+    button:Hide()
+    button:SetParent(nil)
+  end
+  wipe(createdButtons)
+
+  for _, textObj in pairs(createdTexts) do
+    if textObj and textObj.Hide then
+      textObj:Hide()
+      textObj:SetParent(nil)
+    end
+  end
+  wipe(createdTexts)
+end
+
+local function ClearKeystoneRows()
+  for _, row in ipairs(keystoneRows) do
+    if row and row.Hide then
+      row:Hide()
+      row:SetParent(nil)
+    end
+  end
+  wipe(keystoneRows)
+end
+
+local function GetFullPlayerName(unit)
+  unit = unit or "player"
+  local name, realm = UnitFullName(unit)
+  if not name or name == "" then return nil end
+  realm = realm and realm ~= "" and realm or GetRealmName()
+  return name, realm, name .. "-" .. (realm or "")
+end
+
+local function GetMythicPlusRating(unit)
+  if C_PlayerInfo and C_PlayerInfo.GetPlayerMythicPlusRatingSummary then
+    local ok, summary = pcall(C_PlayerInfo.GetPlayerMythicPlusRatingSummary, unit or "player")
+    if ok and summary and summary.currentSeasonScore then
+      return tonumber(summary.currentSeasonScore) or 0
+    end
+  end
+  return 0
+end
+
+local function GetKeystoneDungeonName(challengeMapID)
+  challengeMapID = tonumber(challengeMapID)
+  if not challengeMapID or challengeMapID == 0 then return "-" end
+
+  if C_ChallengeMode and C_ChallengeMode.GetMapUIInfo then
+    local ok, name = pcall(C_ChallengeMode.GetMapUIInfo, challengeMapID)
+    if ok and name and name ~= "" then
+      return name
+    end
+  end
+
+  -- Fallback for the addon's internal map table if a future build returns the internal id.
+  return (constants and constants.mapIDtoDungeonName and constants.mapIDtoDungeonName[challengeMapID]) or ("Map " .. tostring(challengeMapID))
+end
+
+local function EnsureKeystoneDB()
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.keystones = DungeonTeleportsDB.keystones or {}
+  DungeonTeleportsDB.keystones.characters = DungeonTeleportsDB.keystones.characters or {}
+  DungeonTeleportsDB.keystones.party = DungeonTeleportsDB.keystones.party or {}
+  DungeonTeleportsDB.keystones.guild = DungeonTeleportsDB.keystones.guild or {}
+  return DungeonTeleportsDB.keystones
+end
+
+
+local function GetGroupFullNames()
+  local group = {}
+  local function addUnit(unit)
+    if UnitExists and UnitExists(unit) then
+      local name, realm = UnitFullName(unit)
+      if name and name ~= "" then
+        realm = realm and realm ~= "" and realm or GetRealmName()
+        group[name .. "-" .. realm] = true
+      end
+    end
+  end
+
+  addUnit("player")
+  if IsInRaid and IsInRaid() then
+    for i = 1, 40 do addUnit("raid" .. i) end
+  elseif IsInGroup and IsInGroup() then
+    for i = 1, 4 do addUnit("party" .. i) end
+  end
+  return group
+end
+
+local function PrunePartyKeystoneCache()
+  local db = EnsureKeystoneDB()
+  local group = GetGroupFullNames()
+  for fullName in pairs(db.party or {}) do
+    if not group[fullName] then
+      db.party[fullName] = nil
+    end
+  end
+end
+
+local function UpdateOwnKeystoneCache()
+  local db = EnsureKeystoneDB()
+  local name, realm, fullName = GetFullPlayerName("player")
+  if not fullName then return nil end
+
+  local mapID, level = 0, 0
+  if C_MythicPlus then
+    if C_MythicPlus.GetOwnedKeystoneChallengeMapID then
+      local ok, value = pcall(C_MythicPlus.GetOwnedKeystoneChallengeMapID)
+      if ok then mapID = tonumber(value) or 0 end
+    elseif C_MythicPlus.GetOwnedKeystoneMapID then
+      local ok, value = pcall(C_MythicPlus.GetOwnedKeystoneMapID)
+      if ok then mapID = tonumber(value) or 0 end
+    end
+
+    if C_MythicPlus.GetOwnedKeystoneLevel then
+      local ok, value = pcall(C_MythicPlus.GetOwnedKeystoneLevel)
+      if ok then level = tonumber(value) or 0 end
+    end
+  end
+
+  local record = {
+    name = name,
+    realm = realm,
+    fullName = fullName,
+    level = level or 0,
+    mapID = mapID or 0,
+    dungeon = GetKeystoneDungeonName(mapID),
+    rating = GetMythicPlusRating("player"),
+    updated = time(),
+    source = "DungeonTeleports",
+  }
+  db.characters[fullName] = record
+  db.party[fullName] = record
+  if IsInGuild and IsInGuild() then
+    db.guild[fullName] = record
+  end
+  return record
+end
+
+local function StoreRemoteKeystone(scope, name, realm, level, mapID, rating, updated, source)
+  if not name or name == "" then return end
+  local db = EnsureKeystoneDB()
+  local fullName = name .. "-" .. ((realm and realm ~= "") and realm or GetRealmName())
+  local record = {
+    name = name,
+    realm = realm,
+    fullName = fullName,
+    level = tonumber(level) or 0,
+    mapID = tonumber(mapID) or 0,
+    dungeon = GetKeystoneDungeonName(mapID),
+    rating = tonumber(rating) or 0,
+    updated = tonumber(updated) or time(),
+    source = source or "DungeonTeleports",
+  }
+  if scope == "GUILD" then
+    db.guild[fullName] = record
+  else
+    db.party[fullName] = record
+  end
+end
+
+
+local function SplitFullName(fullName)
+  if not fullName or fullName == "" then return nil end
+  local name, realm = strsplit("-", fullName)
+  if not name or name == "" then return nil end
+  realm = realm and realm ~= "" and realm or GetRealmName()
+  return name, realm
+end
+
+local function StoreExternalKeystone(scope, fullName, level, mapID, rating, updated, source)
+  local name, realm = SplitFullName(fullName)
+  if not name then return end
+  StoreRemoteKeystone(scope or "GUILD", name, realm, level, mapID, rating, updated, source)
+end
+
+local function GetLibKeystone()
+  if libKeystone then return libKeystone end
+  if LibStub then
+    local ok, lib = pcall(LibStub, "LibKeystone", true)
+    if ok and lib then
+      libKeystone = lib
+      return libKeystone
+    end
+  end
+  return nil
+end
+
+local function RegisterLibKeystone()
+  local lib = GetLibKeystone()
+  if not lib or libKeystoneRegistered or not lib.Register then return false end
+
+  local ok = pcall(lib.Register, libKeystoneHandler, function(keyLevel, mapID, playerRating, sender, channel)
+    if not sender or sender == "" then return end
+    local scope = (channel == "GUILD") and "GUILD" or "PARTY"
+    StoreExternalKeystone(scope, sender, keyLevel, mapID, playerRating, time(), "LibKeystone")
+
+    if DungeonTeleportsDB and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" and mainFrame and mainFrame:IsShown() then
+      addon.ShowKeystoneView()
+    end
+  end)
+
+  if ok then
+    libKeystoneRegistered = true
+    return true
+  end
+  return false
+end
+
+local function RequestLibKeystones(force)
+  local lib = GetLibKeystone()
+  if not lib or not lib.Request then return false end
+  RegisterLibKeystone()
+
+  local now = GetTime and GetTime() or 0
+  if not force and (now - lastLibKeystoneRequest) < 10 then return true end
+  lastLibKeystoneRequest = now
+
+  if IsInGroup and IsInGroup() then
+    pcall(lib.Request, (IsInRaid and IsInRaid()) and "RAID" or "PARTY")
+  end
+  if IsInGuild and IsInGuild() then
+    pcall(lib.Request, "GUILD")
+  end
+  return true
+end
+
+local function ImportAstralKeysCache()
+  local astral = _G.AstralKeys
+  if type(astral) ~= "table" then return 0 end
+
+  local imported = 0
+  for _, entry in pairs(astral) do
+    if type(entry) == "table" and entry.unit and entry.dungeon_id and entry.key_level then
+      local level = tonumber(entry.key_level) or 0
+      local mapID = tonumber(entry.dungeon_id) or 0
+      if level > 0 and mapID > 0 then
+        local rating = tonumber(entry.mplus_score) or 0
+        local updated = tonumber(entry.time_stamp) or time()
+        StoreExternalKeystone("GUILD", entry.unit, level, mapID, rating, updated, "AstralKeys")
+        imported = imported + 1
+      end
+    end
+  end
+  return imported
+end
+
+local function HandleAstralKeysMessage(msg, channel, sender)
+  if type(msg) ~= "string" then return false end
+
+  -- AstralKeys current sync format is: updateV8 Name-Realm:CLASS:mapID:keyLevel:weeklyBest:week:score:faction
+  local payload = msg:match("^updateV%d+%s+(.+)$")
+  if not payload then return false end
+
+  local unit, class, mapID, keyLevel, weeklyBest, week, score = strsplit(":", payload)
+  if not unit or not mapID or not keyLevel then return false end
+
+  local scope = (channel == "PARTY" or channel == "RAID") and "PARTY" or "GUILD"
+  StoreExternalKeystone(scope, unit, keyLevel, mapID, score, time(), "AstralKeys")
+  return true
+end
+
+local function HandleAddonKeystoneLink(text, sender, channel, source)
+  if type(text) ~= "string" then return false end
+
+  local itemID, mapID, level = string.match(text, "Hkeystone:(%d+):(%d+):(%d+):")
+  if not mapID or not level then return false end
+
+  local scope = (channel == "PARTY" or channel == "RAID" or channel == "INSTANCE_CHAT") and "PARTY" or "GUILD"
+  StoreExternalKeystone(scope, sender, level, mapID, 0, time(), source or "Addon Link")
+  return true
+end
+
+local function BroadcastOwnKeystone(force)
+  local now = GetTime()
+  if not force and (now - lastKeystoneBroadcast) < 10 then return end
+  lastKeystoneBroadcast = now
+
+  local record = UpdateOwnKeystoneCache()
+  if not record or not C_ChatInfo or not C_ChatInfo.SendAddonMessage then return end
+
+  local msg = table.concat({
+    record.name or "",
+    record.realm or "",
+    tostring(record.level or 0),
+    tostring(record.mapID or 0),
+    tostring(record.rating or 0),
+    tostring(record.updated or time()),
+  }, "|")
+
+  if IsInGroup and IsInGroup() then
+    local channel = (IsInRaid and IsInRaid()) and "RAID" or "PARTY"
+    pcall(C_ChatInfo.SendAddonMessage, KEYSTONE_PREFIX, msg, channel)
+  end
+  if IsInGuild and IsInGuild() then
+    pcall(C_ChatInfo.SendAddonMessage, KEYSTONE_PREFIX, msg, "GUILD")
+  end
+end
+
+local UpdateExpansionButtonStyles
+local EnsureExpansionButtons
+
+local function CreateKeystoneButton()
+  if mainFrame.keystoneButton then
+    if IsKeystoneModuleEnabled() then mainFrame.keystoneButton:Show() else mainFrame.keystoneButton:Hide() end
+    return
+  end
+  if not IsKeystoneModuleEnabled() then return end
+
+  local btn = CreateBackdropFrame(nil, mainFrame.sidebar, 1)
+  btn:SetSize(178, 32)
+  btn:SetPoint("BOTTOMLEFT", mainFrame.sidebar, "BOTTOMLEFT", 16, 16)
+  SetPanelStyle(btn, COLORS.bgLight, COLORS.borderSoft)
+  btn:EnableMouse(true)
+
+  btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  btn.text:SetPoint("LEFT", 12, 0)
+  btn.text:SetPoint("RIGHT", -10, 0)
+  btn.text:SetJustifyH("LEFT")
+  btn.text:SetText("Keystones")
+  btn.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+
+  btn.activeBar = btn:CreateTexture(nil, "ARTWORK")
+  btn.activeBar:SetPoint("TOPLEFT", 0, 0)
+  btn.activeBar:SetPoint("BOTTOMLEFT", 0, 0)
+  btn.activeBar:SetWidth(4)
+  btn.activeBar:SetColorTexture(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 1)
+  btn.activeBar:Hide()
+
+  btn:SetScript("OnEnter", function(self)
+    if DungeonTeleportsDB.selectedExpansion ~= "__KEYSTONES__" then
+      self:SetBackdropColor(COLORS.hover[1], COLORS.hover[2], COLORS.hover[3], 1)
+    end
+  end)
+  btn:SetScript("OnLeave", function(self)
+    UpdateExpansionButtonStyles(DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])
+  end)
+  btn:SetScript("OnMouseDown", function()
+    if addon.ShowKeystoneView then addon.ShowKeystoneView() end
+  end)
+
+  mainFrame.keystoneButton = btn
+end
+
+local function SetKeystoneButtonActive(active)
+  if not mainFrame.keystoneButton then return end
+  if active then
+    mainFrame.keystoneButton:SetBackdropColor(COLORS.accentDark[1], COLORS.accentDark[2], COLORS.accentDark[3], 1)
+    mainFrame.keystoneButton:SetBackdropBorderColor(COLORS.accent[1], COLORS.accent[2], COLORS.accent[3], 1)
+    mainFrame.keystoneButton.text:SetTextColor(1, 1, 1)
+    mainFrame.keystoneButton.activeBar:Show()
+  else
+    mainFrame.keystoneButton:SetBackdropColor(COLORS.bgLight[1], COLORS.bgLight[2], COLORS.bgLight[3], 1)
+    mainFrame.keystoneButton:SetBackdropBorderColor(COLORS.borderSoft[1], COLORS.borderSoft[2], COLORS.borderSoft[3], COLORS.borderSoft[4])
+    mainFrame.keystoneButton.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+    mainFrame.keystoneButton.activeBar:Hide()
+  end
+end
+
+
+local function CreateKeystoneRefreshButton()
+  if mainFrame.keystoneRefreshButton then return mainFrame.keystoneRefreshButton end
+
+  local btn = CreateBackdropFrame(nil, mainFrame.contentHeader, 1)
+  btn:SetSize(84, 24)
+  btn:SetPoint("RIGHT", -10, 0)
+  SetPanelStyle(btn, COLORS.bgLight, COLORS.borderSoft)
+  btn:EnableMouse(true)
+  btn:Hide()
+
+  btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+  btn.text:SetPoint("CENTER", 0, 0)
+  btn.text:SetText("Refresh")
+  btn.text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3])
+
+  btn:SetScript("OnEnter", function(self)
+    self:SetBackdropColor(COLORS.hover[1], COLORS.hover[2], COLORS.hover[3], 1)
+  end)
+  btn:SetScript("OnLeave", function(self)
+    SetPanelStyle(self, COLORS.bgLight, COLORS.borderSoft)
+  end)
+  btn:SetScript("OnMouseDown", function()
+    UpdateOwnKeystoneCache()
+    ImportAstralKeysCache()
+    RequestLibKeystones(true)
+    PrunePartyKeystoneCache()
+    BroadcastOwnKeystone(true)
+    if addon.ShowKeystoneView then addon.ShowKeystoneView() end
+  end)
+
+  mainFrame.keystoneRefreshButton = btn
+  return btn
+end
+
+local function SetKeystoneRefreshVisible(visible)
+  local btn = CreateKeystoneRefreshButton()
+  if visible then btn:Show() else btn:Hide() end
+end
+
+local function StartKeystoneAutoRefresh()
+  if keystoneRefreshTicker or not C_Timer or not C_Timer.NewTicker then return end
+  keystoneRefreshTicker = C_Timer.NewTicker(30, function()
+    if not (DungeonTeleportsDB and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" and mainFrame and mainFrame:IsShown()) then
+      if keystoneRefreshTicker and keystoneRefreshTicker.Cancel then keystoneRefreshTicker:Cancel() end
+      keystoneRefreshTicker = nil
+      return
+    end
+    UpdateOwnKeystoneCache()
+    ImportAstralKeysCache()
+    RequestLibKeystones(false)
+    PrunePartyKeystoneCache()
+    BroadcastOwnKeystone(false)
+    if addon.ShowKeystoneView then addon.ShowKeystoneView() end
+  end)
+end
+
+
+local function AddKeystoneColumnHeader(y)
+  local width = math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8)
+  local header = CreateBackdropFrame(nil, mainFrame.scrollChild, 1)
+  header:SetSize(width, 30)
+  header:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", 0, y)
+  SetPanelStyle(header, COLORS.accentDark, COLORS.borderSoft)
+
+  local sortKey, ascending = GetKeystoneSort()
+
+  local function makeHeaderButton(text, key, x, w)
+    local btn = CreateFrame("Button", nil, header)
+    btn:SetPoint("LEFT", x, 0)
+    btn:SetSize(w, 30)
+
+    btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    btn.text:SetPoint("LEFT", 0, 0)
+    btn.text:SetWidth(w - 16)
+    btn.text:SetJustifyH("LEFT")
+    btn.text:SetText(text)
+    btn.text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3])
+
+    -- Sort indicator. Keep this as a texture instead of text so it does not
+    -- wrap the header label or render as unsupported font glyphs.
+    btn.sortArrow = btn:CreateTexture(nil, "OVERLAY")
+    btn.sortArrow:SetSize(10, 10)
+    btn.sortArrow:SetPoint("LEFT", btn.text, "RIGHT", 2, 0)
+    btn.sortArrow:SetTexture("Interface\\Buttons\\UI-SortArrow")
+    if sortKey == key then
+      btn.sortArrow:Show()
+      if ascending then
+        btn.sortArrow:SetTexCoord(0, 1, 0, 1)
+      else
+        btn.sortArrow:SetTexCoord(0, 1, 1, 0)
+      end
+    else
+      btn.sortArrow:Hide()
+    end
+
+    btn:SetScript("OnEnter", function(self) self.text:SetTextColor(1, 1, 1) end)
+    btn:SetScript("OnLeave", function(self) self.text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3]) end)
+    btn:SetScript("OnClick", function()
+      SetKeystoneSort(key)
+      if addon.ShowKeystoneView then addon.ShowKeystoneView() end
+    end)
+    return btn
+  end
+
+  makeHeaderButton("Player", "name", 10, 190)
+  makeHeaderButton("Level", "level", 210, 70)
+  makeHeaderButton("Dungeon", "dungeon", 290, 260)
+  makeHeaderButton("Rating", "rating", 560, 90)
+
+  table.insert(keystoneRows, header)
+  return y - 38
+end
+local function AddKeystoneSection(title, y)
+  local header = CreateBackdropFrame(nil, mainFrame.scrollChild, 1)
+  header:SetSize(math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8), 30)
+  header:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", 0, y)
+  SetPanelStyle(header, COLORS.accentDark, COLORS.borderSoft)
+
+  local text = header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+  text:SetPoint("LEFT", 10, 0)
+  text:SetText(title)
+  text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3])
+
+  table.insert(keystoneRows, header)
+  return y - 38
+end
+
+local function AddKeystoneRow(record, y, emptyText)
+  local width = math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8)
+  local row = CreateBackdropFrame(nil, mainFrame.scrollChild, 1)
+  row:SetSize(width, 32)
+  row:SetPoint("TOPLEFT", mainFrame.scrollChild, "TOPLEFT", 0, y)
+  SetPanelStyle(row, COLORS.bgCard, COLORS.borderSoft)
+
+  local player = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  player:SetPoint("LEFT", 10, 0)
+  player:SetWidth(190)
+  player:SetJustifyH("LEFT")
+
+  local level = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  level:SetPoint("LEFT", player, "RIGHT", 10, 0)
+  level:SetWidth(70)
+  level:SetJustifyH("LEFT")
+
+  local dungeon = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  dungeon:SetPoint("LEFT", level, "RIGHT", 10, 0)
+  dungeon:SetWidth(260)
+  dungeon:SetJustifyH("LEFT")
+
+  local rating = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  rating:SetPoint("LEFT", dungeon, "RIGHT", 10, 0)
+  rating:SetWidth(80)
+  rating:SetJustifyH("LEFT")
+
+  if record then
+    player:SetText(record.name or record.fullName or "Unknown")
+    level:SetText((record.level and record.level > 0) and tostring(record.level) or "-")
+    dungeon:SetText((record.level and record.level > 0) and (record.dungeon or "-") or "No key")
+    rating:SetText((record.rating and record.rating > 0) and tostring(record.rating) or "-")
+    row:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+      GameTooltip:AddLine(record.fullName or record.name or "Keystone")
+      GameTooltip:AddDoubleLine("Source", record.source or "DungeonTeleports", 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+      if record.updated then
+        GameTooltip:AddDoubleLine("Updated", date("%d/%m %H:%M", record.updated), 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+      end
+      GameTooltip:Show()
+    end)
+    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  else
+    player:SetText(emptyText or "No keystones found yet")
+    level:SetText("")
+    dungeon:SetText("")
+    rating:SetText("")
+    player:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+  end
+
+  table.insert(keystoneRows, row)
+  return y - 38
+end
+
+local function SortedRecords(t)
+  local rows = {}
+  local index = 0
+
+  local function safeText(value)
+    return string.lower(tostring(value or ""))
+  end
+  local function safeNumber(value)
+    return tonumber(value) or 0
+  end
+
+  -- Copy the values used by the sorter into stable scalar fields first.
+  -- LibKeystone callbacks can update the source cache while the view is being
+  -- rebuilt; sorting against a changing table can produce Lua's
+  -- "invalid order function for sorting" error, especially on dungeon names.
+  for _, record in pairs(t or {}) do
+    if type(record) == "table" then
+      index = index + 1
+      table.insert(rows, {
+        name = record.name,
+        fullName = record.fullName,
+        realm = record.realm,
+        level = record.level,
+        dungeon = record.dungeon,
+        mapID = record.mapID,
+        rating = record.rating,
+        source = record.source,
+        updated = record.updated,
+        _sortIndex = index,
+        _sortName = safeText(record.name or record.fullName),
+        _sortFullName = safeText(record.fullName or record.name),
+        _sortDungeon = safeText(record.dungeon),
+        _sortLevel = safeNumber(record.level),
+        _sortRating = safeNumber(record.rating),
+      })
+    end
+  end
+
+  local sortKey, ascending = GetKeystoneSort()
+
+  local function comparePrimary(a, b)
+    local av, bv
+    if sortKey == "name" then
+      av, bv = a._sortName, b._sortName
+    elseif sortKey == "dungeon" then
+      av, bv = a._sortDungeon, b._sortDungeon
+    elseif sortKey == "rating" then
+      av, bv = a._sortRating, b._sortRating
+    else
+      av, bv = a._sortLevel, b._sortLevel
+    end
+
+    if av ~= bv then
+      if ascending then return av < bv end
+      return av > bv
+    end
+    return nil
+  end
+
+  table.sort(rows, function(a, b)
+    if type(a) ~= "table" or type(b) ~= "table" then return false end
+
+    local primary = comparePrimary(a, b)
+    if primary ~= nil then return primary end
+
+    -- Fixed tie-breakers keep the comparator strict and stable. Do not reverse
+    -- these with the active sort direction, otherwise equal dungeon rows can
+    -- become non-transitive and table.sort throws an error.
+    if a._sortLevel ~= b._sortLevel then return a._sortLevel > b._sortLevel end
+    if a._sortRating ~= b._sortRating then return a._sortRating > b._sortRating end
+    if a._sortDungeon ~= b._sortDungeon then return a._sortDungeon < b._sortDungeon end
+    if a._sortName ~= b._sortName then return a._sortName < b._sortName end
+    if a._sortFullName ~= b._sortFullName then return a._sortFullName < b._sortFullName end
+    return (a._sortIndex or 0) < (b._sortIndex or 0)
+  end)
+  return rows
+end
+
+local function AddKeystoneSectionIfVisible(scopeTitle, records, y, emptyText, shouldShow)
+  if not shouldShow then return y, 0 end
+  y = AddKeystoneSection(scopeTitle, y)
+  if #records == 0 then
+    y = AddKeystoneRow(nil, y, emptyText)
+    return y, 0
+  end
+  for _, record in ipairs(records) do
+    y = AddKeystoneRow(record, y)
+  end
+  return y, #records
+end
+function addon.ShowKeystoneView()
+  if not IsKeystoneModuleEnabled() then
+    local fallback = DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
+    DungeonTeleportsDB.selectedExpansion = fallback
+    addon.RefreshTeleportUI(fallback)
+    return
+  end
+  EnsureExpansionButtons()
+  CreateKeystoneButton()
+  ClearTeleportRows()
+  ClearKeystoneRows()
+
+  RegisterLibKeystone()
+  UpdateOwnKeystoneCache()
+  ImportAstralKeysCache()
+  RequestLibKeystones(false)
+  PrunePartyKeystoneCache()
+  BroadcastOwnKeystone(false)
+
+  DungeonTeleportsDB.selectedExpansion = "__KEYSTONES__"
+  UpdateExpansionButtonStyles("__KEYSTONES__")
+  SetKeystoneButtonActive(true)
+  SetKeystoneRefreshVisible(true)
+  StartKeystoneAutoRefresh()
+
+  mainFrame.contentIcon:SetTexture("Interface\\Icons\\inv_relics_hourglass")
+  mainFrame.contentTitle:SetText("Keystones")
+  mainFrame.contentSubtitle:SetText("Party, guild, and saved character keystones")
+  mainFrame.summaryText:SetText("")
+
+  local db = EnsureKeystoneDB()
+  local y = 0
+  local total = 0
+
+  y = AddKeystoneColumnHeader(y)
+
+  local sectionCount
+  local partyRows = SortedRecords(db.party)
+  y, sectionCount = AddKeystoneSectionIfVisible("Party Keystones", partyRows, y, "No party keystones received yet", IsInGroup and IsInGroup())
+  total = total + sectionCount
+
+  local guildRows = SortedRecords(db.guild)
+  y, sectionCount = AddKeystoneSectionIfVisible("Guild Keystones", guildRows, y - 6, "No guild keystones received yet", IsInGuild and IsInGuild())
+  total = total + sectionCount
+
+  local charRows = SortedRecords(db.characters)
+  y, sectionCount = AddKeystoneSectionIfVisible("Character Keystones", charRows, y - 6, "No character keystones saved yet", true)
+  total = total + sectionCount
+
+  mainFrame.summaryText:SetText("")
+  mainFrame.scrollChild:SetSize(math.max(640, (mainFrame.scrollFrame:GetWidth() or 700) - 8), math.abs(y) + 20)
+end
+
+function addon.SetKeystoneModuleEnabled(enabled)
+  DungeonTeleportsDB = DungeonTeleportsDB or {}
+  DungeonTeleportsDB.keystoneModuleEnabled = enabled ~= false
+  if mainFrame.keystoneButton then
+    if DungeonTeleportsDB.keystoneModuleEnabled then mainFrame.keystoneButton:Show() else mainFrame.keystoneButton:Hide() end
+  elseif DungeonTeleportsDB.keystoneModuleEnabled then
+    CreateKeystoneButton()
+  end
+  if not DungeonTeleportsDB.keystoneModuleEnabled and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" then
+    local fallback = DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
+    DungeonTeleportsDB.selectedExpansion = fallback
+    addon.RefreshTeleportUI(fallback)
+  end
+  UpdateExpansionButtonStyles(DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])
+end
+
+CreateKeystoneButton()
+
 mainFrame:SetScript("OnShow", function()
   AnalyticsEvent("ui_visibility", { visible = true })
 end)
 mainFrame:SetScript("OnHide", function()
   AnalyticsEvent("ui_visibility", { visible = false })
+  if keystoneRefreshTicker and keystoneRefreshTicker.Cancel then keystoneRefreshTicker:Cancel() end
+  keystoneRefreshTicker = nil
 end)
 
 _G.DungeonTeleportsMainFrame = mainFrame
 addon.mainFrame = mainFrame
 
-local function UpdateExpansionButtonStyles(selectedExpansion)
+UpdateExpansionButtonStyles = function(selectedExpansion)
+  SetKeystoneButtonActive(selectedExpansion == "__KEYSTONES__")
   for expansion, btn in pairs(currentExpansionButtons) do
     local active = expansion == selectedExpansion
     if active then
@@ -660,7 +1403,7 @@ local function UpdateExpansionButtonStyles(selectedExpansion)
   end
 end
 
-local function EnsureExpansionButtons()
+EnsureExpansionButtons = function()
   if mainFrame.expansionButtonsBuilt then return end
   mainFrame.expansionButtonsBuilt = true
 
@@ -742,6 +1485,8 @@ function createTeleportButtons(selectedExpansion)
   selectedExpansion = selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
   DungeonTeleportsDB.selectedExpansion = selectedExpansion
   UpdateExpansionButtonStyles(selectedExpansion)
+  SetKeystoneRefreshVisible(false)
+  ClearKeystoneRows()
 
   local mapIDs = constants.mapExpansionToMapID[selectedExpansion]
   if not mapIDs then return end
@@ -992,12 +1737,69 @@ SetFactionSpecificSpells()
 
 mainFrame:SetScript("OnShow", function()
   local defaultExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1]
-  addon.RefreshTeleportUI(defaultExpansion)
+  if defaultExpansion == "__KEYSTONES__" and IsKeystoneModuleEnabled() then
+    addon.ShowKeystoneView()
+  else
+    addon.RefreshTeleportUI((defaultExpansion == "__KEYSTONES__" and (DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])) or defaultExpansion)
+  end
 end)
 
 DungeonTeleports:RegisterEvent("PLAYER_LOGIN")
-DungeonTeleports:SetScript("OnEvent", function()
+DungeonTeleports:RegisterEvent("PLAYER_ENTERING_WORLD")
+DungeonTeleports:RegisterEvent("ADDON_LOADED")
+DungeonTeleports:RegisterEvent("CHAT_MSG_ADDON")
+-- Do not parse normal chat messages for keystone links here.
+-- In protected/tainted execution paths WoW can pass chat text as a secret string,
+-- and calling string methods on it causes taint errors. Keystone sharing is handled
+-- through saved character data, our own addon messages, and compatible addon messages.
+DungeonTeleports:RegisterEvent("BAG_UPDATE_DELAYED")
+DungeonTeleports:RegisterEvent("GROUP_ROSTER_UPDATE")
+DungeonTeleports:SetScript("OnEvent", function(_, event, prefix, msg, channel, sender)
+  if event == "CHAT_MSG_ADDON" and type(msg) == "string" then
+    if not IsKeystoneModuleEnabled() then return end
+    local updated = false
+    if prefix == KEYSTONE_PREFIX then
+      local name, realm, level, mapID, rating, stamp = strsplit("|", msg)
+      StoreRemoteKeystone(channel == "GUILD" and "GUILD" or "PARTY", name, realm, level, mapID, rating, stamp, "DungeonTeleports")
+      updated = true
+    elseif prefix == "AstralKeys" then
+      updated = HandleAstralKeysMessage(msg, channel, sender)
+    else
+      -- Some keystone addons transmit the normal keystone hyperlink in their addon message.
+      -- This gives us a safe generic catch-all without depending on their internal tables.
+      updated = HandleAddonKeystoneLink(msg, sender, channel, prefix)
+    end
+    if updated and DungeonTeleportsDB and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" and mainFrame:IsShown() then
+      addon.ShowKeystoneView()
+    end
+    return
+  elseif event == "BAG_UPDATE_DELAYED" or event == "GROUP_ROSTER_UPDATE" then
+    UpdateOwnKeystoneCache()
+    if event == "GROUP_ROSTER_UPDATE" then
+      PrunePartyKeystoneCache()
+      RequestLibKeystones(true)
+      BroadcastOwnKeystone(false)
+      if DungeonTeleportsDB and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" and mainFrame:IsShown() then
+        addon.ShowKeystoneView()
+      end
+    end
+    return
+  elseif event == "ADDON_LOADED" or event == "PLAYER_ENTERING_WORLD" then
+    RegisterLibKeystone()
+    RequestLibKeystones(false)
+    return
+  elseif event ~= "PLAYER_LOGIN" then
+    return
+  end
   DungeonTeleportsDB = DungeonTeleportsDB or {}
+  if C_ChatInfo and C_ChatInfo.RegisterAddonMessagePrefix then
+    pcall(C_ChatInfo.RegisterAddonMessagePrefix, KEYSTONE_PREFIX)
+    pcall(C_ChatInfo.RegisterAddonMessagePrefix, "AstralKeys")
+  end
+  RegisterLibKeystone()
+  UpdateOwnKeystoneCache()
+  ImportAstralKeysCache()
+  RequestLibKeystones(true)
   DungeonTeleportsDB.defaultExpansion = DungeonTeleportsDB.defaultExpansion or L["Current Season"]
   DungeonTeleportsDB.selectedExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion
   DungeonTeleportsDB.uiScale = ClampScale(DungeonTeleportsDB.uiScale)
@@ -1049,7 +1851,11 @@ SlashCmdList["DUNGEONTELEPORTS"] = function()
   end
 
   local defaultExpansion = DungeonTeleportsDB.selectedExpansion or DungeonTeleportsDB.defaultExpansion or L["Current Season"]
-  addon.RefreshTeleportUI(defaultExpansion)
+  if defaultExpansion == "__KEYSTONES__" and IsKeystoneModuleEnabled() then
+    addon.ShowKeystoneView()
+  else
+    addon.RefreshTeleportUI((defaultExpansion == "__KEYSTONES__" and (DungeonTeleportsDB.defaultExpansion or constants.orderedExpansions[1])) or defaultExpansion)
+  end
   DT_SafeShow(DungeonTeleportsMainFrame)
   DungeonTeleportsDB.isVisible = true
   AnalyticsEvent("ui_visibility", { visible = true })
