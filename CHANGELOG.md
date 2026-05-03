@@ -1,6 +1,6 @@
 ## 🧩 Addon Updates (2026-05-03)
 
-**Mythic Dungeon Teleports** — v2.1.1  
+**Mythic Dungeon Teleports** — v2.1.2  
 
 **New Feature: Keystones**
 
@@ -25,10 +25,12 @@ A brand new **Keystones** module has been added, giving you a clear and centrali
 - Sidebar button only appears when the module is enabled  
 
 **Changes:**  
-- None (feature-focused release)
+- Improved keystone module performance during dungeons and Mythic+ runs
+- Reduced background processing and unnecessary updates while in active instances
 
 **Fixes:**  
-- None
+- Fixed micro-freezing/stuttering caused by keystone syncing during Mythic+
+- Prevented excessive addon message handling impacting performance
 
 **Known issues:**  
-- None currently known
+- None currently known  

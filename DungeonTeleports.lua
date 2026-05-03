@@ -648,6 +648,13 @@ local libKeystoneHandler = {}
 local lastLibKeystoneRequest = 0
 local KEYSTONE_VIEW_ID = "__KEYSTONES__"
 
+local function KeystoneShouldPauseSync()
+  -- During an active Mythic+ run the UI is already suppressed for Midnight safety.
+  -- Keystone sync can still receive a lot of addon traffic, so pause it completely
+  -- to avoid small hitches/freezes while inside the dungeon.
+  return (addon and addon._DT_mplus_suppressed) or DT_IsChallengeModeActive()
+end
+
 local function IsKeystoneModuleEnabled()
   return not (DungeonTeleportsDB and DungeonTeleportsDB.keystoneModuleEnabled == false)
 end
@@ -864,6 +871,7 @@ local function RegisterLibKeystone()
   if not lib or libKeystoneRegistered or not lib.Register then return false end
 
   local ok = pcall(lib.Register, libKeystoneHandler, function(keyLevel, mapID, playerRating, sender, channel)
+    if KeystoneShouldPauseSync() then return end
     if not sender or sender == "" then return end
     local scope = (channel == "GUILD") and "GUILD" or "PARTY"
     StoreExternalKeystone(scope, sender, keyLevel, mapID, playerRating, time(), "LibKeystone")
@@ -881,6 +889,7 @@ local function RegisterLibKeystone()
 end
 
 local function RequestLibKeystones(force)
+  if not IsKeystoneModuleEnabled() or KeystoneShouldPauseSync() then return false end
   local lib = GetLibKeystone()
   if not lib or not lib.Request then return false end
   RegisterLibKeystone()
@@ -945,6 +954,7 @@ local function HandleAddonKeystoneLink(text, sender, channel, source)
 end
 
 local function BroadcastOwnKeystone(force)
+  if not IsKeystoneModuleEnabled() or KeystoneShouldPauseSync() then return end
   local now = GetTime()
   if not force and (now - lastKeystoneBroadcast) < 10 then return end
   lastKeystoneBroadcast = now
@@ -1078,6 +1088,7 @@ local function StartKeystoneAutoRefresh()
       keystoneRefreshTicker = nil
       return
     end
+    if KeystoneShouldPauseSync() then return end
     UpdateOwnKeystoneCache()
     ImportAstralKeysCache()
     RequestLibKeystones(false)
@@ -1315,11 +1326,13 @@ function addon.ShowKeystoneView()
   ClearKeystoneRows()
 
   RegisterLibKeystone()
-  UpdateOwnKeystoneCache()
-  ImportAstralKeysCache()
-  RequestLibKeystones(false)
-  PrunePartyKeystoneCache()
-  BroadcastOwnKeystone(false)
+  if not KeystoneShouldPauseSync() then
+    UpdateOwnKeystoneCache()
+    ImportAstralKeysCache()
+    RequestLibKeystones(false)
+    PrunePartyKeystoneCache()
+    BroadcastOwnKeystone(false)
+  end
 
   DungeonTeleportsDB.selectedExpansion = "__KEYSTONES__"
   UpdateExpansionButtonStyles("__KEYSTONES__")
@@ -1755,8 +1768,11 @@ DungeonTeleports:RegisterEvent("CHAT_MSG_ADDON")
 DungeonTeleports:RegisterEvent("BAG_UPDATE_DELAYED")
 DungeonTeleports:RegisterEvent("GROUP_ROSTER_UPDATE")
 DungeonTeleports:SetScript("OnEvent", function(_, event, prefix, msg, channel, sender)
+  if event == "CHAT_MSG_ADDON" or event == "BAG_UPDATE_DELAYED" or event == "GROUP_ROSTER_UPDATE" then
+    if not IsKeystoneModuleEnabled() or KeystoneShouldPauseSync() then return end
+  end
+
   if event == "CHAT_MSG_ADDON" and type(msg) == "string" then
-    if not IsKeystoneModuleEnabled() then return end
     local updated = false
     if prefix == KEYSTONE_PREFIX then
       local name, realm, level, mapID, rating, stamp = strsplit("|", msg)
@@ -1765,9 +1781,9 @@ DungeonTeleports:SetScript("OnEvent", function(_, event, prefix, msg, channel, s
     elseif prefix == "AstralKeys" then
       updated = HandleAstralKeysMessage(msg, channel, sender)
     else
-      -- Some keystone addons transmit the normal keystone hyperlink in their addon message.
-      -- This gives us a safe generic catch-all without depending on their internal tables.
-      updated = HandleAddonKeystoneLink(msg, sender, channel, prefix)
+      -- Ignore unrelated addon traffic. Generic link parsing on every addon
+      -- message can create avoidable work/stutter in busy dungeon groups.
+      return
     end
     if updated and DungeonTeleportsDB and DungeonTeleportsDB.selectedExpansion == "__KEYSTONES__" and mainFrame:IsShown() then
       addon.ShowKeystoneView()
@@ -1786,7 +1802,9 @@ DungeonTeleports:SetScript("OnEvent", function(_, event, prefix, msg, channel, s
     return
   elseif event == "ADDON_LOADED" or event == "PLAYER_ENTERING_WORLD" then
     RegisterLibKeystone()
-    RequestLibKeystones(false)
+    if not KeystoneShouldPauseSync() then
+      RequestLibKeystones(false)
+    end
     return
   elseif event ~= "PLAYER_LOGIN" then
     return
