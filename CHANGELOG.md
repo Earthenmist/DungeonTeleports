@@ -1,36 +1,12 @@
-## 🧩 Addon Updates (2026-05-03)
+## 🧩 Addon Updates (2026-05-17)
 
-**Mythic Dungeon Teleports** — v2.1.2  
-
-**New Feature: Keystones**
-
-A brand new **Keystones** module has been added, giving you a clear and centralised view of available Mythic+ keys.
-
-**What it does:**
-- Displays **Party**, **Guild**, and **Character** keystones in one place  
-- Automatically updates using supported addons (e.g. DBM / LibKeystone / AstralKeys)  
-- Includes a manual **Refresh** button and periodic auto-updates  
-- Smart visibility:
-  - Party section only shows when you're in a group  
-  - Guild section only shows when you're in a guild  
-- Clickable column headers allow sorting by:
-  - Player (A–Z)  
-  - Level (High–Low)  
-  - Dungeon  
-  - Rating  
-- Visual sort indicators (arrows) for clarity  
-
-**Modular:**
-- The Keystones feature is fully modular and can be **enabled/disabled in settings**
-- Sidebar button only appears when the module is enabled  
+**Mythic Dungeon Teleports** — v2.1.3  
 
 **Changes:**  
-- Improved keystone module performance during dungeons and Mythic+ runs
-- Reduced background processing and unnecessary updates while in active instances
+- None
 
 **Fixes:**  
-- Fixed micro-freezing/stuttering caused by keystone syncing during Mythic+
-- Prevented excessive addon message handling impacting performance
+- Update German translations for dungeon names
 
 **Known issues:**  
 - None currently known  
