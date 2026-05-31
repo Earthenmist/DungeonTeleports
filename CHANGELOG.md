@@ -3,7 +3,7 @@
 **Mythic Dungeon Teleports** — v2.1.4  
 
 **Changes:**  
-- None
+- Added Locales for the Keystone window
 
 **Fixes:**  
 - Update German translation for Seat
