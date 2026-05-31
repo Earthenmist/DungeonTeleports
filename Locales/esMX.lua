@@ -58,6 +58,12 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Restringe las invitaciones automáticas 
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Elige el nivel de restricción."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Si no quieres recibir invitaciones automáticas de desconocidos, puedes restringirlo."
 
+--Keystone
+L["KEYSTONE_Player"] = "Jugador"
+L["KEYSTONE_Level"] = "Nivel"
+L["KEYSTONE_Dungeon"] = "Mazmorra"
+L["KEYSTONE_Rating"] = "Puntuación"
+
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Ninguno"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amigos"
 L["AUTO_INVITE_RESTRICTION_GUILD"] = "Hermandad"
