@@ -1146,10 +1146,10 @@ local function AddKeystoneColumnHeader(y)
     return btn
   end
 
-  makeHeaderButton("Player", "name", 10, 190)
-  makeHeaderButton("Level", "level", 210, 70)
-  makeHeaderButton("Dungeon", "dungeon", 290, 260)
-  makeHeaderButton("Rating", "rating", 560, 90)
+  makeHeaderButton(L["KEYSTONE_Player"], "name", 10, 190)
+  makeHeaderButton(L["KEYSTONE_Level"], "level", 210, 70)
+  makeHeaderButton(L["KEYSTONE_Dungeon"], "dungeon", 290, 260)
+  makeHeaderButton(L["KEYSTONE_Rating"], "rating", 560, 90)
 
   table.insert(keystoneRows, header)
   return y - 38
