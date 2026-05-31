@@ -63,6 +63,12 @@ L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amigos"
 L["AUTO_INVITE_RESTRICTION_GUILD"] = "Hermandad"
 L["AUTO_INVITE_RESTRICTION_FRIENDS_GUILD"] = "Amigos y hermandad"
 
+--Keystone
+L["KEYSTONE_Player"] = "Jugador"
+L["KEYSTONE_Level"] = "Nivel"
+L["KEYSTONE_Dungeon"] = "Mazmorra"
+L["KEYSTONE_Rating"] = "Puntuación"
+
 L["AUTO_INVITE_RESTRICT_ANYONE"] = "Cualquiera"
 L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Amigos"
 L["AUTO_INVITE_RESTRICT_GUILD"] = "Hermandad"
