@@ -1,9 +1,9 @@
-## Interface: 120005
+## Interface: 120005, 120007
 ## Title: Mythic Dungeon Teleports
 ## Notes: Adds teleport buttons for M+ Dungeons & Raids
 ## Notes-ruRU: Добавляет кнопки телепортации для M+ подземелий и рейдов
 ## Author: Lanni-Alonsus
-## Version: 2.1.3
+## Version: 2.1.4
 
 ## X-Curse-Project-ID: 1194926
 ## X-Wago-ID: BNBeblGx
