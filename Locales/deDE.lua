@@ -148,7 +148,7 @@ L["DUNGEON_MAISARA_CAVERNS"] = "Maisarakavernen"
 L["DUNGEON_NEXUS_POINT"] = "Nexuspunkt Xenas"
 L["DUNGEON_WINDRUNNER_SPIRE"] = "Windläuferturm"
 L["DUNGEON_PIT_SARON"] = "Die Grube von Saron"
-L["DUNGEON_SEAT_TRIUMVIRATE"] = "Der Sitz des Triumvirats"
+L["DUNGEON_SEAT_TRIUMVIRATE"] = "Sitz des Triumvirats"
 
 -- Raids
 L["RAID_VAULT_OF_THE_INCARNATES"] = "Gewölbe der Inkarnationen"
