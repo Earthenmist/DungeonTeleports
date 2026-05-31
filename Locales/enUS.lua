@@ -63,6 +63,12 @@ L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Friends"
 L["AUTO_INVITE_RESTRICT_GUILD"] = "Guild"
 L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Friends & Guild"
 
+--Keystone
+L["KEYSTONE_Player"] = "Player"
+L["KEYSTONE_Level"] = "Level"
+L["KEYSTONE_Dungeon"] = "Dungeon"
+L["KEYSTONE_Rating"] = "Rating"
+
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"
 L["Cataclysm"] = "Cataclysm"
