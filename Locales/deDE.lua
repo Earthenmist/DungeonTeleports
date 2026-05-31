@@ -58,6 +58,12 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Beschränkt Auto-Einladungen auf die fol
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Wähle den Einschränkungsgrad."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Wenn du keine Einladungen von Fremden möchtest, kannst du dies hier einschränken."
 
+--Keystone
+L["KEYSTONE_Player"] = "Spieler"
+L["KEYSTONE_Level"] = "Stufe"
+L["KEYSTONE_Dungeon"] = "Dungeon"
+L["KEYSTONE_Rating"] = "Wertung"
+
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Keine"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Freunde"
 L["AUTO_INVITE_RESTRICTION_GUILD"] = "Gilde"
