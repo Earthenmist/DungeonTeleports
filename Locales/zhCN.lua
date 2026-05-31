@@ -68,6 +68,12 @@ L["AUTO_INVITE_RESTRICT_FRIENDS"] = "好友"
 L["AUTO_INVITE_RESTRICT_GUILD"] = "公会"
 L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "好友和公会"
 
+--Keystone
+L["KEYSTONE_Player"] = "玩家"
+L["KEYSTONE_Level"] = "层数"
+L["KEYSTONE_Dungeon"] = "地下城"
+L["KEYSTONE_Rating"] = "评分"
+
 -- Expansions
 L["Wotlk"] = "巫妖王之怒"
 L["Cataclysm"] = "大地的裂变"
