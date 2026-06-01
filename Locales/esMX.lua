@@ -58,11 +58,24 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Restringe las invitaciones automáticas 
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Elige el nivel de restricción."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Si no quieres recibir invitaciones automáticas de desconocidos, puedes restringirlo."
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Jugador"
 L["KEYSTONE_Level"] = "Nivel"
 L["KEYSTONE_Dungeon"] = "Mazmorra"
 L["KEYSTONE_Rating"] = "Puntuación"
+L["KEYSTONE_KEYSTONES"] = "Piedras angulares"
+L["KEYSTONE_PartyKeystones"] = "Piedras angulares del grupo"
+L["KEYSTONE_GuildKeystones"] = "Piedras angulares de la hermandad"
+L["KEYSTONE_CharacterKeystones"] = "Piedras angulares del personaje"
+L["KEYSTONE_NO_KEY"] = "Sin piedra"
+L["KEYSTONE_SOURCE"] = "Fuente"
+L["KEYSTONE_UPDATED"] = "Actualizado"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Piedras angulares del grupo, la hermandad y personajes guardados"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "Aún no se han recibido piedras angulares del grupo"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "Aún no se han encontrado piedras angulares del grupo"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "Aún no se han recibido piedras angulares de la hermandad"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "Aún no se han guardado piedras angulares del personaje"
+L["KEYSTONE_REFRESH"] = "Actualizar"
 
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Ninguno"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amigos"

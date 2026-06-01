@@ -58,11 +58,24 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Limite les invitations automatiques à l
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Choisissez le niveau de restriction."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Si vous ne souhaitez pas recevoir d’invitations automatiques d’inconnus, vous pouvez restreindre cette option."
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Joueur"
 L["KEYSTONE_Level"] = "Niveau"
 L["KEYSTONE_Dungeon"] = "Donjon"
 L["KEYSTONE_Rating"] = "Score"
+L["KEYSTONE_KEYSTONES"] = "Clés mythiques"
+L["KEYSTONE_PartyKeystones"] = "Clés mythiques du groupe"
+L["KEYSTONE_GuildKeystones"] = "Clés mythiques de guilde"
+L["KEYSTONE_CharacterKeystones"] = "Clés mythiques du personnage"
+L["KEYSTONE_NO_KEY"] = "Aucune clé"
+L["KEYSTONE_SOURCE"] = "Source"
+L["KEYSTONE_UPDATED"] = "Mis à jour"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Clés mythiques du groupe, de la guilde et des personnages sauvegardés"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "Aucune clé mythique de groupe reçue pour le moment"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "Aucune clé mythique de groupe trouvée pour le moment"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "Aucune clé mythique de guilde reçue pour le moment"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "Aucune clé mythique de personnage sauvegardée pour le moment"
+L["KEYSTONE_REFRESH"] = "Actualiser"
 
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Aucune"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amis"

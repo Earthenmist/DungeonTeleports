@@ -1000,7 +1000,7 @@ local function CreateKeystoneButton()
   btn.text:SetPoint("LEFT", 12, 0)
   btn.text:SetPoint("RIGHT", -10, 0)
   btn.text:SetJustifyH("LEFT")
-  btn.text:SetText("Keystones")
+  btn.text:SetText(L["KEYSTONE_KEYSTONES"])
   btn.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
 
   btn.activeBar = btn:CreateTexture(nil, "ARTWORK")
@@ -1053,7 +1053,7 @@ local function CreateKeystoneRefreshButton()
 
   btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   btn.text:SetPoint("CENTER", 0, 0)
-  btn.text:SetText("Refresh")
+  btn.text:SetText(L["KEYSTONE_REFRESH"])
   btn.text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3])
 
   btn:SetScript("OnEnter", function(self)
@@ -1124,8 +1124,9 @@ local function AddKeystoneColumnHeader(y)
     -- wrap the header label or render as unsupported font glyphs.
     btn.sortArrow = btn:CreateTexture(nil, "OVERLAY")
     btn.sortArrow:SetSize(10, 10)
-    btn.sortArrow:SetPoint("LEFT", btn.text, "RIGHT", 2, 0)
     btn.sortArrow:SetTexture("Interface\\Buttons\\UI-SortArrow")
+    btn.sortArrow:ClearAllPoints()
+    btn.sortArrow:SetPoint("RIGHT", btn, "RIGHT", -6, 0)
     if sortKey == key then
       btn.sortArrow:Show()
       if ascending then
@@ -1146,10 +1147,10 @@ local function AddKeystoneColumnHeader(y)
     return btn
   end
 
-  makeHeaderButton(L["KEYSTONE_Player"], "name", 10, 190)
-  makeHeaderButton(L["KEYSTONE_Level"], "level", 210, 70)
-  makeHeaderButton(L["KEYSTONE_Dungeon"], "dungeon", 290, 260)
-  makeHeaderButton(L["KEYSTONE_Rating"], "rating", 560, 90)
+  makeHeaderButton(L["KEYSTONE_Player"], "name", 10, 250)
+  makeHeaderButton(L["KEYSTONE_Level"], "level", 270, 70)
+  makeHeaderButton(L["KEYSTONE_Dungeon"], "dungeon", 350, 260)
+  makeHeaderButton(L["KEYSTONE_Rating"], "rating", 590, 90)
 
   table.insert(keystoneRows, header)
   return y - 38
@@ -1177,42 +1178,54 @@ local function AddKeystoneRow(record, y, emptyText)
   SetPanelStyle(row, COLORS.bgCard, COLORS.borderSoft)
 
   local player = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-  player:SetPoint("LEFT", 10, 0)
-  player:SetWidth(190)
+  player:SetPoint("LEFT", row, "LEFT", 10, 0)
+  player:SetWidth(250)
   player:SetJustifyH("LEFT")
+  player:SetWordWrap(false)
 
   local level = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  level:SetPoint("LEFT", player, "RIGHT", 10, 0)
+  level:SetPoint("LEFT", row, "LEFT", 270, 0)
   level:SetWidth(70)
   level:SetJustifyH("LEFT")
+  level:SetWordWrap(false)
 
   local dungeon = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  dungeon:SetPoint("LEFT", level, "RIGHT", 10, 0)
-  dungeon:SetWidth(260)
+  dungeon:SetPoint("LEFT", row, "LEFT", 350, 0)
+  dungeon:SetWidth(230)
   dungeon:SetJustifyH("LEFT")
+  dungeon:SetWordWrap(false)
 
   local rating = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  rating:SetPoint("LEFT", dungeon, "RIGHT", 10, 0)
-  rating:SetWidth(80)
+  rating:SetPoint("LEFT", row, "LEFT", 590, 0)
+  rating:SetWidth(90)
   rating:SetJustifyH("LEFT")
+  rating:SetWordWrap(false)
 
   if record then
-    player:SetText(record.name or record.fullName or "Unknown")
+    local displayName = record.fullName
+    if not displayName or displayName == "" then
+      displayName = record.name or "Unknown"
+      if record.realm and record.realm ~= "" then
+        displayName = displayName .. "-" .. record.realm
+      end
+    end
+
+    player:SetText(displayName)
     level:SetText((record.level and record.level > 0) and tostring(record.level) or "-")
-    dungeon:SetText((record.level and record.level > 0) and (record.dungeon or "-") or "No key")
+    dungeon:SetText((record.level and record.level > 0) and (record.dungeon or "-") or L["KEYSTONE_NO_KEY"])
     rating:SetText((record.rating and record.rating > 0) and tostring(record.rating) or "-")
     row:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
       GameTooltip:AddLine(record.fullName or record.name or "Keystone")
-      GameTooltip:AddDoubleLine("Source", record.source or "DungeonTeleports", 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+      GameTooltip:AddDoubleLine(L["KEYSTONE_SOURCE"], record.source or "DungeonTeleports", 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
       if record.updated then
-        GameTooltip:AddDoubleLine("Updated", date("%d/%m %H:%M", record.updated), 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+        GameTooltip:AddDoubleLine(L["KEYSTONE_UPDATED"], date("%d/%m %H:%M", record.updated), 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
       end
       GameTooltip:Show()
     end)
     row:SetScript("OnLeave", function() GameTooltip:Hide() end)
   else
-    player:SetText(emptyText or "No keystones found yet")
+    player:SetText(emptyText or L["KEYSTONE_NO_KEYSTONES_FOUND_YET"])
     level:SetText("")
     dungeon:SetText("")
     rating:SetText("")
@@ -1341,8 +1354,8 @@ function addon.ShowKeystoneView()
   StartKeystoneAutoRefresh()
 
   mainFrame.contentIcon:SetTexture("Interface\\Icons\\inv_relics_hourglass")
-  mainFrame.contentTitle:SetText("Keystones")
-  mainFrame.contentSubtitle:SetText("Party, guild, and saved character keystones")
+  mainFrame.contentTitle:SetText(L["KEYSTONE_KEYSTONES"])
+  mainFrame.contentSubtitle:SetText(L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"])
   mainFrame.summaryText:SetText("")
 
   local db = EnsureKeystoneDB()
@@ -1353,15 +1366,15 @@ function addon.ShowKeystoneView()
 
   local sectionCount
   local partyRows = SortedRecords(db.party)
-  y, sectionCount = AddKeystoneSectionIfVisible("Party Keystones", partyRows, y, "No party keystones received yet", IsInGroup and IsInGroup())
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_PartyKeystones"], partyRows, y, L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"], IsInGroup and IsInGroup())
   total = total + sectionCount
 
   local guildRows = SortedRecords(db.guild)
-  y, sectionCount = AddKeystoneSectionIfVisible("Guild Keystones", guildRows, y - 6, "No guild keystones received yet", IsInGuild and IsInGuild())
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_GuildKeystones"], guildRows, y - 6, L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"], IsInGuild and IsInGuild())
   total = total + sectionCount
 
   local charRows = SortedRecords(db.characters)
-  y, sectionCount = AddKeystoneSectionIfVisible("Character Keystones", charRows, y - 6, "No character keystones saved yet", true)
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_CharacterKeystones"], charRows, y - 6, L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"], true)
   total = total + sectionCount
 
   mainFrame.summaryText:SetText("")

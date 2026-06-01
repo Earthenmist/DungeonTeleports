@@ -63,11 +63,24 @@ L["AUTO_INVITE_RESTRICT_FRIENDS"] = "Friends"
 L["AUTO_INVITE_RESTRICT_GUILD"] = "Guild"
 L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "Friends & Guild"
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Player"
 L["KEYSTONE_Level"] = "Level"
 L["KEYSTONE_Dungeon"] = "Dungeon"
 L["KEYSTONE_Rating"] = "Rating"
+L["KEYSTONE_KEYSTONES"] = "Keystones"
+L["KEYSTONE_PartyKeystones"] = "Party Keystones"
+L["KEYSTONE_GuildKeystones"] = "Guild Keystones"
+L["KEYSTONE_CharacterKeystones"] = "Character Keystones"
+L["KEYSTONE_NO_KEY"] = "No key"
+L["KEYSTONE_SOURCE"] = "Source"
+L["KEYSTONE_UPDATED"] = "Updated"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Party, guild, and saved character keystones"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "No party keystones received yet"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "No party keystones found yet"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "No guild keystones received yet"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "No character keystones saved yet"
+L["KEYSTONE_REFRESH"] = "Refresh"
 
 -- Expansions
 L["Wotlk"] = "Wrath of the Lich King"

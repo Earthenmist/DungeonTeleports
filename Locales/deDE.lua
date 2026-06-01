@@ -58,11 +58,24 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Beschränkt Auto-Einladungen auf die fol
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Wähle den Einschränkungsgrad."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Wenn du keine Einladungen von Fremden möchtest, kannst du dies hier einschränken."
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Spieler"
 L["KEYSTONE_Level"] = "Stufe"
 L["KEYSTONE_Dungeon"] = "Dungeon"
 L["KEYSTONE_Rating"] = "Wertung"
+L["KEYSTONE_KEYSTONES"] = "Schlüsselsteine"
+L["KEYSTONE_PartyKeystones"] = "Gruppen-Schlüsselsteine"
+L["KEYSTONE_GuildKeystones"] = "Gilden-Schlüsselsteine"
+L["KEYSTONE_CharacterKeystones"] = "Charakter-Schlüsselsteine"
+L["KEYSTONE_NO_KEY"] = "Kein Schlüssel"
+L["KEYSTONE_SOURCE"] = "Quelle"
+L["KEYSTONE_UPDATED"] = "Aktualisiert"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Gruppen-, Gilden- und gespeicherte Charakter-Schlüsselsteine"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "Noch keine Gruppen-Schlüsselsteine erhalten"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "Noch keine Gruppen-Schlüsselsteine gefunden"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "Noch keine Gilden-Schlüsselsteine erhalten"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "Noch keine Charakter-Schlüsselsteine gespeichert"
+L["KEYSTONE_REFRESH"] = "Aktualisieren"
 
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Keine"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Freunde"

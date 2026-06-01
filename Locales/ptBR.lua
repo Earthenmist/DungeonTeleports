@@ -58,11 +58,24 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Restringe os convites automáticos à li
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Escolha o nível de restrição."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Se não quiser receber convites automáticos de desconhecidos, você pode restringir aqui."
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Jogador"
 L["KEYSTONE_Level"] = "Nível"
 L["KEYSTONE_Dungeon"] = "Masmorra"
 L["KEYSTONE_Rating"] = "Pontuação"
+L["KEYSTONE_KEYSTONES"] = "Pedras-chave"
+L["KEYSTONE_PartyKeystones"] = "Pedras-chave do grupo"
+L["KEYSTONE_GuildKeystones"] = "Pedras-chave da guilda"
+L["KEYSTONE_CharacterKeystones"] = "Pedras-chave do personagem"
+L["KEYSTONE_NO_KEY"] = "Sem chave"
+L["KEYSTONE_SOURCE"] = "Fonte"
+L["KEYSTONE_UPDATED"] = "Atualizado"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Pedras-chave do grupo, guilda e personagens salvos"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "Nenhuma pedra-chave de grupo recebida ainda"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "Nenhuma pedra-chave de grupo encontrada ainda"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "Nenhuma pedra-chave de guilda recebida ainda"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "Nenhuma pedra-chave de personagem salva ainda"
+L["KEYSTONE_REFRESH"] = "Atualizar"
 
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Nenhuma"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amigos"

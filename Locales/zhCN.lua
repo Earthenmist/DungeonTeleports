@@ -68,11 +68,24 @@ L["AUTO_INVITE_RESTRICT_FRIENDS"] = "好友"
 L["AUTO_INVITE_RESTRICT_GUILD"] = "公会"
 L["AUTO_INVITE_RESTRICT_FRIENDS_OR_GUILD"] = "好友和公会"
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "玩家"
 L["KEYSTONE_Level"] = "层数"
 L["KEYSTONE_Dungeon"] = "地下城"
 L["KEYSTONE_Rating"] = "评分"
+L["KEYSTONE_KEYSTONES"] = "钥石"
+L["KEYSTONE_PartyKeystones"] = "队伍钥石"
+L["KEYSTONE_GuildKeystones"] = "公会钥石"
+L["KEYSTONE_CharacterKeystones"] = "角色钥石"
+L["KEYSTONE_NO_KEY"] = "无钥石"
+L["KEYSTONE_SOURCE"] = "来源"
+L["KEYSTONE_UPDATED"] = "已更新"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "队伍、公会和已保存角色的钥石"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "尚未收到队伍钥石"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "尚未找到队伍钥石"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "尚未收到公会钥石"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "尚未保存角色钥石"
+L["KEYSTONE_REFRESH"] = "刷新"
 
 -- Expansions
 L["Wotlk"] = "巫妖王之怒"

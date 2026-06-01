@@ -58,11 +58,24 @@ L["AUTO_INVITE_RESTRICTION_TOOLTIP"] = "Limita gli inviti automatici alla selezi
 L["AUTO_INVITE_RESTRICTION_DESC"] = "Scegli il livello di restrizione."
 L["AUTO_INVITE_RESTRICTION_HINT"] = "Se non vuoi ricevere inviti automatici da sconosciuti, puoi limitarlo."
 
---Keystone
+--Keystone Module
 L["KEYSTONE_Player"] = "Giocatore"
 L["KEYSTONE_Level"] = "Livello"
 L["KEYSTONE_Dungeon"] = "Spedizione"
 L["KEYSTONE_Rating"] = "Punteggio"
+L["KEYSTONE_KEYSTONES"] = "Chiavi del Mito+"
+L["KEYSTONE_PartyKeystones"] = "Chiavi del gruppo"
+L["KEYSTONE_GuildKeystones"] = "Chiavi della gilda"
+L["KEYSTONE_CharacterKeystones"] = "Chiavi del personaggio"
+L["KEYSTONE_NO_KEY"] = "Nessuna chiave"
+L["KEYSTONE_SOURCE"] = "Fonte"
+L["KEYSTONE_UPDATED"] = "Aggiornato"
+L["KEYSTONE_PARTY_GUILD_CHARACTER_KEYSTONES"] = "Chiavi del gruppo, della gilda e dei personaggi salvati"
+L["KEYSTONE_NO_PARTY_KEYSTONES_RECEIVED_YET"] = "Nessuna chiave del gruppo ricevuta finora"
+L["KEYSTONE_NO_KEYSTONES_FOUND_YET"] = "Nessuna chiave del gruppo trovata finora"
+L["KEYSTONE_NO_GUILD_KEYSTONES_RECEIVED_YET"] = "Nessuna chiave della gilda ricevuta finora"
+L["KEYSTONE_NO_CHARACTER_KEYSTONES_SAVED_YET"] = "Nessuna chiave del personaggio salvata finora"
+L["KEYSTONE_REFRESH"] = "Aggiorna"
 
 L["AUTO_INVITE_RESTRICTION_NONE"] = "Nessuna"
 L["AUTO_INVITE_RESTRICTION_FRIENDS"] = "Amici"
