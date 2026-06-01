@@ -34,8 +34,7 @@ body:
       label: WoW Client
       description: Which WoW client are you using?
       options:
-        - Retail (The War Within)
-        - Midnight (Beta)
+        - Retail
         - Classic Era
         - Hardcore
         - Season of Discovery
