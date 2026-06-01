@@ -1,12 +1,12 @@
-## 🧩 Addon Updates (2026-05-31)
+## 🧩 Addon Updates (2026-06-01)
 
-**Mythic Dungeon Teleports** — v2.1.4  
+**Mythic Dungeon Teleports** — v2.1.5  
 
 **Changes:**  
-- Added Locales for the Keystone window
+- None
 
 **Fixes:**  
-- Update German translation for Seat
+- Update various translations for reported bug #25
 
 **Known issues:**  
 - None currently known  
