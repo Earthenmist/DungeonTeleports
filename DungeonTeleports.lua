@@ -1000,7 +1000,7 @@ local function CreateKeystoneButton()
   btn.text:SetPoint("LEFT", 12, 0)
   btn.text:SetPoint("RIGHT", -10, 0)
   btn.text:SetJustifyH("LEFT")
-  btn.text:SetText("Keystones")
+  btn.text:SetText(L["KEYSTONE_KEYSTONES"])
   btn.text:SetTextColor(COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
 
   btn.activeBar = btn:CreateTexture(nil, "ARTWORK")
@@ -1053,7 +1053,7 @@ local function CreateKeystoneRefreshButton()
 
   btn.text = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
   btn.text:SetPoint("CENTER", 0, 0)
-  btn.text:SetText("Refresh")
+  btn.text:SetText(L["Refresh"])
   btn.text:SetTextColor(COLORS.warning[1], COLORS.warning[2], COLORS.warning[3])
 
   btn:SetScript("OnEnter", function(self)
@@ -1199,14 +1199,14 @@ local function AddKeystoneRow(record, y, emptyText)
   if record then
     player:SetText(record.name or record.fullName or "Unknown")
     level:SetText((record.level and record.level > 0) and tostring(record.level) or "-")
-    dungeon:SetText((record.level and record.level > 0) and (record.dungeon or "-") or "No key")
+    dungeon:SetText((record.level and record.level > 0) and (record.dungeon or "-") or L["KEYSTONE_NoKey"])
     rating:SetText((record.rating and record.rating > 0) and tostring(record.rating) or "-")
     row:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
       GameTooltip:AddLine(record.fullName or record.name or "Keystone")
-      GameTooltip:AddDoubleLine("Source", record.source or "DungeonTeleports", 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+      GameTooltip:AddDoubleLine(L["KEYSTONE_Source"], record.source or "DungeonTeleports", 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
       if record.updated then
-        GameTooltip:AddDoubleLine("Updated", date("%d/%m %H:%M", record.updated), 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
+        GameTooltip:AddDoubleLine(L["KEYSTONE_Updated"], date("%d/%m %H:%M", record.updated), 1, 1, 1, COLORS.textDim[1], COLORS.textDim[2], COLORS.textDim[3])
       end
       GameTooltip:Show()
     end)
@@ -1341,8 +1341,8 @@ function addon.ShowKeystoneView()
   StartKeystoneAutoRefresh()
 
   mainFrame.contentIcon:SetTexture("Interface\\Icons\\inv_relics_hourglass")
-  mainFrame.contentTitle:SetText("Keystones")
-  mainFrame.contentSubtitle:SetText("Party, guild, and saved character keystones")
+  mainFrame.contentTitle:SetText(L["KEYSTONE_Keystones"])
+  mainFrame.contentSubtitle:SetText(L["KEYSTONE_PartyGuildSavedCharacterKeystones"])
   mainFrame.summaryText:SetText("")
 
   local db = EnsureKeystoneDB()
@@ -1353,15 +1353,15 @@ function addon.ShowKeystoneView()
 
   local sectionCount
   local partyRows = SortedRecords(db.party)
-  y, sectionCount = AddKeystoneSectionIfVisible("Party Keystones", partyRows, y, "No party keystones received yet", IsInGroup and IsInGroup())
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_PartyKeystones"], partyRows, y, L["No party keystones received yet"], IsInGroup and IsInGroup())
   total = total + sectionCount
 
   local guildRows = SortedRecords(db.guild)
-  y, sectionCount = AddKeystoneSectionIfVisible("Guild Keystones", guildRows, y - 6, "No guild keystones received yet", IsInGuild and IsInGuild())
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_GuildKeystones"], guildRows, y - 6, L["No guild keystones received yet"], IsInGuild and IsInGuild())
   total = total + sectionCount
 
   local charRows = SortedRecords(db.characters)
-  y, sectionCount = AddKeystoneSectionIfVisible("Character Keystones", charRows, y - 6, "No character keystones saved yet", true)
+  y, sectionCount = AddKeystoneSectionIfVisible(L["KEYSTONE_CharacterKeystones"], charRows, y - 6, L["No character keystones saved yet"], true)
   total = total + sectionCount
 
   mainFrame.summaryText:SetText("")
