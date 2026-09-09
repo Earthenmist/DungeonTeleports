@@ -1,0 +1,49 @@
+name: Discord Notify (Dev)
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    types: [opened, reopened, closed, ready_for_review, converted_to_draft]
+  issues:
+    types: [opened, reopened, closed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build message
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            printf '%s\n'               "🧩 **${{ github.repository }}**"               "New commit pushed to **${{ github.ref_name }}** by **${{ github.actor }}**"               "<${{ github.event.head_commit.url }}>"               > message.txt
+
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            printf '%s\n'               "🔀 **${{ github.repository }}**"               "PR **#${{ github.event.pull_request.number }}**: ${{ github.event.pull_request.title }}"               "State: **${{ github.event.action }}** by **${{ github.actor }}**"               "<${{ github.event.pull_request.html_url }}>"               > message.txt
+
+          elif [[ "${{ github.event_name }}" == "issues" ]]; then
+            printf '%s\n'               "🐛 **${{ github.repository }}**"               "Issue **#${{ github.event.issue.number }}**: ${{ github.event.issue.title }}"               "State: **${{ github.event.action }}** by **${{ github.actor }}**"               "<${{ github.event.issue.html_url }}>"               > message.txt
+
+          else
+            printf '%s\n'               "📣 **${{ github.repository }}**"               "Event: ${{ github.event_name }} by **${{ github.actor }}**"               > message.txt
+          fi
+
+      - name: Send to Discord (no embeds)
+        shell: bash
+        env:
+          DISCORD_WEBHOOK_DEV: ${{ secrets.DISCORD_WEBHOOK_DEV }}
+        run: |
+          set -euo pipefail
+
+          python3 - << 'PY' > payload.json
+          import json
+          msg = open("message.txt", "r", encoding="utf-8").read()
+          print(json.dumps({
+            "content": msg,
+            "flags": 4
+          }))
+          PY
+
+          curl -sS -H "Content-Type: application/json"             --data-binary @payload.json             "${DISCORD_WEBHOOK_DEV}"
