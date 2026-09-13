@@ -1,0 +1,13 @@
+package-as: DungeonTeleports
+
+manual-changelog: CHANGELOG.md
+
+ignore:
+  - .github
+  - README.md
+  - CHANGELOG.md
+  - CHANGES.txt
+  - LICENSE
+  - CONTRIBUTING.md
+  - SECURITY.md
+  - .gitignore
